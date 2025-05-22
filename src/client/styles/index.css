@@ -1,0 +1,285 @@
+/* Import font definitions */
+@import './fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base layer for theme variables */
+@layer base {
+  /* Default font settings */
+  html {
+    font-family: 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  body {
+    @apply font-sans text-gray-900 dark:text-white;
+  }
+
+  /* Default theme (grayscale) */
+  :root {
+    /* Primary colors (dark gray) */
+    --color-primary-50: #f9fafb;
+    --color-primary-100: #f3f4f6;
+    --color-primary-200: #e5e7eb;
+    --color-primary-300: #d1d5db;
+    --color-primary-400: #9ca3af;
+    --color-primary-500: #6b7280;
+    --color-primary-600: #4b5563;
+    --color-primary-700: #374151;
+    --color-primary-800: #1f2937;
+    --color-primary-900: #111827;
+    --color-primary-950: #030712;
+
+    /* Secondary colors (medium gray) */
+    --color-secondary-50 : #fafafa;
+    --color-secondary-100: #f4f4f5;
+    --color-secondary-200: #e4e4e7;
+    --color-secondary-300: #d4d4d8;
+    --color-secondary-400: #a1a1aa;
+    --color-secondary-500: #71717a;
+    --color-secondary-600: #52525b;
+    --color-secondary-700: #3f3f46;
+    --color-secondary-800: #27272a;
+    --color-secondary-900: #18181b;
+    --color-secondary-950: #09090b;
+
+    /* Accent colors (black/white) */
+    --color-accent-50: #ffffff;
+    --color-accent-100: #f5f5f5;
+    --color-accent-200: #e5e5e5;
+    --color-accent-300: #d4d4d4;
+    --color-accent-400: #a3a3a3;
+    --color-accent-500: #737373;
+    --color-accent-600: #525252;
+    --color-accent-700: #404040;
+    --color-accent-800: #262626;
+    --color-accent-900: #171717;
+    --color-accent-950: #0a0a0a;
+
+    /* Background colors */
+    --color-background-light: #f9fafb;
+    --color-background-dark: #111827;
+
+    /* Surface colors */
+    --color-surface-light: #ffffff;
+    --color-surface-dark: #1f2937;
+
+    /* Text colors */
+    --color-text-primary  : #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-light    : #f9fafb;
+    --color-text-dark     : #111827;
+  }
+
+  /* Light theme - activated with .theme-light class on html or body element */
+  .theme-light {
+    /* Primary colors (light gray) */
+    --color-primary-50: #fafafa;
+    --color-primary-100: #f5f5f5;
+    --color-primary-200: #e5e5e5;
+    --color-primary-300: #d4d4d4;
+    --color-primary-400: #a3a3a3;
+    --color-primary-500: #737373;
+    --color-primary-600: #525252;
+    --color-primary-700: #404040;
+    --color-primary-800: #262626;
+    --color-primary-900: #171717;
+    --color-primary-950: #0a0a0a;
+
+    /* Secondary colors (lighter gray) */
+    --color-secondary-50: #ffffff;
+    --color-secondary-100: #fafafa;
+    --color-secondary-200: #f5f5f5;
+    --color-secondary-300: #e5e5e5;
+    --color-secondary-400: #d4d4d4;
+    --color-secondary-500: #a3a3a3;
+    --color-secondary-600: #737373;
+    --color-secondary-700: #525252;
+    --color-secondary-800: #404040;
+    --color-secondary-900: #262626;
+    --color-secondary-950: #171717;
+
+    /* Accent colors (pure black/white) */
+    --color-accent-50: #ffffff;
+    --color-accent-100: #ffffff;
+    --color-accent-200: #fafafa;
+    --color-accent-300: #f5f5f5;
+    --color-accent-400: #e5e5e5;
+    --color-accent-500: #262626;
+    --color-accent-600: #171717;
+    --color-accent-700: #0a0a0a;
+    --color-accent-800: #000000;
+    --color-accent-900: #000000;
+    --color-accent-950: #000000;
+  }
+
+  /* Dark theme */
+  .theme-dark {
+    /* Primary colors (very dark gray) */
+    --color-primary-50: #f9fafb;
+    --color-primary-100: #f3f4f6;
+    --color-primary-200: #e5e7eb;
+    --color-primary-300: #d1d5db;
+    --color-primary-400: #9ca3af;
+    --color-primary-500: #6b7280;
+    --color-primary-600: #4b5563;
+    --color-primary-700: #374151;
+    --color-primary-800: #1f2937;
+    --color-primary-900: #111827;
+    --color-primary-950: #030712;
+
+    /* Secondary colors (dark gray with slight blue undertone) */
+    --color-secondary-50: #f8fafc;
+    --color-secondary-100: #f1f5f9;
+    --color-secondary-200: #e2e8f0;
+    --color-secondary-300: #cbd5e1;
+    --color-secondary-400: #94a3b8;
+    --color-secondary-500: #64748b;
+    --color-secondary-600: #475569;
+    --color-secondary-700: #334155;
+    --color-secondary-800: #1e293b;
+    --color-secondary-900: #0f172a;
+    --color-secondary-950: #020617;
+
+    /* Accent colors (pure black/white) */
+    --color-accent-50: #f9fafb;
+    --color-accent-100: #f3f4f6;
+    --color-accent-200: #e5e7eb;
+    --color-accent-300: #d1d5db;
+    --color-accent-400: #000000;
+    --color-accent-500: #000000;
+    --color-accent-600: #000000;
+    --color-accent-700: #000000;
+    --color-accent-800: #000000;
+    --color-accent-900: #000000;
+    --color-accent-950: #000000;
+  }
+}
+
+/* Custom components can be defined here */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm rounded;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-lg rounded-lg;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 hover:bg-secondary-700 text-white focus:ring-secondary-500 dark:bg-secondary-500 dark:hover:bg-secondary-600;
+  }
+  
+  .btn-accent {
+    @apply bg-accent-600 hover:bg-accent-700 text-white focus:ring-accent-500 dark:bg-accent-500 dark:hover:bg-accent-600;
+  }
+  
+  .btn-outline {
+    @apply border bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
+  
+  .btn-outline-primary {
+    @apply border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900;
+  }
+  
+  .btn-outline-secondary {
+    @apply border-secondary-600 text-secondary-600 hover:bg-secondary-50 focus:ring-secondary-500 dark:border-secondary-400 dark:text-secondary-400 dark:hover:bg-secondary-900/30;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700 font-medium;
+  }
+  
+  .card-body {
+    @apply p-6;
+  }
+  
+  .card-footer {
+    @apply px-6 py-4 border-t border-gray-200 dark:border-gray-700;
+  }
+  
+  /* Form elements */
+  .form-input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+  }
+  
+  .form-select {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+  }
+  
+  .form-checkbox {
+    @apply rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600;
+  }
+  
+  .form-radio {
+    @apply border-gray-300 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+  }
+  
+  /* Layout */
+  .container-narrow {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom utilities can be defined here */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-secondary {
+    @apply bg-gradient-to-r from-secondary-600 to-secondary-400 bg-clip-text text-transparent;
+  }
+  
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400;
+  }
+  
+  .bg-gradient-secondary {
+    @apply bg-gradient-to-r from-secondary-600 to-secondary-400;
+  }
+}
+
+button {
+/*  border: 1px solid #000 !important; */
+  padding: 3px;
+  border-radius: 4px;
+}
+button:disabled {
+  opacity: 0.5;
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/avenir-next/AvenirNext-Regular.ttf') format('truetype');
+}

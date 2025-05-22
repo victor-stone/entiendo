@@ -1,0 +1,48 @@
+/* 
+ * Avenir Next Font Family
+ * 
+ * Note: Avenir Next is a licensed font. This is a placeholder for where you would 
+ * normally include the actual font files or use a CDN that serves the font.
+ * 
+ * In a production environment, you should:
+ * 1. Properly license Avenir Next
+ * 2. Host the font files locally or use a licensed web font service
+ */
+
+@font-face {
+  font-family: 'Avenir Next';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  /* src: url('../assets/fonts/avenir-next/AvenirNext-Regular.woff2') format('woff2'); */
+  /* The src is commented out as you need to provide the actual font files */
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  /* src: url('../assets/fonts/avenir-next/AvenirNext-Medium.woff2') format('woff2'); */
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  /* src: url('../assets/fonts/avenir-next/AvenirNext-DemiBold.woff2') format('woff2'); */
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  /* src: url('../assets/fonts/avenir-next/AvenirNext-Bold.woff2') format('woff2'); */
+}
+
+/* 
+ * Fallback system for Avenir Next
+ * If Avenir Next is not available, the system will fallback to these similar fonts
+ */ 

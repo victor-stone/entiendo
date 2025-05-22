@@ -1,0 +1,11 @@
+
+This is the user profile the application will receive:
+{
+  "sub": "google-oauth2|101722812212104773442",
+  "given_name": "victor",
+  "family_name": "stone",
+  "nickname": "victor.stone",
+  "name": "victor stone",
+  "picture": "https://lh3.googleusercontent.com/a/ACg8ocLSeg4EVP8yWCbpFLsTcTppJFHqOT0OwVSfG_5uIrxfYtFwj70B=s96-c",
+  "updated_at": "2025-05-04T15:49:33.720Z"
+}

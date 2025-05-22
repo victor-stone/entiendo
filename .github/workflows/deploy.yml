@@ -1,0 +1,23 @@
+name: Deploy to EC2 (Amazon Linux)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Target server runs Amazon Linux
+            cd ~/entiendo
+            git pull
+            npm install
+            npm run build
+            pm2 restart entiendo
