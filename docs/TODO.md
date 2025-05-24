@@ -29,11 +29,11 @@ TODO
 - ~~Filter is ON/OFF~~
 - ~~recast 'Filter'~~
 - why 'fail' message after successful import csv
-- clear the exercise if you change the filter
+- ~~clear the exercise if you change the filter~~
 - remove a exercise from my timeline (mark it as "seen but not heard" ?)
 - finishing an exercise wipes the stats
 - ~~deal with 'Continue' button (add a 'cancel' button that both disappear
   and then add another cancel button )~~
 - feature: missed word session mode
-- new use default to 'Super Common'
--
+- ~~new user default to 'Super Common'~~
+- user sync is funky (not everything is merging on login)

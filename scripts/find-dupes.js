@@ -5,7 +5,7 @@
  * - If all duplicates are referenced in ExampleModel, a report is printed and nothing is deleted.
  */
 
-import { IdiomModel, ExampleModel } from '../../src/server/models/index.js';
+import { IdiomModel, ExampleModel } from '../src/server/models/index.js';
 
 async function main() {
   const idiomModel = new IdiomModel();

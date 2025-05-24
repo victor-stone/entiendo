@@ -26,6 +26,11 @@ export async function dueStats(unified) {
   const now      = Date.now();
   const pastDue  = progress.filter( ({dueDate}) => dueDate < now );
   const missed   = await missedWords(unified);
+  const next     = progress.reduce((min, item) => 
+    (item.dueDate > now && (min === null || item.dueDate < min.dueDate))
+        ? item
+        : min
+  , null);
 
   const numMissed = missed.missedWords.length;
   const missedPrompt = numMissed
@@ -36,12 +41,12 @@ export async function dueStats(unified) {
     {
       icon: 'ExclamationTriangleIcon',
       label: "Past Due",
-      value: pastDue.length
+      value: pastDue.length + " (" + format(earliest.dueDate) + ")"
     },
     {
       icon: 'ChevronUpIcon',
-      label: "Total Due",
-      value: progress.length + " (!)"
+      label: "Total Seen",
+      value: progress.length
     },
     {
       icon: 'PercentBadgeIcon',
@@ -61,7 +66,7 @@ export async function dueStats(unified) {
     {
       icon: 'PencilIcon',
       label: "Next Due",
-      value: format(earliest.dueDate)
+      value: format(next.dueDate)
     }
   ];
 

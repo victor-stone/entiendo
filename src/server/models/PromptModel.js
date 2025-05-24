@@ -1,4 +1,5 @@
 // src/server/models/ExampleModel.js
+import { PropertyCollection } from 'microsoft-cognitiveservices-speech-sdk';
 import BaseModel from './BaseModel.js';
 
 /**
@@ -25,12 +26,15 @@ export default class PromptModel extends BaseModel {
     if (!result) return null;
     let prompt = result.prompt;
 
-    // Replace ${key} in prompt with corresponding value from substitutions
-    prompt = prompt.replace(/\$\{(\w+)\}/g, (match, key) => {
-      return substitutions.hasOwnProperty(key) ? substitutions[key] : match;
-    });
+    if( prompt ) {
+      // Replace ${key} in prompt with corresponding value from substitutions
+      prompt = prompt.replace(/\$\{(\w+)\}/g, (match, key) => {
+        return substitutions.hasOwnProperty(key) ? substitutions[key] : match;
+      });
 
-    return prompt;
+      return prompt;
+    }
+    return result;
   }
 
 }

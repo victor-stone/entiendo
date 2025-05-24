@@ -15,9 +15,15 @@ const ATTEMPTS_PER_EXAMPLE_THRESHOLD = 3;
 export async function getNext(unified) {
     debugGetNext('**** Getting next exercise for user %s *****', unified.user.userId);
 
+    const model = new ExampleModel();
+
+    const userWants = _userWantsThis(unified);
+    if( userWants ) {
+        return await userWants();
+    }
+
     let [idiom, progress] = await _getNextDueIdiom(unified);
 
-    const model = new ExampleModel();
     let exercise = null;
 
     if (idiom) {
@@ -91,22 +97,10 @@ export async function getNext(unified) {
     
     // The example may have been uploaded, not generated 
     // through here so we can't assume audio
-    const publicUrl = exercise.audio?.publicUrl;
-    if( publicUrl ) {
-        if( exercise.audio.expires < Date.now() ) {
-            debugGetNext('existing audio is found, generating a new public url')
-            exercise.audio = {
-                ...exercise.audio,
-                ...await generatePresignedUrl(publicUrl)
-            };
-        } else {
-            debugGetNext('existing audio found and public url is current')
-        }
-    } else {
-        const { id, name } = _getRandomVoiceOption();
-        exercise.audio = await generateSpeech(exercise.text, id);
+    const needAudio = _ensureAudioAccess(exercise);
+    if( needAudio ) {
+        exercise = await needAudio();
         model.addAudio(exercise.exampleId, exercise.audio);
-        debugGetNext('generated audio with ' + name)
     }
     
     exercise.idiom = idiom;
@@ -116,6 +110,32 @@ export async function getNext(unified) {
             exercise.idiom.usage, 
             exercise.text.slice(0,14));
     return exercise;
+}
+
+function _ensureAudioAccess(exercise) {
+    const publicUrl = exercise.audio?.publicUrl;
+    if( publicUrl ) {
+        if (exercise.audio.expires < Date.now()) {
+            return async () => {
+                debugGetNext('existing audio is found, generating a new public url');
+                const generatedUrl = await generatePresignedUrl(publicUrl);
+                exercise.audio = {
+                    ...exercise.audio,
+                    ...generatedUrl
+                };
+                return exercise;
+            }
+        }
+        debugGetNext('existing audio found and public url is current');
+    } else {
+        return async () => {
+            const { id, name } = _getRandomVoiceOption();
+            exercise.audio = await generateSpeech(exercise.text, id);
+            debugGetNext('generating audio for example with ' + name);
+            return exercise;
+        }
+    }
+    return null;
 }
 
 function _getRandomVoiceOption() {
@@ -213,3 +233,21 @@ async function _createExample(idiom, model) {
         throw new Error(`Failed to get or create example: ${error.message}`);
     }
 }
+
+function _userWantsThis(unified) {
+    const { user: { preferences } } = unified;
+    return preferences.getNextExample ? async () => {
+        debugGetNext("Getting admin example: " + preferences.getNextExample)
+        const model          = new ExampleModel();
+        const idioms         = new IdiomModel();
+        let   exercise       = await model.getById(preferences.getNextExample);
+              exercise.idiom = idioms.getById(exercise.idiomId);
+        const needAudio      = _ensureAudioAccess(exercise);
+        if( needAudio ) {
+            exercise = await needAudio();
+            exercise = await model.addAudio(exercise.exampleId, exercise.audio);
+        }
+        return exercise;
+    } : null;
+}
+

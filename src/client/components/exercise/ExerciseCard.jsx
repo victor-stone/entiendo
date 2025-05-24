@@ -90,8 +90,8 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
 
   // Render conditions
   if (loading && !exercise) return <LoadingIndicator message="Loading exercise..." />;
-  if (error) return <div className="text-red-500 p-4">{error}</div>;
-  if (!exercise) return <div className="p-4">No exercise available.</div>;
+  if (error)                return <div className="text-red-500 p-4">{error}</div>;
+  if (!exercise)            return <div className="p-4">No exercise available.</div>;
 
   // Render the appropriate component based on the current phase
   return (

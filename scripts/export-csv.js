@@ -1,16 +1,16 @@
-import { IdiomModel } from '../../src/server/models/index.js';
+/**
+ * This script exists to provide maintainers and contributors with a simple way
+ * to export all idioms from the database into a CSV file for external use.
+ * 
+ * The exported CSV can be used for data analysis, sharing with collaborators,
+ * or as a backup of the idioms data. The output is saved to the
+ * `../staging/stages/idioms-export.csv` file relative to the project root.
+ */
+
+import { IdiomModel } from '../src/server/models/index.js';
 import fs from 'fs';
 import path from 'path';
-
-// Helper to escape CSV fields
-function escapeCSV(value) {
-  if (value == null) return '';
-  const str = String(value);
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
-}
+import { escapeCSV } from './escapeCSV.js';
 
 async function exportIdiomsToCSV() {
   const idiomModel = new IdiomModel();
@@ -33,14 +33,14 @@ async function exportIdiomsToCSV() {
 
   const csvContent = [header.join(','), ...rows].join('\n');
 
-  // Ensure docs directory exists
-  const docsDir = path.resolve(process.cwd(), 'docs');
-  if (!fs.existsSync(docsDir)) {
-    fs.mkdirSync(docsDir, { recursive: true });
+  // Ensure ../staging/stages directory exists
+  const stagesDir = path.resolve(process.cwd(), '../staging/stages');
+  if (!fs.existsSync(stagesDir)) {
+    fs.mkdirSync(stagesDir, { recursive: true });
   }
 
   // Write to file
-  const filePath = path.join(docsDir, 'idioms-export.csv');
+  const filePath = path.join(stagesDir, 'idioms-export.csv');
   fs.writeFileSync(filePath, csvContent, 'utf8');
   console.log(`Exported ${idioms.length} idioms to ${filePath}`);
 }

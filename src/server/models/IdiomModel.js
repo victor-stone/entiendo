@@ -3,6 +3,17 @@ import BaseModel from './BaseModel.js';
 import { ScanCommand } from '@aws-sdk/client-dynamodb';
 import criteriaToFilterExpression from '../lib/criteriaToFilter.js';
 
+/*
+{
+ "idiomId"    : "b157b729-01b1-452c-9301-fe7ee92d3b6a",
+ "family"     : "dar",
+ "region"     : "RP",
+ "text"       : "dar la lata",
+ "tone"       : "Casual",
+ "translation": "to bother be a nuisance",
+ "usage"      : 7
+}
+*/
 /**
  * Model for Idiom-related database operations
  */

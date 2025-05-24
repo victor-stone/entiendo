@@ -16,7 +16,9 @@ const IdiomSelector = () => {
         preferences,
         setTone,
         setUsage,
-        loading
+        setPreference,
+        loading,
+        isAdmin
      } = useUserStore();
 
     return (
@@ -34,6 +36,18 @@ const IdiomSelector = () => {
                 {
                     toneDescriptions[preferences.filter.tone] &&
                     <CardField>{toneDescriptions[preferences.filter.tone].map((t,i) => <p key={i} className="mb-1">{t}</p>)}</CardField>
+                }
+                {isAdmin && 
+                    <CardField hint="Admin: Next example ID">
+                        <label className="block mb-1 font-medium">Next Example</label>
+                        <input
+                            type="text"
+                            className="border rounded px-2 py-1 w-full"
+                            value={preferences?.getNextExample || ""}
+                            onChange={e => setPreference('getNextExample', e.target.value)}
+                            placeholder="Enter next example value"
+                        />
+                    </CardField>
                 }
                 <CardField>
                     <div className="flex gap-4">

@@ -140,3 +140,6 @@ config/aws/entiendo-instance-info.txt
 diag/
 .vscode/chrome-debug-profile
 .vscode/chrome-debug-profile/
+
+staging/audio
+staging/stages

@@ -46,18 +46,24 @@ const useUserStore = create((set, get) => ({
     }
   },
 
-  setFilter: async (key, value) => {
+  setPreference: async (key, value) => {
     set((state) => ({
       preferences: {
         ...state.preferences,
-        filter: {
-          ...(state.preferences.filter || {}),
-          [key]: value
-        }
+        [key]: value
       }
     }));
     const { preferences, updatePreferences } = get();
     await updatePreferences(preferences);
+  },
+
+  setFilter: async (filterKey, filterValue) => {
+    const { preferences, setPreference } = get();
+    const newFilter = {
+      ...(preferences.filter || {}),
+      [filterKey]: filterValue
+    };
+    await setPreference('filter', newFilter);
   },
 
   setTone:   (tone)   => get().setFilter('tone', tone),

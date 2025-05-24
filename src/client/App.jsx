@@ -1,7 +1,4 @@
-import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useUserStore } from './stores'
-
+import { Routes, Route } from 'react-router-dom'
 import { Page, Main } from './components/layout'
 
 import { 
@@ -20,17 +17,7 @@ import {
 } from './pages/admin';
 
 import AdminRoute from './components/admin/AdminRoute';
-
-// Protected route component to ensure only authenticated users can access
-const UserRoute = ({ children }) => {
-  const isAuthenticated = useUserStore(state => state.isAuthenticated);
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
-};
+import UserRoute from './components/UserRoute';
 
 function App() {
   return (

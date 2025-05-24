@@ -46,15 +46,16 @@ export default class ExampleModel extends BaseModel {
    * @param {String} source - Source of the example (e.g., 'openai', 'manual', 'user')
    * @returns {Promise<Object>} - Created example
    */
-  async createExample(idiomId, text, conjugatedSnippet, source = 'openai') {
-    const now = Date.now();
+  async createExample(idiomId, text, conjugatedSnippet, source = 'openai', audio = null) {
+    const createdAt = Date.now();
 
     return this.create({
       idiomId,
       text,
       conjugatedSnippet,
       source,
-      createdAt: now
+      createdAt,
+      audio
     });
   }
 

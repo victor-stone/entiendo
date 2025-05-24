@@ -85,8 +85,8 @@ async function _validateIdioms(records, idiomModel) {
       const idiomData = {
         text       : record.text,
         translation: record.translation,
-        tone   : record.tone,
-        usage  : record.usage,
+        tone       : record.tone,
+        usage      : record.usage,
         tempId     : `temp-${Date.now()}-${i}`  // Temporary ID for client-side reference
       };
       

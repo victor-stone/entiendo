@@ -41,6 +41,11 @@ const useExerciseStore = create((set, get) => ({
     translation: ''
   },
 
+  // Set the current exercise
+  setExercise: (exercise) => {
+    set({ exercise });
+  },
+
   // Get list of due exercises
   getDueList: (getToken) =>
     fetchAndSet(set, getToken, exerciseService.getDueList, 'dueList', 'Failed to fetch due exercises'),
