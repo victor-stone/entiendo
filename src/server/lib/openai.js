@@ -23,20 +23,18 @@ export async function generateText(systemPrompt, userPrompt, options = {}) {
     const defaultOptions = {
       model      : process.env.OPENAI_MODEL || 'gpt-4o',
       temperature: 0.7,
-      max_tokens : 150
+      max_tokens : 150,
+      response_format: { type: "json_object" }
     };
     
     const config = { ...defaultOptions, ...options };
     
     const response = await openai.chat.completions.create({
-      model: config.model,
+      ...config,
       messages: [
         { role: 'system', content: systemPrompt.trim() },
         { role: 'user',   content: userPrompt.trim() }
-      ],
-      temperature    : config.temperature,
-      max_tokens     : config.max_tokens,
-      response_format: config.response_format
+      ]
     });
     
     return response.choices[0].message.content.trim();
@@ -45,7 +43,6 @@ export async function generateText(systemPrompt, userPrompt, options = {}) {
     throw new Error(`Failed to generate text: ${error.message}`);
   }
 }
-
 
 export default {
   generateText

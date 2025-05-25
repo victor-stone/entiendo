@@ -1,6 +1,7 @@
 import { ExampleModel, IdiomModel, PromptModel, ProgressModel } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
-import { NotFoundError } from '../../../shared/constants/errorTypes.js';
+import { NotFoundError, CalendarExhaustedError } from '../../../shared/constants/errorTypes.js';
+import { getSettings } from '../settingsAPI.js';
 import ttl from './audio.js';
 import debug from 'debug';
 
@@ -9,106 +10,148 @@ const debugGetNext = debug('api:exercise:getNext');
 const { generateSpeech, generatePresignedUrl } = ttl;
 
 const PAST_DUE = true;
-const EXAMPLE_PER_IDIOM_THRESHOLD = 3;
-const ATTEMPTS_PER_EXAMPLE_THRESHOLD = 3;
 
 export async function getNext(unified) {
     debugGetNext('**** Getting next exercise for user %s *****', unified.user.userId);
 
-    const model = new ExampleModel();
+    const bypassExercise = _getAdminBypassExercise(unified);
+    if (bypassExercise) 
+        return await bypassExercise();
 
-    const userWants = _userWantsThis(unified);
-    if( userWants ) {
-        return await userWants();
+    let exercise = await _getNextDueExercise(unified);
+    if( exercise ) {
+        return exercise;
     }
 
-    let [idiom, progress] = await _getNextDueIdiom(unified);
+    exercise = await _getExerciseForNewIdiom(unified);
+    if( exercise ) {
+        return exercise;
+    }
 
-    let exercise = null;
+    const { query: { tone, usage } } = unified;
+    if( tone || usage ) {
+        const fallback = { ...unified, query: { ...unified.query, tone: null, usage: null } };
+        const fallbackExercise = await _getNextDueExercise(fallback);
+        if( fallbackExercise ) {
+            return fallbackExercise;
+        }
+    }
+
+    debugGetNext('No due idiom found and new idioms are forbidden');
+    throw new CalendarExhaustedError('No due idioms available');
+}
+
+async function _getNextDueExercise(unified) {
+    const [idiom, progress] = await _getNextDueIdiom(unified);
 
     if (idiom) {
-        debugGetNext('Due idiom found: %s due: %s', 
-                            idiom.text, 
-                            new Date(progress.dueDate).toLocaleString());
-        // 
-        // Extract this user's example history from progress
-        const seenExampleIdCounts = {};
-        const seenExampleIds      = [];
+        return await _getExerciseForDueIdiom({ idiom, progress, unified });
+    }
 
-        progress.history.forEach(({exampleId}) => {
-            seenExampleIds.push(exampleId);
-            seenExampleIdCounts[exampleId] = (seenExampleIdCounts[exampleId] || 0) + 1;
-        });
-        const maybeCreate = seenExampleIds.length < EXAMPLE_PER_IDIOM_THRESHOLD;
-        if( maybeCreate ) {
-            // we can make more if we need to ...
-            // 
-            // first let's determine if this user has seen all the examples available
-            // for this idiom
-            const examplesForIdiom = await model.findByIdiomId(idiom.idiomId);
-            exercise = examplesForIdiom.find( ({exampleId}) => !seenExampleIds.includes(exampleId));
-            if( exercise ) {
-                debugGetNext('Found an example the user has not seen' );
-            } else {
-                debugGetNext('User has seen all existing sample, making a new one');
-                exercise = await _createExample(idiom, model);
-            }
-        } else {
-            // there are plenty of examples in the system and this user
-            // has seen all of them
-            //
-            // now, let's see how many times they have seen them and favor the ones
-            // they have seen the least
-            // (by reversing the array we increase the chance of alternating 
-            // examples)
-            let exampleToUse = seenExampleIds.reverse().find( id => seenExampleIdCounts[id] < ATTEMPTS_PER_EXAMPLE_THRESHOLD);
-            if( exampleToUse ) {
-                debugGetNext('User has seen this example before but within threshold')
-            }
-            else {
-                // so here are are, maxed out on examples for the idiom,
-                // maxed out on views per example for this user
-                // TODO: design a policy for this case
-                exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
-                debugGetNext('WARNING: User has seen all the examples max times, picking one random')
-            }
-            exercise = await model.getById(exampleToUse)
+    return null;
+}
+
+async function _getExerciseForDueIdiom({ idiom, progress, unified }) {
+    const { 
+        EXAMPLE_PER_IDIOM_THRESHOLD, 
+        ATTEMPTS_PER_EXAMPLE_THRESHOLD } = await getSettings();
+
+    const model = new ExampleModel();
+    const seenExampleIdCounts = {};
+    const seenExampleIds = [];
+
+    progress.history.forEach(({ exampleId }) => {
+        seenExampleIds.push(exampleId);
+        seenExampleIdCounts[exampleId] = (seenExampleIdCounts[exampleId] || 0) + 1;
+    });
+
+    // If user hasn't seen enough examples, try to find or create a new one
+    if (seenExampleIds.length < EXAMPLE_PER_IDIOM_THRESHOLD) {
+        const examplesForIdiom = await model.findByIdiomId(idiom.idiomId);
+        let exercise = examplesForIdiom.find(({ exampleId }) => !seenExampleIds.includes(exampleId));
+        if (exercise) {
+            debugGetNext('Found an example the user has not seen');
+            return await _finalizeExercise(exercise, idiom, model);
         }
+        debugGetNext('User has seen all existing samples, making a new one');
+        exercise = await _createExample(idiom, model);
+        return await _finalizeExercise(exercise, idiom, model);
+    }
+
+    // User has seen all examples, pick one they've seen the least (or random)
+    let exampleToUse = seenExampleIds
+        .slice() // copy
+        .reverse()
+        .find(id => seenExampleIdCounts[id] < ATTEMPTS_PER_EXAMPLE_THRESHOLD);
+
+    if (exampleToUse) {
+        debugGetNext('User has seen this example before but within threshold');
     } else {
-        const { query: { forbidNew } } = unified;
-        if (forbidNew) {
-            debugGetNext('No due idiom found and new idioms are forbidden');
-            throw new NotFoundError('No due idioms available');
-        }
-        // TODO: Need a way to sprinkle in new idioms 
-        // even when a ton are due
-        //
-        idiom = await _getNewIdiom(unified);
-        debugGetNext('Nothing is due for user, fetched: %s', idiom.text);
-        const exercises = await model.findByIdiomId(idiom.idiomId);
-        if( exercises && exercises.length > 0  ) {
-            debugGetNext('found an existing exercise')
-            exercise = exercises[0];
-        } else {
-            exercise = await _createExample(idiom, model);
-            debugGetNext('created a new exercise')
-        }   
+        exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
+        debugGetNext('WARNING: User has seen all the examples max times, picking one random');
     }
-    
-    // The example may have been uploaded, not generated 
-    // through here so we can't assume audio
+    const exercise = await model.getById(exampleToUse);
+    return await _finalizeExercise(exercise, idiom, model);
+}
+
+async function _isNewAllowed(unified) {
+    const { user: { userId } } = unified;
+    const {
+        MAX_INITIAL_NEW_IDIOMS,
+        MAX_NEW_IDIOMS
+    } = await getSettings();
+
+    const model = new ProgressModel();
+    const exercises = await model.findByUser(userId);
+    if( exercises.length < MAX_INITIAL_NEW_IDIOMS ) {
+        return true;
+    }
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const recentCount = exercises.filter(e => now - e.createdAt < ONE_DAY_MS).length;
+    return recentCount < MAX_NEW_IDIOMS;
+}
+
+async function _getExerciseForNewIdiom(unified) {
+
+    const isNewAllowed = await _isNewAllowed(unified);
+    if (!isNewAllowed) {
+        return null;
+    }
+
+    const model = new ExampleModel();
+    let  idiom = await _getNewIdiom(unified);
+    if( !idiom ) {
+        debugGetNext('New idioms are allowed but the user has seen all of this tone/usage');
+        const fallback = { ...unified, query: { ...unified.query, tone: null, usage: null } };
+        idiom = await _getNewIdiom(fallback);
+    }
+    debugGetNext('Nothing is due for user, fetched: %s', idiom.text);
+
+    const exercises = await model.findByIdiomId(idiom.idiomId);
+    let exercise;
+    if (exercises && exercises.length > 0) {
+        debugGetNext('found an existing exercise');
+        exercise = exercises[0];
+    } else {
+        exercise = await _createExample(idiom, model);
+        debugGetNext('created a new exercise');
+    }
+    return await _finalizeExercise(exercise, idiom, model);
+}
+
+async function _finalizeExercise(exercise, idiom, model) {
     const needAudio = _ensureAudioAccess(exercise);
-    if( needAudio ) {
+    if (needAudio) {
         exercise = await needAudio();
-        model.addAudio(exercise.exampleId, exercise.audio);
+        await model.addAudio(exercise.exampleId, exercise.audio);
     }
-    
     exercise.idiom = idiom;
-    
-    debugGetNext('Returning exercise for "%s (%s)": %s...', 
-            exercise.idiom.text, 
-            exercise.idiom.usage, 
-            exercise.text.slice(0,14));
+    debugGetNext('Returning exercise for "%s (%s)": %s...',
+        exercise.idiom.text,
+        exercise.idiom.usage,
+        exercise.text.slice(0, 14)
+    );
     return exercise;
 }
 
@@ -175,6 +218,9 @@ async function _getNewIdiom(unified) {
     if (idiomId) {
         // debugGetNext("Found match: %s - %s: %s", tone, usage, idiom.text);
     } else {
+        if( tone || usage ) {
+            return null;
+        }
         // TODO: make some more idioms with this spec
         debugGetNext("OOPS User has seen all idioms that match: %s - %s", tone, usage)
         throw new NotFoundError(`Wups, turns out there's nothing here... Refresh your browser(!)`);
@@ -196,12 +242,7 @@ async function _generateExampleSentence(idiom) {
     const systemPrompt = await model.getPromptByName('RIOPLATENSE_EXAMPLE_SYSTEM_PROMPT');
     const userPrompt   = await model.getPromptByName('USER_PROMPT', idiom)
 
-    // Generate the example
-    const result = await generateText(systemPrompt, userPrompt, {
-        temperature: 0.7,
-        max_tokens: 150,
-        response_format: { type: "json_object" }
-    });
+    const result = await generateText(systemPrompt, userPrompt);
 
     return JSON.parse(result);
 }
@@ -234,20 +275,15 @@ async function _createExample(idiom, model) {
     }
 }
 
-function _userWantsThis(unified) {
+function _getAdminBypassExercise(unified) {
     const { user: { preferences } } = unified;
     return preferences.getNextExample ? async () => {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
         const model          = new ExampleModel();
         const idioms         = new IdiomModel();
-        let   exercise       = await model.getById(preferences.getNextExample);
-              exercise.idiom = idioms.getById(exercise.idiomId);
-        const needAudio      = _ensureAudioAccess(exercise);
-        if( needAudio ) {
-            exercise = await needAudio();
-            exercise = await model.addAudio(exercise.exampleId, exercise.audio);
-        }
-        return exercise;
+        let exercise         = await model.getById(preferences.getNextExample);
+        let idiom            = await idioms.getById(exercise.idiomId);
+        return await _finalizeExercise(exercise, idiom, model);
     } : null;
 }
 

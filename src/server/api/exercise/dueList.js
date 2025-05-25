@@ -1,13 +1,30 @@
 import { ProgressModel } from "../../models/index.js";
 import { format } from 'timeago.js';
 import { missedWords } from "./missedWordAPI.js";
+import { usageToRange } from "../../../shared/constants/usageRanges.js";
 
 export async function dueList(unified) {
   const {
     user: { userId },
   } = unified;
   const model = new ProgressModel();
-  const progress = await model.findDueItems(userId, {}, 0);
+  let progress = await model.findDueItems(userId, {}, 0);
+
+  progress = progress.map(item => {
+    item.range = usageToRange(item.usage);
+
+    // Confidence Score
+    const success = item.successRate ?? 0; // fallback if undefined
+    const normalizedInterval = Math.min(item.interval, 7) / 7;
+    const lapsePenalty = Math.min(item.lapseCount, 3) / 3;
+
+    let confidence = (success * 0.6) + (normalizedInterval * 0.3) - (lapsePenalty * 0.3);
+    confidence = Math.max(0, Math.min(confidence, 1)); // clamp
+
+    item.confidence = confidence;
+    console.log("confidence: " + confidence);
+    return item;
+  });  
   return progress;
 }
 
@@ -37,6 +54,7 @@ export async function dueStats(unified) {
             ? numMissed + ' / ' + missed.totalCount
             : 0;
   
+  // TODO: move this structure out to the client
   const stats = [
     {
       icon: 'ExclamationTriangleIcon',
@@ -49,24 +67,20 @@ export async function dueStats(unified) {
       value: progress.length
     },
     {
-      icon: 'PercentBadgeIcon',
-      label: "Score (past due)",
-      value: __getAccPercentage(pastDue) + '%'
-    },
-    {
       icon: 'StarIcon',
-      label: "Score (total)",
+      label: "Score",
       value: __getAccPercentage(progress) + '%'
     },
     {
-      icon: 'StarIcon',
+      icon: 'PencilIcon',
       label: "Missed Words",
       value: missedPrompt
     },
     {
-      icon: 'PencilIcon',
+      icon: 'CalendarIcon',
       label: "Next Due",
-      value: format(next.dueDate)
+      value: format(next.dueDate),
+      link: '/app/calendar' 
     }
   ];
 

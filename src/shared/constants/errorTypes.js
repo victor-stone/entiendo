@@ -83,6 +83,12 @@ export class ForbiddenError extends APIError {
   }
 }
 
+export class CalendarExhaustedError extends APIError {
+  constructor(message = 'Calendar exhausted') {
+    super(message, ERROR_CODES.SERVICE_UNAVAILABLE, ERROR_STATUS_CODES[ERROR_CODES.SERVICE_UNAVAILABLE]);
+  }
+}
+
 export default {
   ERROR_CODES,
   ERROR_STATUS_CODES,
@@ -90,5 +96,6 @@ export default {
   ValidationError,
   NotFoundError,
   UnauthorizedError,
-  ForbiddenError
+  ForbiddenError,
+  CalendarExhaustedError
 }; 

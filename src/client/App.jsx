@@ -5,7 +5,8 @@ import {
   Landing, 
   Dashboard, 
   SelectIdioms,
-  Exercise
+  Exercise,
+  Calendar
 } from './pages';
 
 import { 
@@ -31,6 +32,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="select" element={<SelectIdioms />} />
               <Route path="exercise" element={<Exercise />} />
+              <Route path="calendar" element={<Calendar />} />
             </Routes>
           </UserRoute>
           } />

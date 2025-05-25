@@ -6,8 +6,7 @@ import PromptModel from '../models/PromptModel.js';
  */
 export async function getSettings() {
   const promptModel = new PromptModel();
-  // The key is 'SETTINGS' as per your request
-  const settings = await promptModel.getPromptByName('SETTINGS');
+  const settings = await promptModel.getValueByName('SETTINGS');
   return settings;
 }
 

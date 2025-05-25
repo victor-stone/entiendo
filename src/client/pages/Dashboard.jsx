@@ -26,8 +26,31 @@ const MissedWordsPanel = ({getToken}) => {
   return (
     <p>You missed {missedWords.missedWords.length} words {missedWords.totalCount} times. </p>
   )
-
 }
+
+const LogoBackground = ({ children }) => (
+  <div style={{ position: 'relative', overflow: 'hidden' }}>
+    {/* Background image with 50% opacity */}
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: "url('../assets/images/entiendoLogo-trans.png')",
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'contain',
+        opacity: 0.2,
+        pointerEvents: 'none',
+        zIndex: 0
+      }}
+    />
+    {/* Content above background */}
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      {children}
+    </div>
+  </div>
+);
+
 const Dashboard = () => {
   const user = useUserStore(state => state.user);
   const getToken = useUserStore(state => state.getToken);
@@ -37,28 +60,8 @@ const Dashboard = () => {
       <CardHeader>
         <span>Welcome, {user?.name || 'User'}!</span>
       </CardHeader>
-      <CardBody
-        style={{
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        {/* Background image with 50% opacity */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: "url('../assets/images/entiendoLogo-trans.png')",
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            backgroundSize: 'contain',
-            opacity: 0.2,
-            pointerEvents: 'none',
-            zIndex: 0
-          }}
-        />
-        {/* Content above background */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
+      <CardBody>
+        <LogoBackground>
           <Grid columns={2}>
             <CardBlock title="Idioms">
               <CardBlockBody>
@@ -79,7 +82,7 @@ const Dashboard = () => {
               </CardBlockBody>
             </CardBlock>
           </Grid>
-        </div>
+        </LogoBackground>
       </CardBody>
     </Card>
   );

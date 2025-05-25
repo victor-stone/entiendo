@@ -41,9 +41,20 @@ export const CardField = ({ children, hint, isFull = true }) => (
   </div>
 );
 
-export function CardBlock({ className = '', children, title = '' }) {
+// 
+export function CardBlock({ 
+  className = '', 
+  children, 
+  title = '', 
+  border=true,
+  background=true
+}) {
   return (
-    <div className={`inline-block my-6 ml-4 rounded-lg shadow border border-gray-300 dark:border-gray-700 ${className}`} style={{ background: 'rgba(249, 250, 251, 0.8)' }}>
+    <div className={`inline-block my-6 ml-4 rounded-lg shadow 
+                    ${border && "border border-gray-300 dark:border-gray-700"} 
+                    ${className}`} 
+          style={ background && { background: 'rgba(249, 250, 251, 0.8)' }}
+    >
       {title && <CardBlockHeader>{title}</CardBlockHeader>}
       {children}
     </div>
@@ -62,7 +73,7 @@ export function CardBlockHeader({ children }) {
 
 export function CardBlockBody({ children }) {
   return (
-    <div className="px-5 pb-4">
+    <div className="px-5 pb-4 pt-4">
       {children}
     </div>
   );

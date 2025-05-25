@@ -13,7 +13,7 @@ import * as idiomAPI    from  '../api/idiomAPI.js';
 import * as userAPI     from  '../api/userAPI.js';
 import * as exerciseAPI from  '../api/exercise/index.js';
 import * as adminAPI    from  '../api/adminAPI.js';
-import * as settingsAPI from '../lib/settingsAPI.js';
+import * as settingsAPI from  '../api/settingsAPI.js';
 
 /**
  * The route table maps HTTP methods and paths to handler functions

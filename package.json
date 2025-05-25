@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev:client": "vite",
-    "dev:server": "nodemon server.js",
+    "dev:server": "nodemon --inspect server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "vite build",
     "preview": "vite preview",

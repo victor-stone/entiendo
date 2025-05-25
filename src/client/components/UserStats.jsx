@@ -1,7 +1,16 @@
 import { useEffect } from 'react';
 import useExerciseStore from '../stores/exerciseStore';
-import { Glyph } from './ui';
-import {CardBlock, CardBlockHeader, CardBlockBody } from '../components/layout';
+import { Glyph, PageLink } from './ui';
+import { Link } from 'react-router-dom';
+
+
+const UserItem = ({label, value}) => (
+  <span><span className="font-semibold">{label}:</span>{' '}
+                <span>{value}</span></span>
+);
+const UserLink = ({label, value, to}) =>
+  <Link className="underline" to={to}><UserItem label={label} value={value} /></Link>;
+
 
 const UserStats = ({ getToken }) => {
   const { dueStats, getDueStats } = useExerciseStore();
@@ -20,11 +29,14 @@ const UserStats = ({ getToken }) => {
 
       {(dueStats && dueStats.length > 0) && 
           <div>
-            {dueStats.map(({ label, value, icon }) => (
+            {dueStats.map(({ label, value, icon, link }) => (
               <div key={label} className="text-sm">
                 <Glyph name={icon} />
-                <span className="font-semibold">{label}:</span>{' '}
-                <span>{value}</span>
+                {
+                  link
+                    ? <UserLink to={link} label={label} value={value} />
+                    : <UserItem label={label} value={value} />
+                }
               </div>
             ))}
           </div>

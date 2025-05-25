@@ -22,12 +22,14 @@ async function _markProgress(exampleId, idiomId, evaluation, userId) {
     if (!progress) {
         const idiomModel = new IdiomModel();
         const idiom = await idiomModel.getById(idiomId);
+        const { tone, usage } = idiom;
+        const createdAt = Date.now();
         progress = {
             idiomId,
             userId,
-            tone: idiom.tone,
-            usage: idiom.usage,
-            createdAt: Date.now(),
+            tone,
+            usage,
+            createdAt,
             history: []
         }
     }
@@ -68,8 +70,7 @@ async function _evaluateResponse(correctSentence, userTranscription, userTransla
     try {
         const result = await generateText(systemPrompt, userPrompt, {
             temperature: 0.2,
-            max_tokens: 500,
-            response_format: { type: "json_object" }
+            max_tokens: 600
         });
 
         return JSON.parse(result);

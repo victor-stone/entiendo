@@ -37,3 +37,18 @@ TODO
 - feature: missed word session mode
 - ~~new user default to 'Super Common'~~
 - user sync is funky (not everything is merging on login)
+
+API: getNumberOfTestsToday (countcreatedAt dates for last 24 hours of progress)
+prevent 'get next' button after max new items is hit.
+
+Two scenarios to cover better:
+- The queue doesn't have any more filtered due
+- 
+
+
+Settings:
+- When to apply filters (tone and usage) 
+--- only apply filters to new idioms
+--- apply to all exercises
+
+

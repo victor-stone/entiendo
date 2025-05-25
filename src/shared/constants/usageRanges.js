@@ -1,9 +1,9 @@
 const usageRangeOptions = [
-    { value: "",             label: "All",          lo: 0, hi: 0 },
-    { value: "super_common", label: "Super Common", lo: 8, hi: 10 },
-    { value: "common",       label: "Common",       lo: 5, hi: 7 },
-    { value: "uncommon",     label: "Uncommon",     lo: 3, hi: 4 },
-    { value: "super_rare",   label: "Super Rare",   lo: 1, hi: 2 }
+    { value: "",             label: "All",          lo: 0, hi: 0,  icon: '' },
+    { value: "super_common", label: "Super Common", lo: 8, hi: 10, icon: 'ChartBarIcon' },
+    { value: "common",       label: "Common",       lo: 5, hi: 7,  icon: 'Bars3BottomLeftIcon' },
+    { value: "uncommon",     label: "Uncommon",     lo: 3, hi: 4,  icon: 'Bars3Icon' },
+    { value: "super_rare",   label: "Super Rare",   lo: 1, hi: 2,  icon: 'SlashIcon' }
 ];
 
 export default usageRangeOptions;

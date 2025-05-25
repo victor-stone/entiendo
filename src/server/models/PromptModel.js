@@ -15,26 +15,13 @@ export default class PromptModel extends BaseModel {
     super('Prompts', 'PromptId');
   }
 
-  /**
-   * Returns the prompt text for a given name, with optional substitutions.
-   * @param {string} name
-   * @param {object} [substitutions] - Object with keys to replace in the prompt, e.g. { name: "Victor" }
-   * @returns {Promise<string|null>} The prompt text or null if not found.
-   */
   async getPromptByName(name, substitutions = {}) {
-    const result = await this.getById(name);
-    if (!result) return null;
-    let prompt = result.prompt;
+    const r = await this.getById(name);
+    return r ? r.prompt.replace(/\$\{(\w+)\}/g, (_, k) => k in substitutions ? substitutions[k] : '${'+k+'}') : null;
+  }
 
-    if( prompt ) {
-      // Replace ${key} in prompt with corresponding value from substitutions
-      prompt = prompt.replace(/\$\{(\w+)\}/g, (match, key) => {
-        return substitutions.hasOwnProperty(key) ? substitutions[key] : match;
-      });
-
-      return prompt;
-    }
-    return result;
+  async getValueByName(name) {
+    return this.getById(name);
   }
 
 }

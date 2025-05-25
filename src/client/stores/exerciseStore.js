@@ -35,6 +35,7 @@ const useExerciseStore = create((set, get) => ({
   dueList   : null, 
   dueStats  : null,
   missedWords: null,
+  calendarFull: false, 
 
   userInput        : {
     transcription: '',
@@ -100,7 +101,8 @@ const useExerciseStore = create((set, get) => ({
     
     set({ 
       exercise: null, 
-      loading: true 
+      loading: true,
+      calendarFull: false // <-- Clear calendarFull at the start
     });
     try {
       const token = await getToken();
@@ -116,10 +118,19 @@ const useExerciseStore = create((set, get) => ({
       return exercise;
     } catch (err) {
       console.log('ExerciseStore error', err);
-      set({ 
-        error: err.message || 'Failed to fetch next exercise',
-        loading: false
-      });
+      // Check for CalendarExhaustedError by code
+      if (err.code === 'SERVICE_UNAVAILABLE') {
+        set({
+          error: 'No due idioms available. Please try again later.',
+          loading: false,
+          calendarFull: true // <-- Set calendarFull here
+        });
+      } else {
+        set({ 
+          error: err.message || 'Failed to fetch next exercise',
+          loading: false
+        });
+      }
       return null;
     }
   },

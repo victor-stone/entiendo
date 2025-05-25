@@ -1,4 +1,4 @@
-Here’s a summary of the utility scale from 1 to 10, based on how we’ve been applying it:
+Here’s a summary of the utility scale ("how common is an idiom, a usage meter) from 1 to 10, based on how we’ve been applying it:
 
 
 Score	Summary
