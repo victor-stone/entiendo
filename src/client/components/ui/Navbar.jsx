@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUserStore } from '../../stores';
+import { useUserStore, useSettingsStore } from '../../stores';
 import { Link } from 'react-router-dom';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
@@ -9,6 +9,7 @@ import AdminMenu from './AdminMenu';
 const Navbar = () => {
   const user       = useUserStore(state => state.user);
   const isAdmin    = useUserStore(state => state.isAdmin);
+  const needBetaTest = useSettingsStore(state => state.needBetaTest);
   const isLoggedIn = !!user;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -51,7 +52,7 @@ const Navbar = () => {
                   <LogoutButton />
                 </div>
               ) : (
-                <LoginButton />
+                !needBetaTest && <LoginButton />
               )}
             </div>
 
@@ -95,9 +96,9 @@ const Navbar = () => {
                   {isAdmin && <AdminMenu isMobile={true} onClose={() => setIsMobileMenuOpen(false)} />}
                   <LogoutButton />
                 </div>
-              ) : (
-                <LoginButton />
-              )}
+              ) : 
+                !needBetaTest && <LoginButton />
+              }
             </div>
           </div>
         </div>
