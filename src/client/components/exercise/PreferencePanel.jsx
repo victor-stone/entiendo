@@ -32,7 +32,12 @@ const PreferencePanel = () => {
                 </CardField>
                 {
                     toneDescriptions[preferences.filter.tone] &&
-                    <CardField>{toneDescriptions[preferences.filter.tone].map((t,i) => <p key={i} className="mb-1">{t}</p>)}</CardField>
+                    <CardField>
+                        <ul className="list-disc pl-5">
+                        {toneDescriptions[preferences.filter.tone].map((t,i) => 
+                            <li key={i} className="mb-1">{t}</li>)}
+                        </ul>
+                    </CardField>
                 }
                 {isAdmin && 
                     <CardField hint="Admin: Next example ID">

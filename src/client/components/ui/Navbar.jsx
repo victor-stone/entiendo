@@ -51,9 +51,7 @@ const Navbar = () => {
                   {isAdmin && <AdminMenu isMobile={false} />}
                   <LogoutButton />
                 </div>
-              ) : (
-                !needBetaTest && <LoginButton />
-              )}
+              ) : ('')}
             </div>
 
             {/* Mobile menu button */}
