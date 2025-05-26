@@ -1,6 +1,7 @@
 import AudioPlayer from '../ui/AudioPlayer';
 import { usageToRange } from '../../../shared/constants/usageRanges';
 import { HighlightedText, Grid } from '../ui';
+import { Card } from '../layout';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
 
@@ -39,19 +40,6 @@ const EvalFeedback = ({
   </div>
 );
 
-const CardPanel = ({ children, title }) => (
-  <div className="mb-6">
-    {title && <h3 className="font-medium mb-2">{title}:</h3>}
-    {children}
-  </div>
-);
-
-const CardInfo = ({ title, info }) => (
-  <div className="mb-1">
-    <span className="text-sm font-medium">{title}: </span>
-    <span className="text-sm">{info}</span>
-  </div>
-);
 
 const EvalFeatured = ({ children }) => (
   <p className="text-gray-700 dark:text-gray-300 mb-4">{children}</p>
@@ -84,7 +72,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
       <h2 className="text-xl font-bold mb-4">Exercise Results</h2>
 
-      <CardPanel title="Original Sentence">
+      <Card.Panel title="Original Sentence">
         {exercise.audio && <AudioPlayer url={exercise.audio.url} />}
 
         <Grid columns={2}>
@@ -92,9 +80,9 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           <ResultField title="Translation" text={exercise.idiom?.translation || 'Unknown'} />
         </Grid>
 
-      </CardPanel>
+      </Card.Panel>
 
-      <CardPanel>
+      <Card.Panel>
         <Grid columns={2}>
           <div>
             <EvalFeedback title="Transcription"
@@ -121,17 +109,17 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
           </div>
           <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-            {evaluation.mistakeType && <CardInfo title="Mistake type" info={evaluation.mistakeType} />}
-            {evaluation.missedWords && <CardInfo title="Missed words" info={evaluation.missedWords} />}
-            <CardInfo title="Context" info={exercise.idiom.tone} />
+            {evaluation.mistakeType && <Card.Info title="Mistake type" info={evaluation.mistakeType} />}
+            {evaluation.missedWords && <Card.Info title="Missed words" info={evaluation.missedWords} />}
+            <Card.Info title="Context" info={exercise.idiom.tone} />
           </div>
           <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-            <CardInfo title="Usage" info={usageToRange(exercise.idiom.usage)?.label} />
-            {progress?.dueDate && <CardInfo title="Next review" info={format(progress.dueDate)} />}
+            <Card.Info title="Usage" info={usageToRange(exercise.idiom.usage)?.label} />
+            {progress?.dueDate && <Card.Info title="Next review" info={format(progress.dueDate)} />}
           </div>
         </Grid>
 
-      </CardPanel>
+      </Card.Panel>
 
       <div className="flex justify-end mt-4">
         <Link to="/app/dashboard" className="btn">Dashboard</Link>

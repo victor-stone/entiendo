@@ -1,17 +1,17 @@
 import { useUserStore } from "../../stores";
 import ToneSelector from "./ToneSelector";
 import UsageRangeSelector from "./UsageRangeSelector";
-import { CardBody, Card, CardHeader, CardField } from '../layout';
+import { Card, CardField } from '../layout';
 import { LoadingSpinner } from "../ui/LoadingIndicator";
 import toneDescriptions from "../../../shared/constants/toneDescriptions";
 import { PageLink } from "../ui";
 
 const hints = {
     tone  : 'A context the idiom is likely to be use in.',
-    usage : 'Based on how frequently this idiom is used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.'
+    usage : 'Prioritize which idioms you see based on how frequently they are used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.'
 };
 
-const IdiomSelector = () => {
+const PreferencePanel = () => {
     const {
         preferences,
         setTone,
@@ -22,11 +22,8 @@ const IdiomSelector = () => {
      } = useUserStore();
 
     return (
-        <Card>
-            <CardHeader>
-                Select Idioms {loading && <LoadingSpinner />}
-            </CardHeader>
-            <CardBody>
+        <Card title={<span>Preferences {loading ? <LoadingSpinner /> : ''}</span>}>
+            <Card.Body>
                 <CardField hint={hints.usage}>
                     <UsageRangeSelector value={preferences?.filter?.usage} onChange={setUsage} />
                 </CardField>
@@ -55,9 +52,9 @@ const IdiomSelector = () => {
                         <PageLink page="/app/exercise" text="Start Exercise" />
                     </div>
                 </CardField>
-            </CardBody>
+            </Card.Body>
         </Card>
     );
 };
 
-export default IdiomSelector;
+export default PreferencePanel;

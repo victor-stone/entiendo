@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import IdiomImporter from '../../components/admin/IdiomImporter'
 import ImportManager from '../../components/admin/ImportManager';
-import { Card, CardBody, CardHeader } from '../../components/layout';
+import { Card } from '../../components/layout';
 
 function IdiomImportPage() {
   const [parsedIdioms,     setParsedIdioms]     = useState([]);
@@ -32,7 +32,7 @@ function IdiomImportPage() {
     >
       {showUploader ? (
         <Card>
-          <CardHeader>Batch Import Idioms</CardHeader>
+          <Card.Header>Batch Import Idioms</Card.Header>
           <IdiomImporter onIdiomsUploaded={handleIdiomsUploaded} />
         </Card>
       ) : null}

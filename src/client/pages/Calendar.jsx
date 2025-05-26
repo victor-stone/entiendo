@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useUserStore, useExerciseStore } from '../stores';
 import DueList from '../components/exercise/DueList';
-import { Card, CardBody, CardHeader } from '../components/layout';
+import { Card } from '../components/layout';
 
 
 const Calendar = () => {
@@ -16,12 +16,11 @@ const Calendar = () => {
   }, [getDueList, getToken]);
 
   return (
-    <Card>
-        <CardHeader>Calendar</CardHeader>
-        <CardBody>
-      {/* ...other calendar UI... */}
-      <DueList dueList={dueList} loading={loading} error={error} />
-      </CardBody>
+    <Card title="Calendar">
+      <Card.Body>
+        {/* ...other calendar UI... */}
+        <DueList dueList={dueList} loading={loading} error={error} />
+      </Card.Body>
     </Card>
   );
 };

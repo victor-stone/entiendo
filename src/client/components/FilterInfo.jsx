@@ -25,7 +25,7 @@ const FilterToString = ({ filter }) => {
             if (i > 0) interleaved.push(<span key={`comma-${i}`}> and </span>);
             interleaved.push(feature);
         });
-        return <div>Your idioms are {interleaved}</div>;
+        return <div>Your preferred idioms are {interleaved}</div>;
     }
     return <div>You are seeing all the idioms in the system.</div>;
 };

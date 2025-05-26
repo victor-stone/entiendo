@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LoadingIndicator, Grid } from '../ui';
 import { format } from 'timeago.js';
-import { CardBlockBody, CardBlock } from '../../components/layout';
 import { InboxIcon, ExclamationTriangleIcon, ClockIcon, ChatBubbleLeftRightIcon, ChartBarIcon } from '@heroicons/react/24/solid';
-import * as icons from '@heroicons/react/24/solid';;
-
-const defColor = 'bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-200';
+import { Card } from '../layout/Card';
 
 const ConfidenceMeter = ({ value }) => {
   const dots = [0, 1, 2].map((i) => (
@@ -23,23 +20,10 @@ const ConfidenceMeter = ({ value }) => {
   );
 };
 
-const Feature = ({ text, icon: Icon, iconName, color }) => {
-  if (iconName) {
-    Icon = icons[iconName];
-  }
-  return text && <span className={`inline-flex items-center gap-1 text-xs 
-                            font-medium px-2 py-0.5 rounded 
-                            ${color || defColor} 
-                            mr-2`}>
-    {Icon && <Icon className="w-4 h-4" />}
-    {text}
-  </span>
-}
-
 const DueItem = ({ item, isPastDue, isDueToday }) => (
   <div
     key={item.progressId}
-    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-4 rounded-xl shadow border-l-4 transition hover:shadow-md
+    className={`sm:items-center p-4 rounded-xl shadow border-l-4 transition hover:shadow-md
       ${isPastDue
         ? 'border-red-500 bg-red-10 dark:bg-red-900/20'
         : isDueToday
@@ -47,30 +31,24 @@ const DueItem = ({ item, isPastDue, isDueToday }) => (
           : 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
       }`}
   >
-    <div className="flex flex-col gap-2 w-full">
-      <div className="flex items-center gap-3 flex-wrap">
-        {isPastDue
-          ? (<Feature
-            text={`Past Due: ${format(item.dueDate)}`}
-            icon={ExclamationTriangleIcon}
-            color="bg-red-30 text-red-700 dark:bg-red-900 dark:text-red-300" />)
-          : isDueToday
-            ? (<Feature
-              text={`Due: ${format(item.dueDate)}`}
-              icon={ClockIcon}
-              color="bg-green-95 text-green-700 dark:bg-green-900 dark:text-green-300" />)
-            : (<Feature
-              text={`Due: ${format(item.dueDate)}`}
-              icon={InboxIcon}
-              color="bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200" />)
-        }
-      </div>
-      <div className="flex flex-wrap gap-2 mt-1">
-        <Feature text={item.tone} icon={ChatBubbleLeftRightIcon} />
-        <Feature text={item.range.label} iconName={item.range.icon} />
-      </div>
+      {isPastDue
+        ? (<Card.Info
+          text={`Past Due: ${format(item.dueDate)}`}
+          icon={ExclamationTriangleIcon}
+          color="bg-red-30 text-red-700 dark:bg-red-900 dark:text-red-300" />)
+        : isDueToday
+          ? (<Card.Info
+            text={`Due: ${format(item.dueDate)}`}
+            icon={ClockIcon}
+            color="bg-green-95 text-green-700 dark:bg-green-900 dark:text-green-300" />)
+          : (<Card.Info
+            text={`Due: ${format(item.dueDate)}`}
+            icon={InboxIcon}
+            color="bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200" />)
+      }
+        <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} />
+        <Card.Info text={item.range.label} iconName={item.range.icon} />
       <ConfidenceMeter value={item.confidence} />
-    </div>
   </div>
 );
 
@@ -95,6 +73,11 @@ const DueList = ({ dueList, loading, error }) => {
 
   // Group by usage.label if enabled
   let grouped = {};
+  let groupCount = 0;
+  if (dueList && dueList.length > 0) {
+    const labels = new Set(dueList.map(item => item.range.label));
+    groupCount = labels.size;
+  }
   if (groupByUsage) {
     for (const item of dueList) {
       const label = item.range.label;
@@ -104,16 +87,16 @@ const DueList = ({ dueList, loading, error }) => {
   }
 
   return (
-    <CardBlock border={false} background={null}>
-      <div className="flex justify-end p-2">
-        <button
-          className="text-xs px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-          onClick={() => setGroupByUsage(g => !g)}
-        >
-          {groupByUsage ? 'Ungroup' : 'Group by Usage'}
-        </button>
-      </div>
-      <CardBlockBody>
+    <>
+      {groupCount > 1 && (
+        <div id="groupByButton" className="flex justify-end p-2">
+          <button
+            className="text-xs px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+            onClick={() => setGroupByUsage(g => !g)}>
+            {groupByUsage ? 'Ungroup' : 'Group by Usage'}
+          </button>
+        </div>
+      )}
         {groupByUsage ? (
           Object.entries(grouped).map(([label, items]) => (
             <div key={label} className="mb-6">
@@ -142,8 +125,7 @@ const DueList = ({ dueList, loading, error }) => {
             ))}
           </Grid>
         )}
-      </CardBlockBody>
-    </CardBlock>
+    </>
   );
 };
 

@@ -3,14 +3,7 @@ import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
 import { PageLink, Grid } from '../components/ui';
 import { useEffect } from 'react';
-
-import { 
-  CardBody, 
-  Card, 
-  CardHeader, 
-  CardBlock, 
-  CardBlockBody
-} from '../components/layout';
+import { Card } from '../components/layout';
 
 const MissedWordsPanel = ({getToken}) => {
   const { missedWords, getMissedWords } = useExerciseStore();
@@ -27,63 +20,28 @@ const MissedWordsPanel = ({getToken}) => {
     <p>You missed {missedWords.missedWords.length} words {missedWords.totalCount} times. </p>
   )
 }
-
-const LogoBackground = ({ children }) => (
-  <div style={{ position: 'relative', overflow: 'hidden' }}>
-    {/* Background image with 50% opacity */}
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: "url('../assets/images/entiendoLogo-trans.png')",
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundSize: 'contain',
-        opacity: 0.2,
-        pointerEvents: 'none',
-        zIndex: 0
-      }}
-    />
-    {/* Content above background */}
-    <div style={{ position: 'relative', zIndex: 1 }}>
-      {children}
-    </div>
-  </div>
-);
-
 const Dashboard = () => {
   const user = useUserStore(state => state.user);
   const getToken = useUserStore(state => state.getToken);
 
   return (
-    <Card>
-      <CardHeader>
-        <span>Welcome, {user?.name || 'User'}!</span>
-      </CardHeader>
-      <CardBody>
-        <LogoBackground>
-          <Grid columns={2}>
-            <CardBlock title="Idioms">
-              <CardBlockBody>
+    <Card title={`¡Bienvenido ${user?.name || ''}!`} >
+      <Card.Body>
+        <Grid columns={3}>
+            <Card.Section title="Idioms">
                 <FilterInfo getToken={getToken} />
-                <PageLink page="/app/select" text="Select Idioms" />
-              </CardBlockBody>
-            </CardBlock>
-            <CardBlock title="Progress">
-              <CardBlockBody>
+                <PageLink page="/app/preferences" text="Select Idioms" />
+            </Card.Section>
+            <Card.Section title="Progress">
                 <UserStats getToken={getToken} />
                 <PageLink page="/app/exercise" text="Start Exercise" />
-              </CardBlockBody>
-            </CardBlock>
-            <CardBlock title="Missed Words">
-              <CardBlockBody>
+            </Card.Section>
+            <Card.Section title="Missed Words">
                 <MissedWordsPanel getToken={getToken} />
                 <PageLink page="/app/exercise/review" text="Review" />
-              </CardBlockBody>
-            </CardBlock>
-          </Grid>
-        </LogoBackground>
-      </CardBody>
+            </Card.Section>
+        </Grid>
+      </Card.Body>
     </Card>
   );
 };

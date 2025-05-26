@@ -4,7 +4,7 @@ import { Page, Main } from './components/layout'
 import { 
   Landing, 
   Dashboard, 
-  SelectIdioms,
+  Preferences,
   Exercise,
   Calendar
 } from './pages';
@@ -30,7 +30,7 @@ function App() {
           <UserRoute>
             <Routes>
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="select" element={<SelectIdioms />} />
+              <Route path="preferences" element={<Preferences />} />
               <Route path="exercise" element={<Exercise />} />
               <Route path="calendar" element={<Calendar />} />
             </Routes>

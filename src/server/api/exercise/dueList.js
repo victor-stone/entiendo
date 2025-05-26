@@ -59,7 +59,7 @@ export async function dueStats(unified) {
     {
       icon: 'ExclamationTriangleIcon',
       label: "Past Due",
-      value: pastDue.length + " (" + format(earliest.dueDate) + ")"
+      value: pastDue.length + (pastDue.length && " (" + format(earliest.dueDate) + ")")
     },
     {
       icon: 'ChevronUpIcon',

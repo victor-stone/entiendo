@@ -2,7 +2,7 @@ import { useState } from 'react';
 import adminService from '../../services/adminService';
 import { useUserStore } from '../../stores';
 import ToneSelector from '../exercise/ToneSelector';
-import { Card, CardBody, CardField, CardHeader } from '../layout';
+import { Card, CardField } from '../layout';
 
 const NewIdiomForm = ({ onSaveSuccess, onError }) => {
   // Get authentication token from user store
@@ -64,8 +64,8 @@ const NewIdiomForm = ({ onSaveSuccess, onError }) => {
 
   return (
     <Card>
-      <CardHeader>Create New Idiom</CardHeader>
-      <CardBody>
+      <Card.Header>Create New Idiom</Card.Header>
+      <Card.Body>
         <CardField>
           <label className="block text-sm font-medium">
             Idiom Text *
@@ -141,7 +141,7 @@ const NewIdiomForm = ({ onSaveSuccess, onError }) => {
             Reset
           </button>
         </CardField>
-      </CardBody>
+      </Card.Body>
     </Card>
   );
 };
