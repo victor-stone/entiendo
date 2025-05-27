@@ -28,7 +28,7 @@ function CardBody({ children, className, style }) {
 }
 
 export const CardField = ({ children, hint, isFull = true }) => (
-  <div className="mb-3 border-b border-gray-200 dark:border-gray-700 p-5">
+  <div className="mb-3 p-5">
     <div className={isFull ? 'w-full' : 'w-fit'}>
       {children}
     </div>
@@ -42,14 +42,17 @@ export const CardField = ({ children, hint, isFull = true }) => (
 
 function CardSection({ title, children, className = '' }) {
   return (
-    <section className={`py-4 px-1 border-t border-gray-200 last:mb-0 ${className}`}>
+    <section className={`py-4 px-1 ${className}`}>
       {title && (
-        <h2 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-2">{title}</h2>
+        <h2 className="text-lg font-semibold text-primary-700 dark:text-primary-200 mb-3 tracking-tight border-b border-primary-200 dark:border-primary-700 pb-1">
+          {title}
+        </h2>
       )}
       {children}
     </section>
   );
 }
+
 const CardPanel = ({ children, title }) => (
   <div className="mb-6">
     {title && <h3 className="font-medium mb-2">{title}:</h3>}
@@ -76,7 +79,7 @@ const CardInfo = ({ text, icon: Icon, iconName, color, label, link }) => {
     {label && <label>{label}</label>}
     {text}
     { link && <Link to={link}><ArrowTopRightOnSquareIcon className="w-4 h-4" /></Link>}
-  </div>
+    </div>
 }
 
 export function Card({ children, title }) {

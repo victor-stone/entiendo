@@ -5,13 +5,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html.font-nunito, html.font-nunito body {
+  font-family: 'Nunito', 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+html.font-avenir, html.font-avenir body {
+  font-family: 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+html.font-lato, html.font-lato body {
+  font-family: 'Lato', 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+html.font-noto, html.font-noto body {
+  font-family: 'Noto Sans', 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 /* Base layer for theme variables */
 @layer base {
   /* Default font settings */
   html {
     font-family: 'Avenir Next', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  
+
   body {
     @apply font-sans text-gray-900 dark:text-white;
   }

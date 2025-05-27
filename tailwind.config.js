@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         sans: ['Avenir Next', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
+      fontWeight: {
+        '800': '800',
+      },
       colors: {
         // Color scheme variables
         primary: {

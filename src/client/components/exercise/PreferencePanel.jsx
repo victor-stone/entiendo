@@ -5,11 +5,20 @@ import { Card, CardField } from '../layout';
 import { LoadingSpinner } from "../ui/LoadingIndicator";
 import toneDescriptions from "../../../shared/constants/toneDescriptions";
 import { PageLink } from "../ui";
+import { useEffect, useState } from 'react';
+import { setFontClass } from "../../lib/fontLoader";
+import FontPicker from '../ui/FontPicker';
 
 const hints = {
-    tone  : 'A context the idiom is likely to be use in.',
+    tone  : 'Prioritize which idioms you see based on the context they are likely to be used in.',
     usage : 'Prioritize which idioms you see based on how frequently they are used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.'
 };
+
+const fontOptions = [
+  { label: 'Nunito (Google)', value: 'nunito' },
+  { label: 'Avenir Next (Apple)', value: 'avenir' },
+  { label: 'Noto Sans (Google)', value: 'noto' }
+];
 
 const PreferencePanel = () => {
     const {
@@ -20,6 +29,16 @@ const PreferencePanel = () => {
         loading,
         isAdmin
      } = useUserStore();
+
+    const [font] = useState(() => {
+      return localStorage.getItem('fontPref') || 'avenir';
+    });
+
+    // Also update when font changes
+    useEffect(() => {
+      setFontClass(font);
+      localStorage.setItem('fontPref', font);
+    }, [font]);
 
     return (
         <Card title={<span>Preferences {loading ? <LoadingSpinner /> : ''}</span>}>
@@ -39,6 +58,9 @@ const PreferencePanel = () => {
                         </ul>
                     </CardField>
                 }
+                <CardField hint="Choose your preferred font for the app.">
+                  <FontPicker />
+                </CardField>
                 {isAdmin && 
                     <CardField hint="Admin: Next example ID">
                         <label className="block mb-1 font-medium">Next Example</label>

@@ -69,12 +69,12 @@ async function _getExerciseForDueIdiom({ idiom, progress, unified }) {
     if (seenExampleIds.length < EXAMPLE_PER_IDIOM_THRESHOLD) {
         const examplesForIdiom = await model.findByIdiomId(idiom.idiomId);
         let exercise = examplesForIdiom.find(({ exampleId }) => !seenExampleIds.includes(exampleId));
-        if (exercise) {
+        if (!!exercise) {
             debugGetNext('Found an example the user has not seen');
             return await _finalizeExercise(exercise, idiom, model);
         }
         debugGetNext('User has seen all existing samples, making a new one');
-        exercise = await _createExample(idiom, model);
+        exercise = await _createExample(idiom, model, examplesForIdiom);
         return await _finalizeExercise(exercise, idiom, model);
     }
 
@@ -236,11 +236,17 @@ async function _getNewIdiom(unified) {
 * @param {Object} idiom - Idiom object with text and translation
 * @returns {Promise<Object>} Generated example sentence with position info
 */
-async function _generateExampleSentence(idiom) {
+async function _generateExampleSentence(idiom, existingExamples) {
 
-    const model = new PromptModel();
-    const systemPrompt = await model.getPromptByName('RIOPLATENSE_EXAMPLE_SYSTEM_PROMPT');
-    const userPrompt   = await model.getPromptByName('USER_PROMPT', idiom)
+    const model         = new PromptModel();
+    const systemPrompt  = await model.getPromptByName('RIOPLATENSE_EXAMPLE_SYSTEM_PROMPT');
+    let   userPrompt    = await model.getPromptByName('USER_EXAMPLE', idiom)
+
+    if( existingExamples && existingExamples.length > 0 ) {
+        const existingExample  = existingExamples.map(({text}) => `"${text}"`).join('\n');
+        const userWExamples    = await model.getPromptByName('USER_EXAMPLE_WITH_EXISTING', {existingExample})
+              userPrompt      += ' ' + userWExamples;
+    }
 
     const result = await generateText(systemPrompt, userPrompt);
 
@@ -253,10 +259,10 @@ async function _generateExampleSentence(idiom) {
  * @param {Object} idiom - Idiom object
  * @returns {Promise<Object>} Example object with text and idiom position
  */
-async function _createExample(idiom, model) {
+async function _createExample(idiom, model, existingExamples) {
     try {
         // Generate new example sentence with position info
-        const exampleData = await _generateExampleSentence(idiom);
+        const exampleData = await _generateExampleSentence(idiom, existingExamples);
 
         // TODO: we need to check to see if this sentence already exists
         // in our system, if so we have to go back and ask for another

@@ -53,13 +53,17 @@ export async function dueStats(unified) {
   const missedPrompt = numMissed
             ? numMissed + ' / ' + missed.totalCount
             : 0;
+
+  const pastDueValue = pastDue.length
+          ? pastDue.length + ' (' + format(earliest.dueDate) + ")"
+          : 'none';
   
   // TODO: move this structure out to the client
   const stats = [
     {
       icon: 'ExclamationTriangleIcon',
       label: "Past Due",
-      value: pastDue.length + (pastDue.length && " (" + format(earliest.dueDate) + ")")
+      value: pastDueValue
     },
     {
       icon: 'ChevronUpIcon',

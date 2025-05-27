@@ -1,6 +1,5 @@
 import { useUserStore } from "../stores";
 import { valueToRange } from "../../shared/constants/usageRanges";
-import toneDescriptions from "../../shared/constants/toneDescriptions";
 
 const FilterToString = ({ filter }) => {
     if( !filter ) {

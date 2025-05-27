@@ -7,14 +7,14 @@ import { Link } from 'react-router-dom';
 
 const ResultField = ({ title, text }) => (
   <div>
-    <h4 className="font-medium mb-1">{title}:</h4>
+    <h4 className="text-gray-500 text-[70%] mb-1">{title}:</h4>
     <p className="text-gray-700 dark:text-gray-300">{text}</p>
   </div>
 );
 
 const EvalTopic = ({ title, text }) => (
   <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-    <h4 className="text-sm font-medium mb-1">{title}:</h4>
+    <h4 className="text-sm text-gray-500 text-[70%] mb-1">{title}:</h4>
     <p className="text-gray-700 dark:text-gray-300">{text}</p>
   </div>
 );
@@ -27,11 +27,11 @@ const EvalFeedback = ({
   feedback
 }) => (
   <div className="p-3 bg-gray-100 dark:bg-gray-900 rounded-md">
-    <h4 className="font-medium mb-1">Your {title}:</h4>
+    <h4 className="text-gray-500 text-[70%] mb-1">Your {title}:</h4>
     <p className="text-gray-700 dark:text-gray-300 mb-2">{userText}</p>
 
     <div className="flex justify-between items-center">
-      <span className="text-sm font-medium">Accuracy:</span>
+      <span className="text-sm text-gray-500 text-[70%]">Accuracy:</span>
       <span className={`text-sm font-bold ${classes}`}>
         {accuracy}
       </span>
@@ -40,6 +40,13 @@ const EvalFeedback = ({
   </div>
 );
 
+
+const ExtraInfo = ({ label, text }) => (
+  <div className="mb-1">
+    <span className="text-sm font-800">{label}: </span>
+    <span className="text-sm">{text}</span>
+  </div>
+);
 
 const EvalFeatured = ({ children }) => (
   <p className="text-gray-700 dark:text-gray-300 mb-4">{children}</p>
@@ -82,7 +89,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
       </Card.Panel>
 
-      <Card.Panel>
+      <Card.Section>
         <Grid columns={2}>
           <div>
             <EvalFeedback title="Transcription"
@@ -98,6 +105,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
               accuracy={evaluation.translationAccuracy}
               feedback={evaluation.translationFeedback} />
           </div>
+
           <div>
             {evaluation.transcriptionAccuracy !== 'perfect' &&
               <EvalTopic title="Correct Transcription" 
@@ -106,20 +114,19 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           <div>
             {evaluation.translationAccuracy !== 'perfect' &&
               <EvalTopic title="Correct English Translation" text={evaluation.englishTranslation} />}
-
           </div>
-          <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-            {evaluation.mistakeType && <Card.Info title="Mistake type" info={evaluation.mistakeType} />}
-            {evaluation.missedWords && <Card.Info title="Missed words" info={evaluation.missedWords} />}
-            <Card.Info title="Context" info={exercise.idiom.tone} />
+          <div>
+            {evaluation.mistakeType && <ExtraInfo text={evaluation.mistakeType} label="Mistake type" block />}
+            {evaluation.missedWords && <ExtraInfo text={evaluation.missedWords} label="Missed words" block />}
+            <ExtraInfo text={exercise.idiom.tone} label="Context" block />
           </div>
-          <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-            <Card.Info title="Usage" info={usageToRange(exercise.idiom.usage)?.label} />
-            {progress?.dueDate && <Card.Info title="Next review" info={format(progress.dueDate)} />}
+          <div>
+            <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
+            {progress?.dueDate && <ExtraInfo text={format(progress.dueDate)} label="Next review" block />}
           </div>
         </Grid>
 
-      </Card.Panel>
+      </Card.Section>
 
       <div className="flex justify-end mt-4">
         <Link to="/app/dashboard" className="btn">Dashboard</Link>
