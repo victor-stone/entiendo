@@ -63,8 +63,7 @@ const NewIdiomForm = ({ onSaveSuccess, onError }) => {
   };
 
   return (
-    <Card>
-      <Card.Header>Create New Idiom</Card.Header>
+    <Card title="Create New Idiom">
       <Card.Body>
         <CardField>
           <label className="block text-sm font-medium">

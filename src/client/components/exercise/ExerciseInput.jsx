@@ -1,21 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 /**
  * ExerciseInput component - Phase 2 "input"
  * Allows user to enter transcription and translation
  */
-const ExerciseInput = ({ exercise, initialInput, onSubmit }) => {
-  const [transcription, setTranscription] = useState(initialInput?.transcription || '');
-  const [translation, setTranslation] = useState(initialInput?.translation || '');
-
-  // Update local state when initialInput changes
-  useEffect(() => {
-    if (initialInput) {
-      setTranscription(initialInput.transcription || '');
-      setTranslation(initialInput.translation || '');
-    }
-  }, [initialInput]);
+const ExerciseInput = ({ exercise, onSubmit }) => {
+  const [transcription, setTranscription] = useState('');
+  const [translation, setTranslation] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,4 +58,4 @@ const ExerciseInput = ({ exercise, initialInput, onSubmit }) => {
   );
 };
 
-export default ExerciseInput; 
+export default ExerciseInput;

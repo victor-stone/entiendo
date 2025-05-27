@@ -31,8 +31,7 @@ function IdiomImportPage() {
       onReset={handleReset}
     >
       {showUploader ? (
-        <Card>
-          <Card.Header>Batch Import Idioms</Card.Header>
+        <Card title="Batch Import Idioms">
           <IdiomImporter onIdiomsUploaded={handleIdiomsUploaded} />
         </Card>
       ) : null}

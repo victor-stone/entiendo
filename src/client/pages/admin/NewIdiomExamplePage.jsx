@@ -13,15 +13,10 @@ const NewIdiomExamplePage = () => {
     }
   };
 
-  return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-xl mb-4">Add Example</h2>
-      <NewExampleForm
+  return <NewExampleForm
         idiomId={idiomId}
         onSaveSuccess={handleSaveSuccess}
       />
-    </div>
-  );
 };
 
 export default NewIdiomExamplePage; 

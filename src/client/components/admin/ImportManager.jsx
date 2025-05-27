@@ -65,9 +65,7 @@ function ImportManager({
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="p-8 mx-auto mt-6 max-w-5xl bg-white dark:bg-primary-900 rounded-lg shadow-md">
-        
+      <>
         {/* Child components */}
         {children}
 
@@ -112,8 +110,7 @@ function ImportManager({
             </div>
           </div>
         )}
-      </div>
-    </div>
+    </>
   );
 }
 

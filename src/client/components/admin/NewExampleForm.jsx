@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import adminService from '../../services/adminService';
 import { useUserStore } from '../../stores';
 import IdiomSelector from './IdiomSelector';
+import { Card, CardField } from '../layout';
 
 const NewExampleForm = ({ 
   idiomId = '', 
@@ -78,9 +79,8 @@ const NewExampleForm = ({
   };
   
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-medium">Create New Example</h3>
-      
+    <Card title="Create New Example">
+      <Card.Body>
       {/* Show IdiomSelector if no idiomId is provided */}
       {idiomId === '' && (
         <IdiomSelector
@@ -92,13 +92,13 @@ const NewExampleForm = ({
       
       {/* Show idiom details if available and requested */}
       {showIdiomDetails && idiomDetails && (
-        <div className="p-4 bg-gray-100 rounded-md">
+        <CardField>
           <p><strong>Idiom:</strong> {idiomDetails.text}</p>
           <p><strong>Translation:</strong> {idiomDetails.translation}</p>
-        </div>
+        </CardField>
       )}
       
-      <div>
+      <CardField>
         <label className="block text-sm font-medium">
           Example Text *
           <textarea
@@ -109,9 +109,9 @@ const NewExampleForm = ({
             required
           />
         </label>
-      </div>
+      </CardField>
       
-      <div>
+      <CardField>
         <label className="block text-sm font-medium">
           Conjugated Snippet *
           <input
@@ -122,9 +122,9 @@ const NewExampleForm = ({
             required
           />
         </label>
-      </div>
+      </CardField>
       
-      <div>
+      <CardField>
         <button
           type="button"
           onClick={handleSaveExample}
@@ -140,8 +140,9 @@ const NewExampleForm = ({
         >
           Reset
         </button>
-      </div>
-    </div>
+      </CardField>
+      </Card.Body>
+    </Card>
   );
 };
 

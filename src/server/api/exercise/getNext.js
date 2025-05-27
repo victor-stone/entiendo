@@ -95,6 +95,16 @@ async function _getExerciseForDueIdiom({ idiom, progress, unified }) {
 }
 
 async function _isNewAllowed(unified) {
+    /*
+        if total number of progress < MAX_INITIAL_NEW_IDIOMS then return true.
+
+        If the user has any progress record older than 24 hours and the total number of 
+        progress is < (MAX_INITIAL_NEW_IDIOMS * 2) then return true;
+
+        After that only allow MAX_NEW_IDIOMS for the last 24 hours.
+
+        You can calcuate the date of usage by looking at exercise.history[n].date
+    */
     const { user: { userId } } = unified;
     const {
         MAX_INITIAL_NEW_IDIOMS,
@@ -103,12 +113,22 @@ async function _isNewAllowed(unified) {
 
     const model = new ProgressModel();
     const exercises = await model.findByUser(userId);
-    if( exercises.length < MAX_INITIAL_NEW_IDIOMS ) {
-        return true;
-    }
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-    const recentCount = exercises.filter(e => now - e.createdAt < ONE_DAY_MS).length;
+
+    // 1. If total number of progress < MAX_INITIAL_NEW_IDIOMS then return true.
+    if (exercises.length < MAX_INITIAL_NEW_IDIOMS) {
+        return true;
+    }
+
+    // 2. If any progress is older than 24 hours and total < (MAX_INITIAL_NEW_IDIOMS * 2) then return true
+    const hasOldProgress = exercises.some(e => (now - e.createdAt) > ONE_DAY_MS);
+    if (hasOldProgress && exercises.length < (MAX_INITIAL_NEW_IDIOMS * 2)) {
+        return true;
+    }
+
+    // 3. After that only allow MAX_NEW_IDIOMS for the last 24 hours
+    const recentCount = exercises.filter(e => (now - e.createdAt) < ONE_DAY_MS).length;
     return recentCount < MAX_NEW_IDIOMS;
 }
 
