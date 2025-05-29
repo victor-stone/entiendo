@@ -14,7 +14,7 @@ TODO
 - feature: 'get recommendation' for picking a category
 - all the UI shit
   - standardize error/prompts
-  - sexy landing page
+  - ~~sexy landing page~~
 - convert db to sql
 - ~~Stats feature (below)~~
 - what is "invalid or expired token"
@@ -23,7 +23,6 @@ TODO
 - (should probably prepare for having multiple audios for example)
 - ~~change all 'category' to 'tone'~~
 - ~~display cat and family when eval is don~~e
-- ^^ for 'no examples exist' offer to make one(?)AT LEAST: go to 'Select Idioms'
 - for new idiom - should incorporate a picker to make sure it doesn't already exist
 - lowercase of incoming idioms when not starting with !? before dupe check
 - ~~Filter is ON/OFF~~
@@ -32,7 +31,7 @@ TODO
 - ~~clear the exercise if you change the filter~~
 - remove a exercise from my timeline (mark it as "seen but not heard" ?)
 - finishing an exercise wipes the stats
-- ~~deal with 'Continue' button (add a 'cancel' button that both disappear
+- ~~deal with 'Continue' button (add a 'cancel' button that both disappear~~
   and then add another cancel button )~~
 - feature: missed word session mode
 - ~~new user default to 'Super Common'~~
@@ -45,6 +44,7 @@ Two scenarios to cover better:
 - The queue doesn't have any more filtered due
 - 
 
+error reporting page (straight to GitHub)
 
 Settings:
 - When to apply filters (tone and usage) 

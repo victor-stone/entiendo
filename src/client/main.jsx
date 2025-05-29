@@ -1,13 +1,11 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Auth } from './components/Auth.jsx'
-import App from './App.jsx'
 import './styles/index.css'
 import { applyInitialFont, setInitialFont } from './lib/fontLoader.js';
 import { checkAuth0LocalStorage } from './lib/checkAuth0LocalStorage.js';
-import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import { RouterProvider } from 'react-router-dom';
+import router from './pages/router.jsx';
 
 applyInitialFont('noto');
 
@@ -35,10 +33,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       useRefreshTokens={true}
     >
         <Auth />
-        <BrowserRouter>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </BrowserRouter>
+        <RouterProvider router={router} />
     </Auth0Provider>
 );

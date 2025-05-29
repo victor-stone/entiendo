@@ -36,6 +36,7 @@ export class ErrorBoundary extends React.Component {
         </div>
       );
     }
+    // Always render children and an Outlet for nested routes
     return this.props.children;
   }
 }
