@@ -1,7 +1,12 @@
 import { useUserStore } from "../stores";
 import { valueToRange } from "../../shared/constants/usageRanges";
+import { LoadingIndicator } from "./ui";
 
-const FilterToString = ({ filter }) => {
+const FilterToString = ({ filter, loading }) => {
+    if( loading ) {
+        return <LoadingIndicator />
+    }
+
     if( !filter ) {
         return;
     }
@@ -31,9 +36,9 @@ const FilterToString = ({ filter }) => {
 
 export default function FilterInfo({ getToken }) {
 
-    const { preferences } = useUserStore();
+    const { preferences, loading } = useUserStore();
 
     return (
-            <FilterToString filter={preferences.filter} />
+            <FilterToString filter={preferences.filter} loading={loading} />
     );
 }

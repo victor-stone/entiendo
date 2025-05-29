@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
 import useExerciseStore from '../stores/exerciseStore';
-import { Glyph } from './ui';
+import { Glyph, LoadingIndicator } from './ui';
 import { Card } from './layout';
 
 
 const UserStats = ({ getToken }) => {
-  const { dueStats, getDueStats } = useExerciseStore();
+  const { dueStats, getDueStats, loading } = useExerciseStore();
 
   useEffect(() => {
     if (!dueStats) 
       getDueStats(getToken);
   }, [dueStats, getToken, getDueStats]);
 
+  if( loading ) {
+    return <LoadingIndicator />
+  }
+  
   if( !dueStats || dueStats.length === 0 ) {
     return (
       <>

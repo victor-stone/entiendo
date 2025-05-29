@@ -2,6 +2,9 @@
 import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useUserStore } from '../stores';
+import debug from 'debug';
+
+const debugLogin = debug('app:login');
 
 export function Auth() {
   const { 
@@ -18,6 +21,7 @@ export function Auth() {
   
   // Sync Auth0 state to Zustand
   useEffect(() => {
+    debugLogin('Auth0 state changed: isLoading=%s, isAuthenticated=%s', isLoading, isAuthenticated);
     if (isLoading) return;
     
     setAuth({

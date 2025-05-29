@@ -49,3 +49,23 @@ export function applyInitialFont(defaultFont = 'noto') {
     setFontClass(font);
   } catch (e) {}
 }
+
+export function setInitialFont() {
+  try {
+    const font = localStorage.getItem('fontPref') || 'avenir';
+    const html = document.documentElement;
+    html.classList.remove('font-nunito', 'font-avenir');
+    if (font === 'nunito') {
+      if (!document.getElementById('nunito-font')) {
+        const link = document.createElement('link');
+        link.id = 'nunito-font';
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap';
+        document.head.appendChild(link);
+      }
+      html.classList.add('font-nunito');
+    } else {
+      html.classList.add('font-avenir');
+    }
+  } catch (e) {}
+}

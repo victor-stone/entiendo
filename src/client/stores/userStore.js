@@ -1,6 +1,9 @@
 // src/client/stores/userStore.js
 import { create } from 'zustand';
 import userService from '../services/userService';
+import debug from 'debug';
+
+const debugLogin = debug('app:login');
 
 const useUserStore = create((set, get) => ({
   // State
@@ -14,20 +17,33 @@ const useUserStore = create((set, get) => ({
   preferences    : {},
   
   // Auth methods
-  login   : null,
+  _login  : null,
   logout  : null,
   getToken: null,
   
   // Set auth data from Auth0
-  setAuth: (authData) => set({
-    user           : authData.user,
-    isAuthenticated: authData.isAuthenticated,
-    loading        : authData.isLoading,
-    login          : authData.login,
-    logout         : authData.logout,
-    getToken       : authData.getToken
-  }),
+  setAuth: (authData) => {
+    debugLogin('setAuth called with isAuthenticated=%s', authData.isAuthenticated);
+    set({
+      user           : authData.user,
+      isAuthenticated: authData.isAuthenticated,
+      loading        : authData.isLoading,
+      _login         : authData.login,
+      logout         : authData.logout,
+      getToken       : authData.getToken
+    });
+  },
   
+  login: async() => {
+    try {
+      debugLogin('login called');
+      const { _login } = get();
+      _login();
+    } catch(err) {
+      debugLogin('Login error: %O', err);
+    }
+  },
+
   updatePreferences: async (prefs) => {
     const { getToken } = get();
     set({ loading: true });

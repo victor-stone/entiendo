@@ -284,11 +284,6 @@ async function _createExample(idiom, model, existingExamples) {
         // Generate new example sentence with position info
         const exampleData = await _generateExampleSentence(idiom, existingExamples);
 
-        // TODO: we need to check to see if this sentence already exists
-        // in our system, if so we have to go back and ask for another
-        // example (hopefully this doesn't happen too many times - we need
-        // a strategy for to do deal with how that would work)
-        // Save and return the new example
         return await model.createExample(
             idiom.idiomId,
             exampleData.text,

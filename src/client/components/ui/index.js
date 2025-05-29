@@ -4,6 +4,7 @@ export { default as AudioPlayer } from './AudioPlayer';
 export { default as Avatar } from './Avatar';
 export { default as DueBadge } from './DueBadge';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { LoadingSpinner } from './LoadingIndicator';
 export { default as LoginButton } from './LoginButton';
 export { default as LogoutButton } from './LogoutButton';
 export { default as Navbar } from './Navbar';

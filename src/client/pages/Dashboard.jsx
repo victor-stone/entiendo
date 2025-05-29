@@ -1,26 +1,38 @@
 import { useUserStore, useExerciseStore } from '../stores';
 import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
-import { PageLink, Grid } from '../components/ui';
+import { PageLink, Grid, LoadingSpinner } from '../components/ui';
 import { useEffect } from 'react';
 import { Card } from '../components/layout';
+import debug from 'debug';
+
+const debugRender = debug('app:render');
 
 const MissedWordsPanel = ({getToken}) => {
-  const { missedWords, getMissedWords } = useExerciseStore();
+  const { missedWords, getMissedWords, loading } = useExerciseStore();
 
   useEffect(() => {
-    if (!missedWords) getMissedWords(getToken);
-  }, [missedWords, getToken, getMissedWords]);
+    if (!missedWords && !loading ) 
+      getMissedWords(getToken);
+  }, [missedWords, getToken, getMissedWords, loading]);
+
+  if( loading ) {
+    return <LoadingSpinner />
+  }
 
   if( !missedWords || (missedWords && !missedWords.totalCount) ) {
     return <p>Your record is perfect!</p>
   }
 
   return (
-    <p>You missed {missedWords.missedWords.length} words {missedWords.totalCount} times. </p>
+    <>
+      <p>You missed {missedWords.missedWords.length} words {missedWords.totalCount} times. </p>
+      <PageLink page="/app/exercise/review" text="Review" />
+    </>
   )
 }
 const Dashboard = () => {
+  debugRender('Rendering Dashboard');
   const user = useUserStore(state => state.user);
   const getToken = useUserStore(state => state.getToken);
 
@@ -38,7 +50,6 @@ const Dashboard = () => {
             </Card.Section>
             <Card.Section title="Missed Words">
                 <MissedWordsPanel getToken={getToken} />
-                <PageLink page="/app/exercise/review" text="Review" />
             </Card.Section>
         </Grid>
       </Card.Body>
