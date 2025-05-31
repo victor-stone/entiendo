@@ -43,7 +43,12 @@ export async function getIdiom(unified) {
  * @returns {Promise<Object>} - Object containing array of idioms with id and text
  */
 export async function getIdiomsList(unified) {
+  const { query: { full = false } } = unified;
   const idiomModel = new IdiomModel();
-  const idioms = await idiomModel.getIdiomsList();
+  let idioms = null;
+  if( full ) {
+    return await idiomModel.findAll();
+  }
+  idioms = await idiomModel.getIdiomsList();
   return { idioms };
 }

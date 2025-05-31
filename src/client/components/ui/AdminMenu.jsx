@@ -11,6 +11,9 @@ const AdminMenu = ({ isMobile, onClose }) => {
   // Single source of truth for menu items
   const menuItems = [
     { 
+      path: '/admin/idioms', label: 'Idioms'
+    },
+    { 
       path: '/admin/import', label: 'Import Idioms (CSV)'
     },
     {

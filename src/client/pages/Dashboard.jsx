@@ -31,6 +31,7 @@ const MissedWordsPanel = ({getToken}) => {
     </>
   )
 }
+
 const Dashboard = () => {
   debugRender('Rendering Dashboard');
   const user = useUserStore(state => state.user);

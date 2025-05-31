@@ -16,8 +16,9 @@ const idiomService = {
    * Get list of idioms
    * @returns {Promise<Array>} - List of idioms
    */
-  getIdiomsList: async () => {
-    return await get('/api/idioms');
+  getIdiomsList: async (full = false) => {
+    const query = full ? '?full=true' : '';
+    return await get(`/api/idioms${query}`);
   },
   
   /**

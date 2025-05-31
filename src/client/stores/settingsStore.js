@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 import settingsService from '../services/settingsService';
+import debug from 'debug';
+
+const debugSettings = debug('client:settings');
 
 function getCookie(name) {
   if (typeof document === 'undefined') return null;
@@ -38,6 +41,7 @@ const useSettingsStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const settings = await settingsService.fetchSettings();
+      debugSettings('got settings %o', settings)
       set({ settings, loading: false });
       return settings;
     } catch (err) {

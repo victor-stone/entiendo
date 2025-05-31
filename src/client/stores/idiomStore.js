@@ -1,12 +1,30 @@
 import { create } from 'zustand';
 import idiomService from '../services/idiomService';
+import debug from 'debug';
+
+const debugIdioms = debug('app:idioms');
 
 const useIdiomStore = create((set, get) => ({
   // State
   tones: [],
   loading: false,
   error: null,
-  
+  idioms: null,
+
+  getIdioms: async (full = false) => {
+    set({ loading: true });
+    try {
+      const idioms = await idiomService.getIdiomsList(full);
+      set({ 
+        loading: false,
+        idioms
+      })
+      return idioms;
+    } catch(err) {
+      debugIdioms('error getting idioms %o', err);
+    }
+  },
+
   // Get all tones
   getTones: async () => {
     const { tones } = get();

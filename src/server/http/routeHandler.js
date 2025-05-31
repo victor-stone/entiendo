@@ -66,6 +66,14 @@ export const handleRequest = async (req, res) => {
     }
     
     // Prepare unified parameter object for API function
+    /**
+     * The 'unified' object provides a consistent interface for all API handlers:
+     *
+     * @property {Object} params   Path parameters for the route, as defined in the route table (e.g., /api/user/:id provides { id: ... }).
+     * @property {Object} query    Query string parameters from the request URL (e.g., /api/user?id=123 provides { id: "123" }).
+     * @property {Object} payload  The request body, including any file-related information (such as req.body, req.files, or req.file). Used for POST/PUT data and uploaded files.
+     * @property {Object|null} user The authenticated user object, if authentication is required for the route. Populated by the authentication middleware and contains user identity and claims.
+     */
     const unified = {
       // Path parameters become params
       params: handlerInfo.params || {},
