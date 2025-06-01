@@ -6,6 +6,18 @@ import debug from 'debug';
 
 const debugLogin = debug('app:login');
 
+/*
+return from useAuth0
+| isAuthenticated | boolean | Whether the user is authenticated |
+| user | object | The user profile (if authenticated) |
+| loginWithRedirect | function | Starts login via redirect |
+| loginWithPopup | function | Starts login via popup |
+| logout | function | Logs out the user |
+| isLoading | boolean | Whether the SDK is still loading the auth state |
+| getAccessTokenSilently | function | Retrieves an access token without prompting the user |
+| getAccessTokenWithPopup | function | Retrieves an access token via popup |
+| error | object | Auth error (if any) |
+*/
 export function Auth() {
   const { 
     isAuthenticated, 
@@ -13,7 +25,8 @@ export function Auth() {
     user, 
     loginWithRedirect, 
     logout, 
-    getAccessTokenSilently 
+    getAccessTokenSilently,
+    error
   } = useAuth0();
 
   const setAuth     = useUserStore(state => state.setAuth);
@@ -21,8 +34,13 @@ export function Auth() {
   
   // Sync Auth0 state to Zustand
   useEffect(() => {
-    debugLogin('Auth0 state changed: isLoading=%s, isAuthenticated=%s', isLoading, isAuthenticated);
-    if (isLoading) return;
+    debugLogin('Auth0 user: %o', user);
+    debugLogin('Auth0 state changed: isLoading=%s, isAuthenticated=%s, error: %o', isLoading, isAuthenticated, error);
+    if( error ) {
+      debugLogin('Auth0 error: %o', error);
+    }
+    if (isLoading) 
+      return;
     
     setAuth({
       isAuthenticated,
@@ -30,7 +48,8 @@ export function Auth() {
       isLoading,
       login   : loginWithRedirect,
       logout  : () => logout({ returnTo: import.meta.env.VITE_AUTH0_LOGOUT_URL }),
-      getToken: getAccessTokenSilently
+      getToken: getAccessTokenSilently,
+      error
     });
   }, [isLoading, isAuthenticated, user]);
   

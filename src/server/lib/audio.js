@@ -191,7 +191,6 @@ const azureTTS = {
 
 export default azureTTS
 
-
 // LOCAL HELPER
 
 /**
@@ -254,4 +253,3 @@ async function _synthesizeSpeechToFile(subscriptionKey, region, text, voice, out
     );
   });
 }
-

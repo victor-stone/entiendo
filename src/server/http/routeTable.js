@@ -18,50 +18,50 @@ import * as settingsAPI from  '../api/settingsAPI.js';
 /**
  * The route table maps HTTP methods and paths to handler functions
  * Each entry specifies:
- * - handler: Function to handle the request with unified parameter object
+ * - handler: Function to handle the request with routeContext parameter object
  * - auth: Whether authentication is required for this endpoint
  */
 export const routeTable = {
   // POST routes
   POST: {
     '/api/exercises/evaluate': {
-      handler: (unified) => exerciseAPI.evaluateResponse(unified),
+      handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
       auth: true
     },
 
     '/api/admin/idioms/validate': {
-      handler: (unified) => adminAPI.importValidateCSV(unified),
+      handler: (routeContext) => adminAPI.importValidateCSV(routeContext),
       auth: true
     },
 
     '/api/admin/idioms': {
-      handler: (unified) => adminAPI.importIdioms(unified),
+      handler: (routeContext) => adminAPI.importIdioms(routeContext),
       auth: true
     },
 
     '/api/admin/idiom': {
-      handler: (unified) => adminAPI.createIdiom(unified),
+      handler: (routeContext) => adminAPI.createIdiom(routeContext),
       auth: true
     },
 
     '/api/admin/idiom-examples': {
-      handler: (unified) => adminAPI.createIdiomExample(unified),
+      handler: (routeContext) => adminAPI.createIdiomExample(routeContext),
       auth: true
     },
     
     '/api/admin/example-audio': {
-      handler: (unified) => adminAPI.uploadExampleAudio(unified),
+      handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
       auth: true
     },
 
     // User routes
     '/api/users/sync': {
-      handler: (unified) => userAPI.syncUserFromAuth0(unified),
+      handler: (routeContext) => userAPI.syncUserFromAuth0(routeContext),
       auth: true
     },
 
     '/api/users/preferences': {
-      handler: (unified) => userAPI.updatePreferences(unified),
+      handler: (routeContext) => userAPI.updatePreferences(routeContext),
       auth: true
     },
 
@@ -70,35 +70,39 @@ export const routeTable = {
   // GET routes
   GET: {
     '/api/idioms': { 
-      handler: (unified) => idiomAPI.getIdiomsList(unified),
+      handler: (routeContext) => idiomAPI.getIdiomsList(routeContext),
+      auth: false 
+    },
+    '/api/idiom/:idiomId': { 
+      handler: (routeContext) => idiomAPI.getIdiom(routeContext),
       auth: false 
     },
     '/api/idioms/tones': { 
-      handler: (unified) => idiomAPI.getTones(unified),
+      handler: (routeContext) => idiomAPI.getTones(routeContext),
       auth: false 
     },
     '/api/exercises/:idiomId': {
-      handler: (unified) => exerciseAPI.getIdiomExamples(unified),
+      handler: (routeContext) => exerciseAPI.getIdiomExamples(routeContext),
       auth: false
     },
     '/api/exercises/next': {
-      handler: (unified) => exerciseAPI.getNext(unified),
+      handler: (routeContext) => exerciseAPI.getNext(routeContext),
       auth: true
     },
     '/api/exercises': {
-      handler: (unified) => exerciseAPI.dueList(unified),
+      handler: (routeContext) => exerciseAPI.dueList(routeContext),
       auth: true
     },
     '/api/exercises/stats': {
-      handler: (unified) => exerciseAPI.dueStats(unified),
+      handler: (routeContext) => exerciseAPI.dueStats(routeContext),
       auth: true
     },
     '/api/exercises/missed': {
-      handler: (unified) => exerciseAPI.missedWords(unified),
+      handler: (routeContext) => exerciseAPI.missedWords(routeContext),
       auth: true
     },
     '/api/settings': {
-      handler: (unified) => settingsAPI.getSettings(unified),
+      handler: (routeContext) => settingsAPI.getSettings(routeContext),
       auth: false
     }
   },

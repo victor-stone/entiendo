@@ -11,8 +11,8 @@ function getCookie(name) {
 }
 
 async function hashPassword(input, testKey) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input + testKey);
+  const encoder    = new TextEncoder();
+  const data       = encoder.encode(input + testKey);
   const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(hashBuffer))
     .map(b => b.toString(16).padStart(2, '0'))
@@ -21,17 +21,17 @@ async function hashPassword(input, testKey) {
 
 const useSettingsStore = create((set, get) => ({
   // State
-  settings: null,
-  loading: false,
-  error: null,
+  settings    : null,
+  loading     : false,
+  error       : null,
   needBetaTest: false,
   verifiedBeta: false,
 
   // Actions
   resetState: () => set({
-    settings: null,
-    loading: false,
-    error: null,
+    settings    : null,
+    loading     : false,
+    error       : null,
     needBetaTest: false,
     verifiedBeta: false
   }),

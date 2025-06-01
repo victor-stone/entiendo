@@ -1,18 +1,14 @@
 // src/server/api/idiomAPI.js
-// Contains application logic for idiom-related operations
-// No HTTP plumbing, routes, or direct database access
-
-import { IdiomModel } from '../models/index.js';
-import { 
-  NotFoundError
-} from '../../shared/constants/errorTypes.js';
+import { IdiomModel, ExampleModel } from '../models/index.js';
+import { NotFoundError } from '../../shared/constants/errorTypes.js';
+import { finalizeExample } from './exampleAPI.js';
 
 /**
  * Get all unique tones of idioms
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Object containing array of tones
  */
-export async function getTones(unified) {
+export async function getTones() {
   const idiomModel = new IdiomModel();
   const tones = await idiomModel.getTones();
   return { tones };
@@ -21,29 +17,34 @@ export async function getTones(unified) {
 
 /**
  * Get a specific idiom by ID
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Idiom details or error
  */
-export async function getIdiom(unified) {
-  const { params } = unified;
+export async function getIdiom(routeContext) {
+  const { params: { idiomId } } = routeContext;
   const idiomModel = new IdiomModel();
   
-  const idiom = await idiomModel.getById(params.idiomId);
-  
+  const idiom = await idiomModel.getById(idiomId);
+
   if (!idiom) {
     throw new NotFoundError('Idiom not found');
   }
+  
+  const model          = new ExampleModel();
+  let   examples       = await model.findByIdiomId(idiomId);
+        examples       = examples.map( e => finalizeExample(e) );
+        idiom.examples = await Promise.all(examples);
   
   return idiom;
 }
 
 /**
  * Get a list of all idioms with just their ID and text
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Object containing array of idioms with id and text
  */
-export async function getIdiomsList(unified) {
-  const { query: { full = false } } = unified;
+export async function getIdiomsList(routeContext) {
+  const { query: { full = false } } = routeContext;
   const idiomModel = new IdiomModel();
   let idioms = null;
   if( full ) {

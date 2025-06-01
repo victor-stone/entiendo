@@ -21,14 +21,10 @@ const idiomService = {
     return await get(`/api/idioms${query}`);
   },
   
-  /**
-   * Get examples for a specific idiom
-   * @param {String} idiomId - ID of the idiom
-   * @returns {Promise<Array>} - List of examples for the idiom
-   */
-  getIdiomExamples: async (idiomId) => {
-    return await get(`/api/exercises/${idiomId}`);
+  getIdiom: async (idiomId) => {
+    return await get(`/api/idiom/${idiomId}`);
   }
+
 };
 
 export default idiomService;

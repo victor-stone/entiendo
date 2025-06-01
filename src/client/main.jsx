@@ -27,7 +27,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience
+        audience,
+        scope: "openid profile email offline_access"
       }}
       cacheLocation="localstorage"  // important!
       useRefreshTokens={true}

@@ -2,13 +2,13 @@
 // Utility functions for user operations
 
 /**
- * Validate user from unified parameter object
- * @param {Object} unified - Unified parameter object
+ * Validate user from routeContext parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @param {Object} options - Options for validation
  * @returns {Object} - Validation result with user if valid
  */
-export function validateUser(unified, options = {}) {
-  const { user } = unified;
+export function validateUser(routeContext, options = {}) {
+  const { user } = routeContext;
   
   if (!user || !user.sub) {
     return { 
@@ -25,12 +25,12 @@ export function validateUser(unified, options = {}) {
 
 /**
  * Validate required fields in payload
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @param {Array} requiredFields - List of required fields
  * @returns {Object} - Validation result
  */
-export function validateFields(unified, requiredFields) {
-  const { payload } = unified;
+export function validateFields(routeContext, requiredFields) {
+  const { payload } = routeContext;
   
   if (!payload) {
     return {

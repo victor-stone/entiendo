@@ -30,23 +30,26 @@ const useUserStore = create((set, get) => ({
       loading        : authData.isLoading,
       _login         : authData.login,
       logout         : authData.logout,
-      getToken       : authData.getToken
+      getToken       : authData.getToken,
+      error          : authData.error
     });
   },
   
   login: async() => {
+    set({ error: null });
     try {
       debugLogin('login called');
       const { _login } = get();
       _login();
     } catch(err) {
       debugLogin('Login error: %O', err);
+      set({ error: err.message, loading: false });
     }
   },
 
   updatePreferences: async (prefs) => {
     const { getToken } = get();
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const token = await getToken();
       const preferences = await userService.updatePreferences(prefs, token);
@@ -90,7 +93,7 @@ const useUserStore = create((set, get) => ({
     const { isAuthenticated, getToken } = get();
     if (!isAuthenticated || !getToken) return null;
     
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const token = await getToken();
       const result = await userService.syncUser(token);
@@ -99,8 +102,7 @@ const useUserStore = create((set, get) => ({
         profile: result,
         isAdmin: result.role === 'admin',
         preferences: { ...result.preferences } ,
-        loading: false,
-        error: null
+        loading: false
       });
       
       return result;

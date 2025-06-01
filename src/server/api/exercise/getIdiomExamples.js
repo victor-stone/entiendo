@@ -3,11 +3,11 @@ import { NotFoundError } from '../../../shared/constants/errorTypes.js';
 
 /**
  * Get all examples for a specific idiom
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Object containing array of examples for the idiom
  */
-export async function getIdiomExamples(unified) {
-  const { params } = unified;
+export async function getIdiomExamples(routeContext) {
+  const { params } = routeContext;
   
   if (!params.idiomId) {
     throw new Error('Idiom ID is required');

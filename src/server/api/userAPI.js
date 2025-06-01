@@ -7,8 +7,8 @@ import filterDefaults from '../../shared/filterDefaults.js';
 /**
  * Synchronize user data from Auth0 profile
  */
-export async function syncUserFromAuth0(unified) {
-  const validation = validateUser(unified);
+export async function syncUserFromAuth0(routeContext) {
+  const validation = validateUser(routeContext);
   if (!validation.valid) {
     throw new ValidationError(validation.error.message || 'Invalid user data');
   }
@@ -37,8 +37,8 @@ export async function syncUserFromAuth0(unified) {
   return user;
 }
 
-export async function updatePreferences(unified) {
-    const { user: {userId}, payload: { preferences }} = unified;
+export async function updatePreferences(routeContext) {
+    const { user: {userId}, payload: { preferences }} = routeContext;
     const model = new UserModel();
     return (await model.update(userId, { preferences })).preferences;
   }

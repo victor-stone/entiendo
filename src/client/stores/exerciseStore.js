@@ -4,14 +4,13 @@ import exerciseService from '../services/exerciseService';
 // Helper to fetch and set state for async service calls
 const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg) => {
   if (!getToken) return null;
-  set({ loading: true });
+  set({ loading: true, error: null });
   try {
     const token = await getToken();
     const data = await serviceFn(token);
     set({
       [stateKey]: data,
-      loading: false,
-      error: null
+      loading: false
     });
     return data;
   } catch (err) {
@@ -26,20 +25,20 @@ const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg) => {
 
 const useExerciseStore = create((set, get) => ({
   // State
-  exercise  : null,
-  loading   : false,
-  error     : null,
-  phase     : 'prompt',
-  evaluation: null,
-  progress  : null,
-  dueList   : null, 
-  dueStats  : null,
-  missedWords: null,
-  calendarFull: false, 
+  exercise    : null,
+  loading     : false,
+  error       : null,
+  phase       : 'prompt',
+  evaluation  : null,
+  progress    : null,
+  dueList     : null,
+  dueStats    : null,
+  missedWords : null,
+  calendarFull: false,
 
   userInput        : {
     transcription: '',
-    translation: ''
+    translation  : ''
   },
 
   // Set the current exercise
@@ -100,18 +99,18 @@ const useExerciseStore = create((set, get) => ({
     if (!getToken) return null;
     
     set({ 
-      exercise: null, 
-      loading: true,
-      calendarFull: false // <-- Clear calendarFull at the start
+      exercise    : null,
+      loading     : true,
+      error       : null,
+      calendarFull: false  // <-- Clear calendarFull at the start
     });
     try {
-      const token = await getToken();
+      const token    = await getToken();
       const exercise = await exerciseService.getNext(criteria, token);
       
       set({ 
         exercise,
         loading: false,
-        error  : null,
         phase  : 'prompt'  // Reset to prompt phase for new exercise
       });
       
@@ -138,7 +137,7 @@ const useExerciseStore = create((set, get) => ({
   evaluateResponse: async (userTranscription, userTranslation, getToken) => {
     if (!getToken) return null;
     
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
 
       const token    = await getToken();
@@ -156,6 +155,7 @@ const useExerciseStore = create((set, get) => ({
       return null;
     }
   },  
+  
   // Clear error
   clearError: () => set({ error: null })
 }));

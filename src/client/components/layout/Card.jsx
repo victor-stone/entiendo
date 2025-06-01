@@ -55,7 +55,7 @@ function CardSection({ title, children, className = '' }) {
 
 const CardPanel = ({ children, title }) => (
   <div className="mb-6">
-    {title && <h3 className="font-medium mb-2">{title}:</h3>}
+    {title && <h3 className="mb-2 text-xl font-bold">{title}</h3>}
     {children}
   </div>
 );

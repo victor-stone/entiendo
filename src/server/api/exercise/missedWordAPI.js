@@ -21,8 +21,8 @@ export async function clearMissedWord(userId, word) {
     }
 }
 
-export async function missedWords(unified) {
-    const { user: { userId } } = unified;
+export async function missedWords(routeContext) {
+    const { user: { userId } } = routeContext;
 
     const model = new ProgressModel();
     const progress = await model.findByUser(userId);

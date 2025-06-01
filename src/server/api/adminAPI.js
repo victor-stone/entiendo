@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import { ForbiddenError, ValidationError } from '../../shared/constants/errorTypes.js';
 import { IdiomModel, ExampleModel } from '../models/index.js';
-import { uploadAudioToS3 } from './exercise/audio.js';
+import { uploadAudioToS3 } from '../lib/audio.js';
 
 import debug from 'debug';
 
@@ -9,11 +9,11 @@ const debugAdmin = debug('api:admin');
 
 /**
  * Batch create multiple idioms
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Results of batch operation
  */
-export async function importIdioms(unified) {
-  const { payload: { idioms: originalIdioms }, user: { role } } = unified;
+export async function importIdioms(routeContext) {
+  const { payload: { idioms: originalIdioms }, user: { role } } = routeContext;
   
   debugAdmin('importIdioms idioms: %s', originalIdioms.length);
 
@@ -121,11 +121,11 @@ async function _validateIdioms(records, idiomModel) {
 
 /**
  * Process an uploaded CSV file and validate idioms without saving them
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Parsed and validated idioms
  */
-export async function importValidateCSV(unified) {
-  const { user: { role }, payload } = unified;
+export async function importValidateCSV(routeContext) {
+  const { user: { role }, payload } = routeContext;
   const uploadedFile = payload.files.file;
   
   // Check admin role
@@ -168,11 +168,11 @@ export async function importValidateCSV(unified) {
 
 /**
  * Create a single idiom
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Created idiom
  */
-export async function createIdiom(unified) {
-  const { payload: idiomData, user: { role } } = unified;
+export async function createIdiom(routeContext) {
+  const { payload: idiomData, user: { role } } = routeContext;
   
   // Check admin role
   if (!role || role !== 'admin') {
@@ -194,11 +194,11 @@ export async function createIdiom(unified) {
 
 /**
  * Create a single idiom example
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Created idiom example
  */
-export async function createIdiomExample(unified) {
-  const { payload: exampleData, user: { role } } = unified;
+export async function createIdiomExample(routeContext) {
+  const { payload: exampleData, user: { role } } = routeContext;
   
   // Check admin role
   if (!role || role !== 'admin') {
@@ -214,11 +214,11 @@ export async function createIdiomExample(unified) {
 
 /**
  * Upload audio file for an existing example
- * @param {Object} unified - Unified parameter object
+ * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Updated example with audio information
  */
-export async function uploadExampleAudio(unified) {
-  const { payload, user: { role } } = unified;
+export async function uploadExampleAudio(routeContext) {
+  const { payload, user: { role } } = routeContext;
   
   // Check admin role
   if (!role || role !== 'admin') {

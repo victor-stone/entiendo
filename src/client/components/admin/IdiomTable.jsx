@@ -1,34 +1,26 @@
 import { useState, useEffect } from 'react';
 import ListSearch from '../ui/ListSearch';
+import useIdiomStore from '../../stores/idiomStore';
+import { Card } from '../layout/Card';
+
+// Table header cell component
+const SortableHeaderCell = ({ label, sortKey, handleSort, renderSortIndicator }) => (
+  <th
+    onClick={() => handleSort(sortKey)}
+    className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700"
+  >
+    {label} {renderSortIndicator(sortKey)}
+  </th>
+);
 
 // IdiomTableHeader component for table header
 const IdiomTableHeader = ({ handleSort, renderSortIndicator }) => (
   <thead className="bg-primary-50 dark:bg-primary-800">
     <tr>
-      <th 
-        onClick={() => handleSort('text')}
-        className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700"
-      >
-        Idiom {renderSortIndicator('text')}
-      </th>
-      <th 
-        onClick={() => handleSort('translation')}
-        className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700"
-      >
-        Translation {renderSortIndicator('translation')}
-      </th>
-      <th 
-        onClick={() => handleSort('tone')}
-        className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700"
-      >
-        Tone {renderSortIndicator('tone')}
-      </th>
-      <th 
-        onClick={() => handleSort('usage')}
-        className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700"
-      >
-        Usage {renderSortIndicator('usage')}
-      </th>
+      <SortableHeaderCell label="Idiom" sortKey="text" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
+      <SortableHeaderCell label="Translation" sortKey="translation" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
+      <SortableHeaderCell label="Tone" sortKey="tone" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
+      <SortableHeaderCell label="Usage" sortKey="usage" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
     </tr>
   </thead>
 );
@@ -71,107 +63,111 @@ function sortIdioms(idioms, key, direction) {
   });
 }
 
-const IdiomTable = ({ idioms, onSave }) => {
-  const [filteredIdioms,   setFilteredIdioms]   = useState([]);
-  const [selectedTone, setSelectedTone] = useState('all');
-  const [searchTerm,       setSearchTerm]       = useState('');
-  const [sortConfig,       setSortConfig]       = useState({ key: 'text', direction: 'ascending' });
-  
-  // Initialize filtered idioms with all idioms
-  useEffect(() => {
-    setFilteredIdioms(idioms);
-  }, [idioms]);
-  
-  // Handle filtering and sorting when filter criteria change
+// Table cell component
+const TableCell = ({ children, clamp = false, className = '', ...props }) => {
+  let style = {
+      color: 'var(--color-primary-600)',
+      background: 'none',
+      ...props.style
+    };
+  if( clamp ) {
+    style = { ...style,
+      maxWidth: '350px',
+      width: '350px',
+    };
+  }
+  return <td style={style} {...props}>{children}</td>
+};
+
+// Accept new props for state persistence
+const IdiomTable = ({ idioms, onSelectIdiom }) => {
+  // Use idiomStore for all UI state
+  const {
+    idiomTableSort, setIdiomTableSort,
+    idiomTableFilter, setIdiomTableFilter,
+    idiomTableScroll, setIdiomTableScroll,
+    idiomTableTone, setIdiomTableTone
+  } = useIdiomStore();
+
+  const [filteredIdioms, setFilteredIdioms] = useState([]);
+
+  // Filtering and sorting
   useEffect(() => {
     let result = idioms;
-    if (selectedTone !== 'all') result = result.filter(i => i.tone === selectedTone);
-    if (searchTerm) {
-      const t = searchTerm.toLowerCase();
+    if (idiomTableTone !== 'all') 
+      result = result.filter(i => i.tone === idiomTableTone);
+    if (idiomTableFilter) {
+      const t = idiomTableFilter.toLowerCase();
       result = result.filter(i => i.text?.toLowerCase().includes(t) || i.translation?.toLowerCase().includes(t));
     }
-    if (sortConfig.key) result = sortIdioms(result, sortConfig.key, sortConfig.direction);
+    if (idiomTableSort.key) 
+      result = sortIdioms(result, idiomTableSort.key, idiomTableSort.direction);
     setFilteredIdioms(result);
-  }, [idioms, selectedTone, searchTerm, sortConfig]);
-  
+  }, [idioms, idiomTableTone, idiomTableFilter, idiomTableSort]);
+
   // Handle sorting when column header is clicked
   const handleSort = (key) => {
-    setSortConfig(prevConfig => ({
+    setIdiomTableSort(prevConfig => ({
       key,
-      direction: prevConfig.key === key && prevConfig.direction === 'ascending' 
-        ? 'descending' 
+      direction: prevConfig.key === key && prevConfig.direction === 'ascending'
+        ? 'descending'
         : 'ascending'
     }));
   };
-  
+
   // Get all unique tones from idioms
   const tones = ['all', ...new Set(idioms.map(idiom => idiom.tone))];
-  
+
   // Render sort indicator
   const renderSortIndicator = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
+    if (!idiomTableSort || !idiomTableSort.key || idiomTableSort.key !== key) return null;
+    return idiomTableSort.direction === 'ascending' ? ' ↑' : ' ↓';
+  };
+
+  // On scroll, update scroll position in store
+  const handleScroll = (e) => {
+    setIdiomTableScroll(e.target.scrollTop);
   };
 
   return (
-    <div className="bg-white dark:bg-primary-900 rounded-lg shadow-md overflow-hidden">
-      <div className="p-4 border-b border-primary-200 dark:border-primary-700 flex flex-col md:flex-row gap-4">
-        <ListSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder="Search idioms..." />
-        <IdiomTableToneSelect selectedTone={selectedTone} setSelectedTone={setSelectedTone} tones={tones} />
-        {onSave && (
-          <div className="md:w-1/3 flex items-end">
-            <button
-              onClick={() => onSave(idioms)}
-              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 
-                text-white rounded-md transition-colors"
-            >
-              Save All Idioms
-            </button>
-          </div>
-        )}
-      </div>
-      
-      <div className="overflow-x-auto">
+    <Card>
+      <Card.Section>
+        <ListSearch searchTerm={idiomTableFilter} setSearchTerm={setIdiomTableFilter} placeholder="Search idioms..." />
+        <IdiomTableToneSelect selectedTone={idiomTableTone} setSelectedTone={setIdiomTableTone} tones={tones} />
+      </Card.Section>
+      <Card.Section style={{ maxHeight: 500, overflowY: 'scroll' }}>
         <table className="min-w-full divide-y divide-primary-200 dark:divide-primary-700">
           <IdiomTableHeader handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
           <tbody className="bg-white dark:bg-primary-900 divide-y divide-primary-200 dark:divide-primary-700">
             {filteredIdioms.length > 0 ? (
               filteredIdioms.map((idiom, index) => (
-                <tr 
+                <tr
                   key={idiom.idiomId || index}
-                  className="hover:bg-primary-50 dark:hover:bg-primary-800"
+                  style={{ cursor: 'pointer', background: 'none' }}
+                  onClick={() => onSelectIdiom && onSelectIdiom(idiom.idiomId || idiom.id)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-900 dark:text-primary-100">
-                    {idiom.text}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-600 dark:text-primary-300">
-                    {idiom.translation}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-600 dark:text-primary-300">
-                    {idiom.tone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-600 dark:text-primary-300">
-                    {idiom.usage || '-'}
-                  </td>
+                  <TableCell clamp>{idiom.text}</TableCell>
+                  <TableCell clamp>{idiom.translation}</TableCell>
+                  <TableCell>{idiom.tone}</TableCell>
+                  <TableCell>{idiom.usage}</TableCell>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="px-6 py-4 text-center text-sm text-primary-500 dark:text-primary-400">
+                <TableCell colSpan={5} style={{ textAlign: 'center', color: 'var(--color-primary-500)', background: 'none' }}>
                   No idioms found matching the current filters
-                </td>
+                </TableCell>
               </tr>
             )}
           </tbody>
         </table>
-      </div>
-      
-      <div className="p-4 bg-primary-50 dark:bg-primary-800 border-t border-primary-200 dark:border-primary-700">
-        <p className="text-sm text-primary-600 dark:text-primary-300">
+      </Card.Section>
+      <Card.Section>
+        <p>
           Showing {filteredIdioms.length} of {idioms.length} idioms
         </p>
-      </div>
-    </div>
+      </Card.Section>
+    </Card>
   );
 };
 

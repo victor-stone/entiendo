@@ -65,16 +65,16 @@ export const handleRequest = async (req, res) => {
       requestBody.contentType = req.headers['content-type'];
     }
     
-    // Prepare unified parameter object for API function
+    // Prepare routeContext parameter object for API function
     /**
-     * The 'unified' object provides a consistent interface for all API handlers:
+     * The 'routeContext' object provides a consistent interface for all API handlers:
      *
      * @property {Object} params   Path parameters for the route, as defined in the route table (e.g., /api/user/:id provides { id: ... }).
      * @property {Object} query    Query string parameters from the request URL (e.g., /api/user?id=123 provides { id: "123" }).
      * @property {Object} payload  The request body, including any file-related information (such as req.body, req.files, or req.file). Used for POST/PUT data and uploaded files.
      * @property {Object|null} user The authenticated user object, if authentication is required for the route. Populated by the authentication middleware and contains user identity and claims.
      */
-    const unified = {
+    const routeContext = {
       // Path parameters become params
       params: handlerInfo.params || {},
       // Query parameters
@@ -88,7 +88,7 @@ export const handleRequest = async (req, res) => {
     // Call the handler function with proper try/catch
     let result;
     try {
-      result = await handlerInfo.handler(unified);
+      result = await handlerInfo.handler(routeContext);
     } catch (handlerError) {
       console.error(`Handler error for ${req.method} ${fullPath}:`, handlerError);
       console.error('Request details:', {

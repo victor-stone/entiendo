@@ -4,28 +4,28 @@ import adminService from '../services/adminService';
 
 const useAdminStore = create((set, get) => ({
   // State
-  idioms: [],
+  idioms   : [],
   validated: null,
-  loading: false,
-  error: null,
+  loading  : false,
+  error    : null,
   
   // Actions
   resetState: () => set({
-    idioms: [],
+    idioms   : [],
     validated: null,
-    loading: false,
-    error: null
+    loading  : false,
+    error    : null
   }),
   
   // Batch create idioms
   importIdioms: async (idioms, authToken) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, idioms: [] });
     
     try {
       const result = await adminService.importIdioms(idioms, authToken);
       set({ 
         idioms: [...result.created],
-        loading: false 
+        loading: false
       });
       return result;
     } catch (err) {
@@ -42,9 +42,9 @@ const useAdminStore = create((set, get) => ({
     set({ loading: true, error: null, validated: null });
     
     try {
-      const results = await adminService.validateIdiomsFromCSV(file, authToken);
+      const validated = await adminService.validateIdiomsFromCSV(file, authToken);
       set({ 
-        validated: results,
+        validated,
         loading: false 
       });
       return results;

@@ -6,22 +6,47 @@ const debugIdioms = debug('app:idioms');
 
 const useIdiomStore = create((set, get) => ({
   // State
-  tones: [],
+  tones  : [],
   loading: false,
-  error: null,
-  idioms: null,
+  loadingIdiom: false,
+  error  : null,
+  idioms : null,
+  idiom  : null,
+  // UI State for IdiomTable
+  idiomTableSort: { key: 'text', direction: 'ascending' },
+  idiomTableFilter: '',
+  idiomTableScroll: 0,
+  idiomTableTone: 'all',
+  setIdiomTableSort: (sort) => set({ idiomTableSort: sort }),
+  setIdiomTableFilter: (filter) => set({ idiomTableFilter: filter }),
+  setIdiomTableScroll: (scroll) => set({ idiomTableScroll: scroll }),
+  setIdiomTableTone: (tone) => set({ idiomTableTone: tone }),
 
   getIdioms: async (full = false) => {
-    set({ loading: true });
+    set({ loading: true, idioms: null, error: null });
     try {
       const idioms = await idiomService.getIdiomsList(full);
-      set({ 
-        loading: false,
-        idioms
-      })
+      set({ loading: false, idioms })
       return idioms;
     } catch(err) {
       debugIdioms('error getting idioms %o', err);
+      set({ error: err.message, loading: false });
+    }
+  },
+
+  getIdiom: async (idiomId) => {
+    const {idiom} = get();  
+    if( idiom ) {
+      return idiom;
+    }
+    set({ idiom: null, error: null, loadingIdiom: true });
+    try {
+      const idiom = await idiomService.getIdiom(idiomId);
+      set({ idiom, loadingIdiom: false })
+      return idiom;
+    } catch(err) {
+      debugIdioms('error getting idiom %o', err);
+      set({ error: err.message, loadingIdiom: false });
     }
   },
 
@@ -32,13 +57,12 @@ const useIdiomStore = create((set, get) => ({
     // Return cached tones if already loaded
     if (tones.length > 0) return { tones };
     
-    set({ loading: true });
+    set({ loading: true, tones: null, error: null });
     try {
       const data = await idiomService.getTones();
       set({ 
         tones: data.tones || [],
-        loading: false,
-        error: null 
+        loading: false
       });
       return data;
     } catch (err) {
@@ -51,7 +75,9 @@ const useIdiomStore = create((set, get) => ({
   },
   
   // Reset error state
-  resetError: () => set({ error: null })
+  resetError: () => set({ error: null }),
+  
+  resetIdiom: () => set({ idiom: null })
 }));
 
-export default useIdiomStore; 
+export default useIdiomStore;

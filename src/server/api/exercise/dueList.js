@@ -3,10 +3,10 @@ import { format } from 'timeago.js';
 import { missedWords } from "./missedWordAPI.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 
-export async function dueList(unified) {
+export async function dueList(routeContext) {
   const {
     user: { userId },
-  } = unified;
+  } = routeContext;
   const model = new ProgressModel();
   let progress = await model.findDueItems(userId, {}, 0);
 
@@ -28,8 +28,8 @@ export async function dueList(unified) {
   return progress;
 }
 
-export async function dueStats(unified) {
-  const { user: { userId } } = unified;
+export async function dueStats(routeContext) {
+  const { user: { userId } } = routeContext;
 
   const model    = new ProgressModel();  
   const progress = await model.findDueItems(userId, {}, 0);
@@ -42,7 +42,7 @@ export async function dueStats(unified) {
   const earliest = numDue ? progress[0] : null;
   const now      = Date.now();
   const pastDue  = progress.filter( ({dueDate}) => dueDate < now );
-  const missed   = await missedWords(unified);
+  const missed   = await missedWords(routeContext);
   const next     = progress.reduce((min, item) => 
     (item.dueDate > now && (min === null || item.dueDate < min.dueDate))
         ? item
@@ -83,7 +83,7 @@ export async function dueStats(unified) {
     {
       icon: 'CalendarIcon',
       label: "Next Due",
-      value: format(next.dueDate),
+      value: next ? format(next.dueDate) : 'none',
       link: '/app/calendar' 
     }
   ];

@@ -2,8 +2,8 @@ import { ExampleModel, IdiomModel, PromptModel, ProgressModel } from '../../mode
 import { generateText } from '../../lib/openai.js';
 import processSirpState from '../../lib/sirp/process.js';
 
-export async function evaluateResponse(unified) {
-    const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = unified;
+export async function evaluateResponse(routeContext) {
+    const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
 
     const exampleModel = new ExampleModel();
     const example      = await exampleModel.getById(exampleId);

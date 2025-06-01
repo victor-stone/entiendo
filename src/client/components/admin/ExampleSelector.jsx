@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import idiomService from '../../services/idiomService';
+import { useEffect, useState } from 'react';
 
 const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
   const [examples, setExamples] = useState([]);
@@ -15,7 +14,8 @@ const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
       
       try {
         setLoading(true);
-        const response = await idiomService.getIdiomExamples(idiomId);
+        // TODO: there's 0 way this should be here - only stores should call services
+        const response = null // await idiomService.getIdiomExamples(idiomId);
         if (response && response.examples) {
           setExamples(response.examples);
         } else {
