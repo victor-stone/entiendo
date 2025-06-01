@@ -5,15 +5,17 @@ import { InboxIcon, ExclamationTriangleIcon, ClockIcon, ChatBubbleLeftRightIcon,
 import { Card } from '../layout/Card';
 
 const ConfidenceMeter = ({ value }) => {
-  const dots = [0, 1, 2].map((i) => (
+  const thresholds = [0.5, 0.6, 0.7];
+  const dots = thresholds.map((threshold, i) => (
     <span
       key={i}
       className={`inline-block w-2 h-2 rounded-full mx-0.5 
-          ${value >= (i + 1) * 0.21  // 0.21, 0.42, 0.63
+          ${value >= threshold
               ? 'bg-green-500 dark:bg-green-300'
               : 'bg-gray-300 dark:bg-gray-600' }`}
     ></span>
-  )); return (
+  ));
+  return (
     <div className="flex items-center mt-2 ml-1" title="Confidence level">
       {dots}
     </div>

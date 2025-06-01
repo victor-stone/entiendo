@@ -1,7 +1,6 @@
 import { ProgressModel } from "../../models/index.js";
-import { format } from 'timeago.js';
-import { missedWords } from "./missedWordAPI.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
+import { isNewAllowed } from "./isNewAllowed.js";
 
 export async function dueList(routeContext) {
   const {
@@ -13,19 +12,21 @@ export async function dueList(routeContext) {
   progress = progress.map(item => {
     item.range = usageToRange(item.usage);
 
-    // Confidence Score
-    const success = item.successRate ?? 0; // fallback if undefined
-    const normalizedInterval = Math.min(item.interval, 7) / 7;
-    const lapsePenalty = Math.min(item.lapseCount, 3) / 3;
-
-    let confidence = (success * 0.6) + (normalizedInterval * 0.3) - (lapsePenalty * 0.3);
-    confidence = Math.max(0, Math.min(confidence, 1)); // clamp
-
-    item.confidence = confidence;
-    console.log("confidence: " + confidence);
+    item.confidence = _confidence(item);
+    console.log("confidence: " + item.confidence);
     return item;
   });  
   return progress;
+}
+
+function _confidence(item) {
+  const success = item.successRate ?? 0; // fallback if undefined
+  const normalizedInterval = Math.min(item.interval, 7) / 7;
+  const lapsePenalty = Math.min(item.lapseCount, 3) / 3;
+
+  let confidence = (success * 0.6) + (normalizedInterval * 0.3) - (lapsePenalty * 0.3);
+  confidence = Math.max(0, Math.min(confidence, 1)); // clamp
+  return confidence;
 }
 
 export async function dueStats(routeContext) {
@@ -35,58 +36,29 @@ export async function dueStats(routeContext) {
   const progress = await model.findDueItems(userId, {}, 0);
 
   if( progress.length == 0 ) {
-    return [];
+    return {
+      numSeen: 0
+    }
   }
 
   const numDue   = progress.length;
   const earliest = numDue ? progress[0] : null;
   const now      = Date.now();
   const pastDue  = progress.filter( ({dueDate}) => dueDate < now );
-  const missed   = await missedWords(routeContext);
   const next     = progress.reduce((min, item) => 
     (item.dueDate > now && (min === null || item.dueDate < min.dueDate))
         ? item
         : min
   , null);
 
-  const numMissed = missed.missedWords.length;
-  const missedPrompt = numMissed
-            ? numMissed + ' / ' + missed.totalCount
-            : 0;
-
-  const pastDueValue = pastDue.length
-          ? pastDue.length + ' (' + format(earliest.dueDate) + ")"
-          : 'none';
-  
-  // TODO: move this structure out to the client
-  const stats = [
-    {
-      icon: 'ExclamationTriangleIcon',
-      label: "Past Due",
-      value: pastDueValue
-    },
-    {
-      icon: 'ChevronUpIcon',
-      label: "Total Seen",
-      value: progress.length
-    },
-    {
-      icon: 'StarIcon',
-      label: "Score",
-      value: __getAccPercentage(progress) + '%'
-    },
-    {
-      icon: 'PencilIcon',
-      label: "Missed Words",
-      value: missedPrompt
-    },
-    {
-      icon: 'CalendarIcon',
-      label: "Next Due",
-      value: next ? format(next.dueDate) : 'none',
-      link: '/app/calendar' 
-    }
-  ];
+  const stats = {
+    pastDueDate: earliest?.dueDate || 0,
+    numPastDue : pastDue.length,
+    numSeen    : progress.length,
+    score      : __getAccPercentage(progress),
+    nextDueDate: next?.dueDate || 0,
+    isNewAllowed: await isNewAllowed(userId)
+  }
 
   return stats;
 

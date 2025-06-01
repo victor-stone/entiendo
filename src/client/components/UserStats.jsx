@@ -2,21 +2,56 @@ import { useEffect } from 'react';
 import useExerciseStore from '../stores/exerciseStore';
 import { Glyph, LoadingIndicator } from './ui';
 import { Card } from './layout';
+import { format } from 'timeago.js';
 
+const makeStatsArray = ({
+  pastDueDate,
+  numPastDue,
+  numSeen,
+  score,
+  nextDueDate
+}) => 
+  [
+    {
+      icon: 'ExclamationTriangleIcon',
+      label: numPastDue
+          ? 'Past Due'
+          : 'All caught up!',
+      value: numPastDue
+          ? numPastDue + ' (' + format(pastDueDate) + ')'
+          : ''
+    },
+    {
+      icon: 'ChevronUpIcon',
+      label: "Total Seen",
+      value: numSeen
+    },
+    {
+      icon: 'StarIcon',
+      label: "Score",
+      value: score + '%'
+    },
+    {
+      icon: 'CalendarIcon',
+      label: "Next Due",
+      value: nextDueDate ? format(nextDueDate) : 'none'
+    }
+  ];
 
 const UserStats = ({ getToken }) => {
   const { dueStats, getDueStats, loading } = useExerciseStore();
 
   useEffect(() => {
-    if (!dueStats) 
+    if (!dueStats) {
       getDueStats(getToken);
+    }
   }, [dueStats, getToken, getDueStats]);
 
   if( loading ) {
     return <LoadingIndicator />
   }
   
-  if( !dueStats || dueStats.length === 0 ) {
+  if( !dueStats || dueStats.numSeen === 0 ) {
     return (
       <>
           <Glyph name="LanguageIcon" />
@@ -26,9 +61,9 @@ const UserStats = ({ getToken }) => {
   }
   return (
     <>
-      {dueStats.map(({ label, value, icon, link }) => (
+      {makeStatsArray(dueStats).map(({ label, value, icon }) => (
         <Card.Info key={label} text={value} label={label} 
-            iconName={icon} color={'white'} link={link} />
+            iconName={icon} color={'white'} />
       ))}
     </>
   );

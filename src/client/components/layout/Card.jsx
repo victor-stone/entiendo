@@ -67,11 +67,12 @@ const CardPanel = ({ children, title }) => (
 //   </div>
 // );
 
-const CardInfo = ({ text, icon: Icon, iconName, color, label, link }) => {
+const CardInfo = ({ text, icon: Icon, iconName, color, label, link, inline = false }) => {
   if (iconName) {
     Icon = icons[iconName];
   }
-  return text && <div className={`inline-flex items-center gap-1 text-xs 
+  const blockage = inline ? 'inline-' : '';
+  return text && <div className={`${blockage}flex items-center gap-1 text-xs 
                             font-medium px-2 py-0.5  
                             ${color || defColor} 
                             mr-2`}>
