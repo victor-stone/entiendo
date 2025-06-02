@@ -9,36 +9,39 @@ import filterDefaults from '../../shared/filterDefaults.js';
  */
 export async function syncUserFromAuth0(routeContext) {
   const validation = validateUser(routeContext);
-  if (!validation.valid) {
+  if (!validation.valid) 
     throw new ValidationError(validation.error.message || 'Invalid user data');
-  }
-  
+
+  const { payload: { authUser } } = routeContext;
   const { userId } = validation;
-  const userModel  = new UserModel();
-  const createdAt  = Date.now();
-  let   user       = await userModel.findByAuthId(userId);
-  
-  if( !user ) {
+  const userModel = new UserModel();
+  let user = await userModel.findByAuthId(userId);
+
+  if (!user) {
     user = await userModel.create({
-        userId,
-        role: 'user',
-        createdAt
-      });
-  }
-  if( user && !user.preferences ) {
-    user.preferences = {};
+      userId,
+      role: 'user',
+      createdAt: Date.now(),
+      name: authUser.name
+    });
   }
 
-  if( user && !user.preferences.filter ) {
-    user.preferences.filter = { ...filterDefaults }
-    user = await userModel.update( userId, user );
-  }
+  user.preferences = user.preferences || {};
+  let needUpdate = false;
 
+  if (!user.preferences.filter) {
+    user.preferences.filter = { ...filterDefaults };
+    needUpdate = true;
+  }
+  if (!user.name && authUser.name) {
+    user.name = authUser.name;
+    needUpdate = true;
+  }
+  if (needUpdate) user = await userModel.update(userId, user);
   return user;
 }
 
 export async function updatePreferences(routeContext) {
-    const { user: {userId}, payload: { preferences }} = routeContext;
-    const model = new UserModel();
-    return (await model.update(userId, { preferences })).preferences;
-  }
+  const { user: { userId }, payload: { preferences } } = routeContext;
+  return (await new UserModel().update(userId, { preferences })).preferences;
+}

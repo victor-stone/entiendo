@@ -12,8 +12,8 @@ const userService = {
    * @param {string} authToken - Authentication token
    * @returns {Promise<Object>} - User data
    */
-  syncUser: async (authToken) => {
-    return await post('/api/users/sync', {}, authToken);
+  syncUser: async (authUser, authToken) => {
+    return await post('/api/users/sync', {authUser}, authToken);
   },
 
   updatePreferences: async (preferences, authToken) => {

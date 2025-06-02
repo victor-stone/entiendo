@@ -15,36 +15,18 @@ const useUserStore = create((set, get) => ({
   error          : null,
   token          : null,
   preferences    : {},
+  authReady      : false, // TODO: this is a hack maybe
   
   // Auth methods
-  _login  : null,
   logout  : null,
   getToken: null,
   
-  // Set auth data from Auth0
   setAuth: (authData) => {
     debugLogin('setAuth called with isAuthenticated=%s', authData.isAuthenticated);
     set({
-      user           : authData.user,
-      isAuthenticated: authData.isAuthenticated,
-      loading        : authData.isLoading,
-      _login         : authData.login,
-      logout         : authData.logout,
-      getToken       : authData.getToken,
-      error          : authData.error
+      ...authData,
+      authReady: true
     });
-  },
-  
-  login: async() => {
-    set({ error: null });
-    try {
-      debugLogin('login called');
-      const { _login } = get();
-      _login();
-    } catch(err) {
-      debugLogin('Login error: %O', err);
-      set({ error: err.message, loading: false });
-    }
   },
 
   updatePreferences: async (prefs) => {
@@ -89,20 +71,20 @@ const useUserStore = create((set, get) => ({
   setUsage:  (usage)  => get().setFilter('usage', usage),
 
   // Sync user profile with backend
-  syncProfile: async () => {
+  syncProfile: async (user) => {
     const { isAuthenticated, getToken } = get();
     if (!isAuthenticated || !getToken) return null;
     
     set({ loading: true, error: null });
     try {
-      const token = await getToken();
-      const result = await userService.syncUser(token);
+      const token  = await getToken();
+      const result = await userService.syncUser(user, token);
       
       set({ 
-        profile: result,
-        isAdmin: result.role === 'admin',
-        preferences: { ...result.preferences } ,
-        loading: false
+        profile    : result,
+        isAdmin    : result.role === 'admin',
+        preferences: { ...result.preferences },
+        loading    : false
       });
       
       return result;
