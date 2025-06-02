@@ -65,6 +65,10 @@ export const routeTable = {
       auth: true
     },
 
+    '/api/admin/reportbug': {
+      handler: (routeContext) => adminAPI.reportAppBug(routeContext),
+      auth: true
+    },
   },
   
   // GET routes

@@ -2,6 +2,7 @@ import { parse } from 'csv-parse/sync';
 import { ForbiddenError, ValidationError } from '../../shared/constants/errorTypes.js';
 import { IdiomModel, ExampleModel } from '../models/index.js';
 import { uploadAudioToS3 } from '../lib/audio.js';
+import { reportBug } from '../lib/github.js';
 
 import debug from 'debug';
 
@@ -268,4 +269,14 @@ export async function uploadExampleAudio(routeContext) {
     console.error('Error uploading audio file:', error);
     throw new Error(`Failed to upload audio: ${error.message}`);
   }
+}
+
+export async function reportAppBug(routeContext) {
+  const { payload: { title, body, labels }, user: { userId } } = routeContext;
+  body += `
+  
+  userId: ${userId}
+  `;
+  const result = reportBug({title,body,labels});
+  return result;
 }

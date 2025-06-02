@@ -61,6 +61,10 @@ const adminService = {
    */
   importIdioms: async (idioms, authToken) => {
     return await post('/api/admin/idioms', { idioms }, authToken);
+  },
+
+  reportBug: async (title, body, labels, authToken) => {
+    return await post('/api/admin/reportbug', { title, body, labels }, authToken);
   }
 };
 

@@ -1,6 +1,6 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
-import { Landing, Dashboard, Preferences, Exercise, Calendar } from './index';
+import { Landing, Dashboard, Preferences, Exercise, Calendar, BugReport } from './index';
 import { IdiomListPage, IdiomImportPage, AudioUploadPage, NewIdiomExamplePage, NewIdiomPage } from './admin';
 import AdminRoute from '../components/admin/AdminRoute';
 import UserRoute from '../components/UserRoute';
@@ -19,6 +19,7 @@ const router = createBrowserRouter([
           { path: 'preferences', element: <Preferences /> },
           { path: 'exercise', element: <Exercise /> },
           { path: 'calendar', element: <Calendar /> },
+          { path: 'bugreport', element: <BugReport /> },
         ],
       },
       {

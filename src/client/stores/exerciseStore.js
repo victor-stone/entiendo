@@ -2,22 +2,22 @@ import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
 
 // Helper to fetch and set state for async service calls
-const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg) => {
+const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg, loadingKey, errorKey) => {
   if (!getToken) return null;
-  set({ loading: true, error: null });
+  set({ [loadingKey]: true, [errorKey]: null });
   try {
     const token = await getToken();
     const data = await serviceFn(token);
     set({
       [stateKey]: data,
-      loading: false
+      [loadingKey]: false
     });
     return data;
   } catch (err) {
     console.log(`ExerciseStore ${stateKey} error`, err);
     set({
-      error: err.message || errorMsg,
-      loading: false
+      [errorKey]: err.message || errorMsg,
+      [loadingKey]: false
     });
     return null;
   }
@@ -26,8 +26,8 @@ const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg) => {
 const useExerciseStore = create((set, get) => ({
   // State
   exercise    : null,
-  loading     : false,
-  error       : null,
+  loading     : false, // Only for exercise flow, not dashboard fetches
+  error       : null,  // Only for exercise flow, not dashboard fetches
   phase       : 'prompt',
   evaluation  : null,
   progress    : null,
@@ -35,6 +35,14 @@ const useExerciseStore = create((set, get) => ({
   dueStats    : null,
   missedWords : null,
   calendarFull: false,
+
+  // Per-fetch loading and error states
+  loadingDueList: false,
+  errorDueList: null,
+  loadingDueStats: false,
+  errorDueStats: null,
+  loadingMissedWords: false,
+  errorMissedWords: null,
 
   userInput        : {
     transcription: '',
@@ -48,15 +56,15 @@ const useExerciseStore = create((set, get) => ({
 
   // Get list of due exercises
   getDueList: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getDueList, 'dueList', 'Failed to fetch due exercises'),
+    fetchAndSet(set, getToken, exerciseService.getDueList, 'dueList', 'Failed to fetch due exercises', 'loadingDueList', 'errorDueList'),
 
   // Get stats for due exercises
   getDueStats: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getDueStats, 'dueStats', 'Failed to fetch due stats'),
+    fetchAndSet(set, getToken, exerciseService.getDueStats, 'dueStats', 'Failed to fetch due stats', 'loadingDueStats', 'errorDueStats'),
 
   // Get missed words
   getMissedWords: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getMissedWords, 'missedWords', 'Failed to fetch missed words'),
+    fetchAndSet(set, getToken, exerciseService.getMissedWords, 'missedWords', 'Failed to fetch missed words', 'loadingMissedWords', 'errorMissedWords'),
 
   // Set the current phase of the exercise flow
   setPhase: (newPhase) => {
@@ -90,7 +98,15 @@ const useExerciseStore = create((set, get) => ({
         transcription: '',
         translation: ''
       },
-      evaluation: null
+      evaluation: null,
+      loading: false,
+      // Reset dashboard fetch loading/error states as well
+      loadingDueList: false,
+      errorDueList: null,
+      loadingDueStats: false,
+      errorDueStats: null,
+      loadingMissedWords: false,
+      errorMissedWords: null
     });
   },
   
@@ -156,8 +172,13 @@ const useExerciseStore = create((set, get) => ({
     }
   },  
   
-  // Clear error
-  clearError: () => set({ error: null })
+  // Clear error (all errors)
+  clearError: () => set({ 
+    error: null,
+    errorDueList: null,
+    errorDueStats: null,
+    errorMissedWords: null
+  })
 }));
 
 export default useExerciseStore;

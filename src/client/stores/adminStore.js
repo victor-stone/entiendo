@@ -8,11 +8,13 @@ const useAdminStore = create((set, get) => ({
   validated: null,
   loading  : false,
   error    : null,
+  bugreport: null,
   
   // Actions
   resetState: () => set({
     idioms   : [],
     validated: null,
+    bugreport: null,
     loading  : false,
     error    : null
   }),
@@ -72,6 +74,23 @@ const useAdminStore = create((set, get) => ({
       });
       return null;
     }
+  },
+
+  reportBug: async (title, body, labels) => {
+    set({ loading: true, error: null });
+    
+    try {
+      const result = await adminService.reportBug(title,body,labels)
+      set({ loading: false, bugreport: result });
+      return result;
+    } catch (err) {
+      set({ 
+        error: err.message,
+        loading: false 
+      });
+      return null;
+    }
+
   }
 }));
 

@@ -33,9 +33,14 @@ const Navbar = () => {
           {/* Navigation links - desktop */}
           <div className="hidden md:flex items-center space-x-6">
             {isLoggedIn && (
-              <Link to="/app/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
-                Dashboard
-              </Link>
+              <>
+                <Link to="/app/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                  Dashboard
+                </Link>
+                <Link to="/app/bugreport" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                  Report a Bug
+                </Link>
+              </>
             )}
           </div>
 
@@ -74,13 +79,22 @@ const Navbar = () => {
         <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden mt-3 pt-3 border-t border-gray-200 dark:border-gray-700`}>
           <div className="flex flex-col space-y-4 px-2 pb-3">
             {isLoggedIn && (
-              <Link 
-                to="/app/dashboard" 
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link 
+                  to="/app/dashboard" 
+                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/app/bugreport" 
+                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Report a Bug
+                </Link>
+              </>
             )}
             <div className="pt-2">
               {isLoggedIn ? (
@@ -105,4 +119,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
