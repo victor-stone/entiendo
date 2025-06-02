@@ -76,11 +76,11 @@ const useAdminStore = create((set, get) => ({
     }
   },
 
-  reportBug: async (title, body, labels) => {
+  reportBug: async (title, body, labels, token) => {
     set({ loading: true, error: null });
     
     try {
-      const result = await adminService.reportBug(title,body,labels)
+      const result = await adminService.reportBug(title,body,labels,token)
       set({ loading: false, bugreport: result });
       return result;
     } catch (err) {

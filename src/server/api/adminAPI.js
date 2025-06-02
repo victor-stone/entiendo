@@ -273,10 +273,10 @@ export async function uploadExampleAudio(routeContext) {
 
 export async function reportAppBug(routeContext) {
   const { payload: { title, body, labels }, user: { userId } } = routeContext;
-  body += `
+  const bodyPlus = body + `
   
   userId: ${userId}
   `;
-  const result = reportBug({title,body,labels});
+  const result = reportBug({title,body: bodyPlus,labels});
   return result;
 }

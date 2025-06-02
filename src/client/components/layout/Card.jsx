@@ -27,8 +27,9 @@ function CardBody({ children, className, style }) {
     )
 }
 
-export const CardField = ({ children, hint, isFull = true }) => (
+export const CardField = ({ children, hint, title, isFull = true }) => (
   <div className="mb-3 p-5">
+    {title && <label className="block mb-1 font-medium">{title}</label>}
     <div className={isFull ? 'w-full' : 'w-fit'}>
       {children}
     </div>

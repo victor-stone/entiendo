@@ -89,6 +89,10 @@ export const routeTable = {
       handler: (routeContext) => exerciseAPI.getIdiomExamples(routeContext),
       auth: false
     },
+    '/api/exercises/example/:exampleId': {
+      handler: (routeContext) => exerciseAPI.getExampleById(routeContext),
+      auth: false
+    },
     '/api/exercises/next': {
       handler: (routeContext) => exerciseAPI.getNext(routeContext),
       auth: true

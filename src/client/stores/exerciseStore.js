@@ -1,13 +1,17 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
 
-// Helper to fetch and set state for async service calls
-const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg, loadingKey, errorKey) => {
+// TODO: refact the F out of this 
+
+
+const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg, loadingKey, errorKey, arg = null) => {
   if (!getToken) return null;
   set({ [loadingKey]: true, [errorKey]: null });
   try {
     const token = await getToken();
-    const data = await serviceFn(token);
+    const data = arg 
+            ? await serviceFn(arg,token)
+            : await serviceFn(token);
     set({
       [stateKey]: data,
       [loadingKey]: false
@@ -35,6 +39,7 @@ const useExerciseStore = create((set, get) => ({
   dueStats    : null,
   missedWords : null,
   calendarFull: false,
+  example     : null,
 
   // Per-fetch loading and error states
   loadingDueList: false,
@@ -43,6 +48,8 @@ const useExerciseStore = create((set, get) => ({
   errorDueStats: null,
   loadingMissedWords: false,
   errorMissedWords: null,
+  loadingExample: false,
+  errorExample: null,
 
   userInput        : {
     transcription: '',
@@ -65,6 +72,9 @@ const useExerciseStore = create((set, get) => ({
   // Get missed words
   getMissedWords: (getToken) =>
     fetchAndSet(set, getToken, exerciseService.getMissedWords, 'missedWords', 'Failed to fetch missed words', 'loadingMissedWords', 'errorMissedWords'),
+
+  getExample: (exampleId, getToken) =>
+    fetchAndSet(set, getToken, exerciseService.getExample, 'example', 'Failed to fetch missed example', 'loadingExample', 'errorExample', exampleId),
 
   // Set the current phase of the exercise flow
   setPhase: (newPhase) => {
@@ -106,7 +116,9 @@ const useExerciseStore = create((set, get) => ({
       loadingDueStats: false,
       errorDueStats: null,
       loadingMissedWords: false,
-      errorMissedWords: null
+      errorMissedWords: null,
+      loadingExample: false,
+      errorExample: null
     });
   },
   

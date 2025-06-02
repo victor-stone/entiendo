@@ -5,6 +5,7 @@ import { generateText } from '../lib/openai.js';
 
 const { generateSpeech, generatePresignedUrl } = ttl;
 
+
 // TODO: not sure where finalizeExample (exercise?) should go
 export async function finalizeExample(example, idiom = null, model = null, debug = null) {
     const needAudio = _ensureAudioAccess(example, debug);
@@ -90,4 +91,10 @@ export async function createExample(idiom, model, existingExamples) {
         console.error('Error generating example:', error);
         throw new Error(`Failed to get or create example: ${error.message}`);
     }
+}
+
+export async function getExampleById(routeContext) {
+    const { params: { exampleId } } = routeContext;
+    const model = new ExampleModel();
+    return await model.getById(exampleId);
 }

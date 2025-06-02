@@ -10,17 +10,19 @@ import debug from 'debug';
 const debugRender = debug('app:render');
 
 const MissedWordsPanel = ({getToken}) => {
-  const { dueStats, getDueStats, missedWords, getMissedWords, loading } = useExerciseStore();
+  const { dueStats, getDueStats, missedWords, getMissedWords, loadingMissedWords, errorMissedWords } = useExerciseStore();
 
   useEffect(() => {
-    if (!missedWords && !loading ) 
+    if (!missedWords && !loadingMissedWords ) 
       getMissedWords(getToken);
-  }, [missedWords, getToken, getMissedWords, loading]);
+  }, [missedWords, getToken, getMissedWords, loadingMissedWords]);
 
-  if( loading ) {
+  if( loadingMissedWords ) {
     return <LoadingSpinner />
   }
-
+  if( errorMissedWords ) {
+    return <p className="text-red-500">{errorMissedWords}</p>;
+  }
   if( dueStats && !dueStats.numSeen ) {
     return <p></p>
   }
@@ -40,7 +42,7 @@ const CardTitle = ({dueStats}) => {
     <div className="flex items-center justify-between w-full">
       <div className="text-left">¡Bienvenido!</div>
       <div className="text-right">
-        {dueStats && (dueStats.isNewAllowed || dueStats.numPastDue)
+        {dueStats && (!dueStats.numSeen || dueStats.isNewAllowed || dueStats.numPastDue)
           ? <PageLink page="/app/exercise" text="Start Exercise" className="btn btn-primary" />
           : dueStats.nextDueDate
             ? `Next exercise due ${format(dueStats.nextDueDate)}`
@@ -55,16 +57,22 @@ const Dashboard = () => {
   debugRender('Rendering Dashboard');
   const getToken = useUserStore(state => state.getToken);
 
-  const { dueStats, getDueStats, loading } = useExerciseStore();
+  const { dueStats, getDueStats, loadingDueStats, errorDueStats } = useExerciseStore();
 
   debugRender('Due Stats %o', dueStats)
   useEffect(() => {
-    if (!dueStats) {
+    if (!dueStats && !loadingDueStats) {
       getDueStats(getToken);
     }
-  }, [dueStats, getToken, getDueStats]);
+  }, [dueStats, getToken, getDueStats, loadingDueStats]);
 
-  if( !dueStats || loading ) {
+  if( loadingDueStats ) {
+    return <LoadingIndicator />
+  }
+  if( errorDueStats ) {
+    return <p className="text-red-500">{errorDueStats}</p>;
+  }
+  if( !dueStats ) {
     return <LoadingIndicator />
   }
 

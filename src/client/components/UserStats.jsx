@@ -39,18 +39,20 @@ const makeStatsArray = ({
   ];
 
 const UserStats = ({ getToken }) => {
-  const { dueStats, getDueStats, loading } = useExerciseStore();
+  const { dueStats, getDueStats, loadingDueStats, errorDueStats } = useExerciseStore();
 
   useEffect(() => {
-    if (!dueStats) {
+    if (!dueStats && !loadingDueStats) {
       getDueStats(getToken);
     }
-  }, [dueStats, getToken, getDueStats]);
+  }, [dueStats, getToken, getDueStats, loadingDueStats]);
 
-  if( loading ) {
+  if( loadingDueStats ) {
     return <LoadingIndicator />
   }
-  
+  if( errorDueStats ) {
+    return <span className="text-red-500">{errorDueStats}</span>;
+  }
   if( !dueStats || dueStats.numSeen === 0 ) {
     return (
       <>

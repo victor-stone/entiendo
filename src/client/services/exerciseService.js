@@ -45,6 +45,9 @@ const exerciseService = {
     return await get(`/api/exercises/${idiomId}`);
   },
 
+  getExample: async (exerciseid) => {
+    return await get(`/api/exercises/example/${exerciseid}`);
+  },
 
   evaluateResponse: async (
     exampleId,
