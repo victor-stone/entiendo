@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { LoadingIndicator, Grid } from '../ui';
+import { Grid } from './ui';
 import { format } from 'timeago.js';
-import { InboxIcon, ExclamationTriangleIcon, ClockIcon, ChatBubbleLeftRightIcon, ChartBarIcon } from '@heroicons/react/24/solid';
-import { Card } from '../layout/Card';
+import { InboxIcon, ExclamationTriangleIcon, ClockIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
+import { Card } from './layout/Card';
 
 const ConfidenceMeter = ({ value }) => {
   const thresholds = [0.5, 0.6, 0.7];
@@ -54,16 +54,8 @@ const DueItem = ({ item, isPastDue, isDueToday }) => (
   </div>
 );
 
-const DueList = ({ dueList, loading, error }) => {
+const DueList = ({ dueList }) => {
   const [groupByUsage, setGroupByUsage] = useState(false);
-
-  if (loading) {
-    return <LoadingIndicator />;
-  }
-
-  if (error) {
-    return <div className="text-red-500 p-4">Error loading due exercises: {error}</div>;
-  }
 
   if (!dueList || dueList.length === 0) {
     return <div className="p-4 text-gray-500">No exercises due at this time.</div>;

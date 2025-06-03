@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import IdiomImporter from '../../components/admin/IdiomImporter'
 import ImportManager from '../../components/admin/ImportManager';
 import { Card } from '../../components/layout';
+import IdiomTable from '../../components/admin/IdiomTable';
 
 function IdiomImportPage() {
   const [parsedIdioms,     setParsedIdioms]     = useState([]);
@@ -43,19 +43,11 @@ function IdiomImportPage() {
       )}
 
       {parsedIdioms.length > 0 && (
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-3">
-              <Link 
-                to="/admin/idioms" 
-                state={{ idioms: parsedIdioms }}
-                className="px-4 py-2 rounded-md text-white bg-secondary-500 hover:bg-secondary-600 transition-colors"
-              >
-                View Full List
-              </Link>
-            </div>
-          </div>
-        </div>
+        <Card title="Results">
+          <Card.Body>
+            <IdiomTable idioms={parsedIdioms} />
+          </Card.Body>
+        </Card>
       )}
     </ImportManager>
   );

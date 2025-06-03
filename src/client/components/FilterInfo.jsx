@@ -34,7 +34,7 @@ const FilterToString = ({ filter, loading }) => {
     return <div>You are seeing all the idioms in the system.</div>;
 };
 
-export default function FilterInfo({ getToken }) {
+export default function FilterInfo() {
 
     const { preferences, loading } = useUserStore();
 

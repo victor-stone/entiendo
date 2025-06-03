@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useUserStore, useAdminStore } from '../../stores';
 
+/*
+  This is code that Claude created
+  TODO: clean this shit up - also: buggy
+*/
 const IdiomImporter = ({ onIdiomsUploaded }) => {
   const [file,         setFile]         = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -99,7 +103,7 @@ const IdiomImporter = ({ onIdiomsUploaded }) => {
               cursor-pointer focus:outline-none"
           />
           <p className="mt-1 text-xs text-primary-500 dark:text-primary-400">
-            Upload a CSV file with idiom data. <a href="#csv-guidelines" className="text-primary-600 dark:text-primary-300 underline">Template format</a>
+            Parse a CSV file with idiom data. You will have a chance to review before committing.
           </p>
         </div>
         <button
@@ -121,15 +125,15 @@ const IdiomImporter = ({ onIdiomsUploaded }) => {
         </div>
       )}
 
-      <div className="mt-4" id="csv-guidelines">
-        <h3 className="text-primary-800 dark:text-primary-200 font-medium mb-2">CSV Format Guidelines</h3>
+      <div className="mt-4">
+        <h3 className="text-primary-800 dark:text-primary-200 font-medium mb-2">CSV Format</h3>
         <p className="text-sm text-primary-600 dark:text-primary-400 mb-2">
-          Your CSV should include these columns:
+          Expected CSV columns
         </p>
         <ul className="list-disc pl-5 text-sm text-primary-600 dark:text-primary-400">
           <li>text - The Spanish idiom text</li>
-          <li>translation - English equivalent</li>
-          <li>tone - Tone (Neutral, Casual, Official, Vulgar, Esoteric)</li>
+          <li>translation - English equivalent (idiomatically, not literal)</li>
+          <li>tone - Tone (Neutral, Casual, Official, Street, Esoteric)</li>
           <li>usage - Ranking from 1-10 10 being Super Common, 1 rare and exotic</li>
         </ul>
       </div>

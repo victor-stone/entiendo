@@ -11,7 +11,7 @@ import { finalizeExample } from './exampleAPI.js';
 export async function getTones() {
   const idiomModel = new IdiomModel();
   const tones = await idiomModel.getTones();
-  return { tones };
+  return tones;
 }
 
 

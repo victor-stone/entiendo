@@ -1,30 +1,39 @@
 import { useEffect } from 'react';
-import useIdiomStore from '../../stores/idiomStore';
+import { useIdiomStore, useUserStore } from '../../stores';
 import { useParams } from 'react-router-dom';
 import { Card } from '../layout';
+import { LoadingSpinner } from '../ui/LoadingIndicator';
 
 const IdiomDetail = ({ idiomId: idiomIdProp, onBack }) => {
-  const params = useParams();
-  const idiomId = idiomIdProp || params.idiomId;
-  const { idiom, loadingIdiom, error, getIdiom, resetIdiom } = useIdiomStore();
+  const params   = useParams();
+  const idiomId  = idiomIdProp || params.idiomId;
+  const getToken = useUserStore(s => s.getToken );
 
+  const { data, loading, fetch, error, reset } = useIdiomStore();
+  
   useEffect(() => {
-    if (idiomId) 
-        getIdiom(idiomId);
-  }, [idiomId]);
+    if (!data && !loading) {
+      fetch(idiomId, getToken);
+    }
+  }, [data, getToken, fetch, loading]);
 
-  console.log( "Loading: %s, idiom: %s, error: %s, idiomId: %s", loadingIdiom, idiom?.text, error?.message, idiomId);
-  if (loadingIdiom) return <div>Loading idiom...</div>;
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!idiom && !error) return <div>No idiom found.</div>;
+  if( error ) {
+    return <p className="text-red-500">{error}</p>;
+  }
+  
+  if( loading || !data ) {
+    return <LoadingSpinner />
+  }
 
+  const idiom = data;
+  
   return (
     <>
       {onBack && (
         <button
           className="mb-4 px-4 py-2 bg-primary-200 dark:bg-primary-700 rounded text-primary-800 dark:text-primary-100 hover:bg-primary-300 dark:hover:bg-primary-600"
           onClick={() => {
-            resetIdiom();
+            reset();
             onBack();
           }}
         >

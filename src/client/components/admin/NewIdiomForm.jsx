@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import adminService from '../../services/adminService';
 import { useUserStore } from '../../stores';
-import ToneSelector from '../exercise/ToneSelector';
+import ToneSelector from '../ToneSelector';
 import { Card, CardField } from '../layout';
 
 const NewIdiomForm = ({ onSaveSuccess, onError }) => {

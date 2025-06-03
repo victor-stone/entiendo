@@ -1,8 +1,18 @@
 // src/client/stores/adminStore.js
 import { create } from 'zustand';
 import adminService from '../services/adminService';
+import { storeFetch } from '../lib/storeUtils';
+const { createExample } = adminService;
 
-const useAdminStore = create((set, get) => ({
+export const useCreateExampleStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(createExample, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const useAdminStore = create((set, get) => ({
   // State
   idioms   : [],
   validated: null,
@@ -49,7 +59,7 @@ const useAdminStore = create((set, get) => ({
         validated,
         loading: false 
       });
-      return results;
+      return validated;
     } catch (err) {
       set({ 
         error: err.message || 'Failed to validate idioms',
@@ -93,5 +103,3 @@ const useAdminStore = create((set, get) => ({
 
   }
 }));
-
-export default useAdminStore;

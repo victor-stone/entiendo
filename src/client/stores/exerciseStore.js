@@ -1,80 +1,43 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
+import { storeFetch } from '../lib/storeUtils';
+const { getDueList, getDueStats, getMissedWords, getExample } = exerciseService;
 
-// TODO: refact the F out of this 
+export const useDueStatsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getDueStats, set)
+}));
 
+export const useDueListStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getDueList, set)
+}));
 
-const fetchAndSet = async (set, getToken, serviceFn, stateKey, errorMsg, loadingKey, errorKey, arg = null) => {
-  if (!getToken) return null;
-  set({ [loadingKey]: true, [errorKey]: null });
-  try {
-    const token = await getToken();
-    const data = arg 
-            ? await serviceFn(arg,token)
-            : await serviceFn(token);
-    set({
-      [stateKey]: data,
-      [loadingKey]: false
-    });
-    return data;
-  } catch (err) {
-    console.log(`ExerciseStore ${stateKey} error`, err);
-    set({
-      [errorKey]: err.message || errorMsg,
-      [loadingKey]: false
-    });
-    return null;
-  }
-};
+export const useExampleStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getExample, set)
+}));
+
+export const useMissedWordsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getMissedWords, set)
+}));
 
 const useExerciseStore = create((set, get) => ({
-  // State
-  exercise    : null,
-  loading     : false, // Only for exercise flow, not dashboard fetches
-  error       : null,  // Only for exercise flow, not dashboard fetches
+
+  loading     : false,
+  error       : null,
   phase       : 'prompt',
   evaluation  : null,
   progress    : null,
-  dueList     : null,
-  dueStats    : null,
-  missedWords : null,
-  calendarFull: false,
-  example     : null,
-
-  // Per-fetch loading and error states
-  loadingDueList: false,
-  errorDueList: null,
-  loadingDueStats: false,
-  errorDueStats: null,
-  loadingMissedWords: false,
-  errorMissedWords: null,
-  loadingExample: false,
-  errorExample: null,
-
-  userInput        : {
-    transcription: '',
-    translation  : ''
-  },
-
-  // Set the current exercise
-  setExercise: (exercise) => {
-    set({ exercise });
-  },
-
-  // Get list of due exercises
-  getDueList: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getDueList, 'dueList', 'Failed to fetch due exercises', 'loadingDueList', 'errorDueList'),
-
-  // Get stats for due exercises
-  getDueStats: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getDueStats, 'dueStats', 'Failed to fetch due stats', 'loadingDueStats', 'errorDueStats'),
-
-  // Get missed words
-  getMissedWords: (getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getMissedWords, 'missedWords', 'Failed to fetch missed words', 'loadingMissedWords', 'errorMissedWords'),
-
-  getExample: (exampleId, getToken) =>
-    fetchAndSet(set, getToken, exerciseService.getExample, 'example', 'Failed to fetch missed example', 'loadingExample', 'errorExample', exampleId),
 
   // Set the current phase of the exercise flow
   setPhase: (newPhase) => {
@@ -110,15 +73,6 @@ const useExerciseStore = create((set, get) => ({
       },
       evaluation: null,
       loading: false,
-      // Reset dashboard fetch loading/error states as well
-      loadingDueList: false,
-      errorDueList: null,
-      loadingDueStats: false,
-      errorDueStats: null,
-      loadingMissedWords: false,
-      errorMissedWords: null,
-      loadingExample: false,
-      errorExample: null
     });
   },
   
@@ -186,10 +140,7 @@ const useExerciseStore = create((set, get) => ({
   
   // Clear error (all errors)
   clearError: () => set({ 
-    error: null,
-    errorDueList: null,
-    errorDueStats: null,
-    errorMissedWords: null
+    error: null
   })
 }));
 

@@ -1,103 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import adminService from '../../services/adminService';
-import { useUserStore } from '../../stores';
+import { useState } from 'react';
+import { useUserStore, useCreateExampleStore } from '../../stores';
 import IdiomSelector from './IdiomSelector';
 import { Card, CardField } from '../layout';
+import IdiomDetail from './IdiomDetail';
+import { LoadingSpinner } from '../ui/LoadingIndicator';
 
-const NewExampleForm = ({ 
-  idiomId = '', 
-  onSaveSuccess, 
-  onError, 
-  showIdiomDetails = false,
-  idiomDetails = null
-}) => {
+const NewExampleForm = () => {
   // Get authentication token from user store
   const getToken = useUserStore(state => state.getToken);
   
   // Form state
-  const [selectedIdiomId, setSelectedIdiomId] = useState(idiomId);
-  const [exampleText, setExampleText] = useState('');
-  const [exampleSnippet, setExampleSnippet] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [selectedIdiomId, setSelectedIdiomId] = useState(null);
+  const [exampleText, setExampleText]         = useState('');
+  const [exampleSnippet, setExampleSnippet]   = useState('');
   
-  // Update selectedIdiomId if prop changes
-  useEffect(() => {
-    setSelectedIdiomId(idiomId);
-  }, [idiomId]);
+  const { loading, error, data, fetch, reset } = useCreateExampleStore();
+
+  const resetForm = () => {
+    setExampleText('');
+    setExampleSnippet('');
+    reset();
+  };
   
+  if( error ) {
+    return <p className="text-red-500">{error}</p>;
+  }
+
+  if( loading ) {
+    return <LoadingSpinner />
+  }
+
+  if( data ) {
+    return <IdiomDetail idiomId={selectedIdiomId} onBack={resetForm} />
+  }
   // Handle idiom selection
   const handleIdiomChange = (e) => {
     setSelectedIdiomId(e.target.value);
   };
-  
-  // Create a new example
-  const handleSaveExample = async () => {
-    setLoading(true);
     
-    try {
-      if (!selectedIdiomId) {
-        throw new Error('No idiom selected for this example');
-      }
-      
-      if (!exampleText || !exampleSnippet) {
-        throw new Error('Example text and conjugated snippet are required');
-      }
-      
-      const exampleData = {
-        idiomId: selectedIdiomId,
-        text: exampleText,
-        conjugatedSnippet: exampleSnippet,
-        source: 'manual'
-      };
-      
-      // Get auth token and pass it to the service call
-      const token = await getToken();
-      const response = await adminService.createExample(exampleData, token);
-      
-      if (response && response.exampleId) {
-        if (onSaveSuccess) {
-          onSaveSuccess(response);
-        }
-        return response;
-      } else {
-        throw new Error('Failed to create example');
-      }
-    } catch (err) {
-      if (onError) {
-        onError(err.message || 'An error occurred during submission');
-      }
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSaveExample = async () => {
+    const exampleData = {
+      idiomId          : selectedIdiomId,
+      text             : exampleText,
+      conjugatedSnippet: exampleSnippet,
+      source           : 'admin'
+    };
+    fetch( exampleData, getToken );
   };
-  
-  // Reset the form
-  const resetForm = () => {
-    setExampleText('');
-    setExampleSnippet('');
-  };
-  
+  // todo: move Card out to page component
   return (
     <Card title="Create New Example">
       <Card.Body>
-      {/* Show IdiomSelector if no idiomId is provided */}
-      {idiomId === '' && (
-        <IdiomSelector
-          value={selectedIdiomId}
-          onChange={handleIdiomChange}
-          required={true}
-        />
-      )}
-      
-      {/* Show idiom details if available and requested */}
-      {showIdiomDetails && idiomDetails && (
         <CardField>
-          <p><strong>Idiom:</strong> {idiomDetails.text}</p>
-          <p><strong>Translation:</strong> {idiomDetails.translation}</p>
-        </CardField>
-      )}
-      
+          <IdiomSelector
+            value={selectedIdiomId}
+            onChange={handleIdiomChange}
+            required={true}
+          />
+      </CardField>            
       <CardField>
         <label className="block text-sm font-medium">
           Example Text *

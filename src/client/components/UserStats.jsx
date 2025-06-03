@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-import useExerciseStore from '../stores/exerciseStore';
-import { Glyph, LoadingIndicator } from './ui';
+import { Glyph } from './ui';
 import { Card } from './layout';
 import { format } from 'timeago.js';
 
@@ -38,21 +36,8 @@ const makeStatsArray = ({
     }
   ];
 
-const UserStats = ({ getToken }) => {
-  const { dueStats, getDueStats, loadingDueStats, errorDueStats } = useExerciseStore();
+const UserStats = ({ dueStats }) => {
 
-  useEffect(() => {
-    if (!dueStats && !loadingDueStats) {
-      getDueStats(getToken);
-    }
-  }, [dueStats, getToken, getDueStats, loadingDueStats]);
-
-  if( loadingDueStats ) {
-    return <LoadingIndicator />
-  }
-  if( errorDueStats ) {
-    return <span className="text-red-500">{errorDueStats}</span>;
-  }
   if( !dueStats || dueStats.numSeen === 0 ) {
     return (
       <>

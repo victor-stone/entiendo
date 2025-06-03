@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { setFontClass } from '../../lib/fontLoader';
+import { setFontClass } from '../lib/fontLoader';
 
 const fontOptions = [
   { label: 'Nunito (Google)', value: 'nunito' },

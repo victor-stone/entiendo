@@ -1,5 +1,5 @@
 // UsageRangeSelector component
-import usageOptions from '../../../shared/constants/usageRanges';
+import usageOptions from '../../shared/constants/usageRanges';
 
 export default function UsageRangeSelector({ value = "", onChange }) {
     return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ListSearch from '../ui/ListSearch';
-import useIdiomStore from '../../stores/idiomStore';
+import { useIdiomTableStore } from '../../stores';
 import { Card } from '../layout/Card';
 
 // Table header cell component
@@ -17,10 +17,10 @@ const SortableHeaderCell = ({ label, sortKey, handleSort, renderSortIndicator })
 const IdiomTableHeader = ({ handleSort, renderSortIndicator }) => (
   <thead className="bg-primary-50 dark:bg-primary-800">
     <tr>
-      <SortableHeaderCell label="Idiom" sortKey="text" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
-      <SortableHeaderCell label="Translation" sortKey="translation" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
-      <SortableHeaderCell label="Tone" sortKey="tone" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
-      <SortableHeaderCell label="Usage" sortKey="usage" handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
+      <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Idiom"       sortKey="text"        />
+      <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Translation" sortKey="translation" />
+      <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Tone"        sortKey="tone"        />
+      <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Usage"       sortKey="usage"       />
     </tr>
   </thead>
 );
@@ -87,7 +87,7 @@ const IdiomTable = ({ idioms, onSelectIdiom }) => {
     idiomTableFilter, setIdiomTableFilter,
     idiomTableScroll, setIdiomTableScroll,
     idiomTableTone, setIdiomTableTone
-  } = useIdiomStore();
+  } = useIdiomTableStore();
 
   const [filteredIdioms, setFilteredIdioms] = useState([]);
 
@@ -107,12 +107,13 @@ const IdiomTable = ({ idioms, onSelectIdiom }) => {
 
   // Handle sorting when column header is clicked
   const handleSort = (key) => {
-    setIdiomTableSort(prevConfig => ({
+    setIdiomTableSort({
       key,
-      direction: prevConfig.key === key && prevConfig.direction === 'ascending'
-        ? 'descending'
-        : 'ascending'
-    }));
+      direction:
+        idiomTableSort.key === key && idiomTableSort.direction === 'ascending'
+          ? 'descending'
+          : 'ascending'
+    });
   };
 
   // Get all unique tones from idioms

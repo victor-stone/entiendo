@@ -1,25 +1,32 @@
 import { useEffect } from 'react';
-import { useUserStore, useExerciseStore } from '../stores';
-import DueList from '../components/exercise/DueList';
+import { useUserStore, useDueListStore } from '../stores';
+import DueList from '../components/DueList';
 import { Card } from '../components/layout';
-
+import { LoadingIndicator } from '../components/ui';
 
 const Calendar = () => {
   const getToken = useUserStore(state => state.getToken);
-  const { dueList, getDueList, loading, error } = useExerciseStore();
+  const { data, fetch, loading, error } = useDueListStore();
 
   useEffect(() => {
-    const fetchDueList = async () => {
-      await getDueList(getToken);
-    };
-    fetchDueList();
-  }, [getDueList, getToken]);
+    if (!data && !loading) {
+      fetch(getToken);
+    }
+  }, [data, getToken, fetch, loading]);
+
+  if( error ) {
+    return <p className="text-red-500">{error}</p>;
+  }
+  
+  if( loading || !data ) {
+    return <LoadingIndicator />
+  }
 
   return (
     <Card title="Calendar">
       <Card.Body>
         {/* ...other calendar UI... */}
-        <DueList dueList={dueList} loading={loading} error={error} />
+        <DueList dueList={data} loading={loading} error={error} />
       </Card.Body>
     </Card>
   );
