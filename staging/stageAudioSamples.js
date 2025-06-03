@@ -11,7 +11,7 @@ import { parse } from "csv-parse/sync";
 import { ExampleModel } from "../src/server/models/index.js";
 import { uploadAudioToS3 } from "../src/server/lib/audio.js";
 
-const stagedir = process.argv[2] || 'stage2';
+const stagedir = process.argv[2];
 if (!stagedir) {
   console.error("Usage: node stageAudioSamples.js <stagedir>");
   process.exit(1);

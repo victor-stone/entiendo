@@ -3,7 +3,7 @@
 # This script exists to batch downsample and convert .aif audio files to low-bitrate mono .mp3 files,
 # making them smaller and more suitable for entiendo exercises
 #
-# filepath: /Users/victor/Documents/entiendo/staging/stage_audio_samples.sh
+# filepath: ./staging/stage_audio_samples.sh
 
 # Usage: ./stage_audio_samples.sh "/path/to/input/*.aif" "/path/to/output"
 

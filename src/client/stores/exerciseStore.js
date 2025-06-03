@@ -7,7 +7,8 @@ export const useDueStatsStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getDueStats, set)
+  fetch: storeFetch(getDueStats, set),
+  reset: () => set({ data: null, error: null, loading: false })
 }));
 
 export const useDueListStore = create((set, get) => ({
