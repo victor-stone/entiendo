@@ -34,15 +34,27 @@ This is what a record looks like
 }
 */
 function dumpRecord(r,idioms,examples) {
-    r.dueDate = format(r.dueDate);
-    r.createdAt = format(r.createdAt);
+    r.dueDateF = format(r.dueDate);
+    r.createdAtF = format(r.createdAt);
     r.idiom = idioms.find(({idiomId}) => idiomId == r.idiomId);
     for( let i = 0; i < r.history.length; i++ ) {
         r.history[i].example = examples.find(({exampleId})=> exampleId == r.history[i].exampleId);        
-        r.history[i].date = format( r.history[i].date );
-        r.history[i].evaluation.translationFeedback = r.history[i].evaluation.translationFeedback.slice(0, 20);
+        r.history[i].dateF = format( r.history[i].date );
+        if(r.history[i].evaluation.missedWords) {
+          r.history[i].evaluation.missedWords = r.history[i].evaluation.missedWords
+                .split(/\s?,\s?/) // split on comma, optional spaces
+                // .filter(Boolean)
+                .map(w => w.toLowerCase())
+        } else {
+          r.history[i].evaluation.missedWords = [];
+        }
         if(r.history[i].example.audio) {
-            r.history[i].example.audio = { publicUrl: r.history[i].example.audio.publicUrl.replace('entiendo-audio-files-426593798727.s3.amazonaws.com/tts', '...') }
+            r.history[i].example.audio = { 
+              ...r.history[i].example.audio,
+              expiresF: format(r.history[i].example.audio.expires),
+              url: r.history[i].example.audio.publicUrl.slice(0,40) + '...',
+              publicUrl: r.history[i].example.audio.publicUrl.replace('entiendo-audio-files-426593798727.s3.amazonaws.com/tts', '...') 
+            }
         }
         
     }
@@ -50,13 +62,13 @@ function dumpRecord(r,idioms,examples) {
 }
 async function dumpProgress() {
   const progressModel = new ProgressModel();
-  const allProgress = await progressModel.findAll();
-  const idiomModel = new IdiomModel();
-  const allIdioms = await idiomModel.findAll();
-  const exampleModel = new ExampleModel();
-  const allExamples = await exampleModel.findAll();
+  const allProgress   = await progressModel.findAll();
+  const idiomModel    = new IdiomModel();
+  const allIdioms     = await idiomModel.findAll();
+  const exampleModel  = new ExampleModel();
+  const allExamples   = await exampleModel.findAll();
 
-  console.log( '{ "progress" : [')
+  console.log( 'export default { "progress" : [')
   for( var i = 0; i < allProgress.length; i++ ) {
     if( i !== 0 ) {
         console.log(',');

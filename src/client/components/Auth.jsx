@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useUserStore } from '../stores';
 import debug from 'debug';
+import { jwtDecode } from "jwt-decode";
+import { format } from 'timeago.js';
 
 const debugLogin = debug('app:login');
 
@@ -74,7 +76,17 @@ export function Auth() {
     if( isAuthenticated ) {
       (async () => {
         try {
-          await getAccessTokenSilently();
+          const token = await getAccessTokenSilently();
+          const decoded = jwtDecode(token);
+          const now = Date.now();
+          const fromnow = format(decoded.exp * 1000);
+          const _now = format(now);
+          debugLogin('Decoded token expires %s vs. %s', fromnow, _now);
+          if (decoded.exp && (decoded.exp * 1000) < now) {
+            debugLogin('Token is expired! Logging out.');
+            logout({ returnTo: window.location.origin });
+            return;
+          }
           debugLogin('Login token still fresh');
           setAuth(authSpec);
         } catch(err) {

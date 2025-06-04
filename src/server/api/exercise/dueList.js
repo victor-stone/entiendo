@@ -3,17 +3,13 @@ import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 
 export async function dueList(routeContext) {
-  const {
-    user: { userId },
-  } = routeContext;
-  const model = new ProgressModel();
-  let progress = await model.findDueItems(userId, {}, 0);
+  const userId   = routeContext.user.userId;
+  const model    = new ProgressModel();
+  let   progress = await model.findDueItems(userId, {}, 0);
 
   progress = progress.map(item => {
-    item.range = usageToRange(item.usage);
-
+    item.range      = usageToRange(item.usage);
     item.confidence = _confidence(item);
-    console.log("confidence: " + item.confidence);
     return item;
   });  
   return progress;

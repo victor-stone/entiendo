@@ -5,3 +5,4 @@ export { default as Preferences } from './Preferences';
 export { default as Exercise } from './Exercise';
 export { default as Calendar } from './Calendar';
 export { default as BugReport } from './BugReport';
+export { default as Sandbox } from './Sandbox';

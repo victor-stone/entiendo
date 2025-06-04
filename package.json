@@ -40,6 +40,8 @@
     "express": "^5.1.0",
     "express-fileupload": "^1.5.1",
     "express-oauth2-jwt-bearer": "^1.6.1",
+    "jspath": "^0.4.0",
+    "jwt-decode": "^4.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.43.1",
     "openai": "^4.96.0",
     "react": "^19.1.0",

@@ -1,28 +1,43 @@
 import React, { useState } from 'react';
-import adminService from '../../services/adminService';
-import { useUserStore } from '../../stores';
+import { useUserStore, useUploadAudioStore, useIdiomExampleStore } from '../../stores';
 import IdiomSelector from './IdiomSelector';
 import ExampleSelector from './ExampleSelector';
+import { CardField } from '../layout';
 
-const AudioUploader = ({ exampleId, onSuccess, onError, onSkip }) => {
+const AudioUploader = ({ exampleId, onSuccess, onError }) => {
   const [audioFile, setAudioFile]                 = useState(null);
-  const [loading, setLoading]                     = useState(false);
-  const [error, setError]                         = useState('');
   const [success, setSuccess]                     = useState('');
   const [selectedIdiomId, setSelectedIdiomId]     = useState('');
   const [selectedExampleId, setSelectedExampleId] = useState('');
-  
+
+  const { loading, error, fetch, data, reset } = useUploadAudioStore();
+  const { reset: exampleReset } = useIdiomExampleStore();
+
   // Get authentication token function from user store
   const getToken = useUserStore(state => state.getToken);
   
+  if( data && !error ) {
+      const successMsg = 'Audio uploaded successfully!';
+      setSuccess(successMsg);
+      if (onSuccess) 
+        onSuccess(response);
+  }
+
+  if( error ) {
+      setError(error);
+      if (onError) 
+        onError(error);
+  }
+
   const handleFileChange = (e) => {
     setAudioFile(e.target.files[0]);
-    setError('');
+    reset();
   };
 
   const handleIdiomChange = (e) => {
     setSelectedIdiomId(e.target.value);
     setSelectedExampleId('');
+    exampleReset();
   };
 
   const handleExampleChange = (e) => {
@@ -30,75 +45,35 @@ const AudioUploader = ({ exampleId, onSuccess, onError, onSkip }) => {
   };
   
   const handleUpload = async () => {
-    // Use provided exampleId or the selected one from the ExampleSelector
     const targetExampleId = exampleId || selectedExampleId;
-    
-    if (!targetExampleId) {
-      const errorMsg = 'Example ID is required to upload audio';
-      setError(errorMsg);
-      if (onError) onError(errorMsg);
-      return;
-    }
-    
-    if (!audioFile) {
-      const errorMsg = 'Audio file is required';
-      setError(errorMsg);
-      if (onError) onError(errorMsg);
-      return;
-    }
-    
-    setLoading(true);
-    setError('');
-    setSuccess('');
-    
-    try {
-      // Get auth token and pass it to the service call
-      const token = await getToken();
-      const response = await adminService.uploadExampleAudio(targetExampleId, audioFile, token);
-      
-      if (response && response.success) {
-        const successMsg = 'Audio uploaded successfully!';
-        setSuccess(successMsg);
-        if (onSuccess) onSuccess(response);
-      } else {
-        throw new Error('Failed to upload audio');
-      }
-    } catch (err) {
-      const errorMsg = err.message || 'An error occurred during audio upload';
-      setError(errorMsg);
-      if (onError) onError(errorMsg);
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    const token = await getToken();
+    fetch(targetExampleId, audioFile, token);    
   };
-  
-  const handleSkip = () => {
-    if (onSkip) onSkip();
-  };
-  
+    
   return (
     <div className="space-y-4">
       {!exampleId && (
         <>
+        <CardField>
           <IdiomSelector 
             value={selectedIdiomId} 
             onChange={handleIdiomChange} 
             required={true} 
           />
-          
+        </CardField>
+
+        <CardField>
           <ExampleSelector 
             idiomId={selectedIdiomId} 
             value={selectedExampleId} 
             onChange={handleExampleChange} 
             required={true} 
           />
+        </CardField>                    
         </>
       )}
       
-      <div>
-        <label className="block text-sm font-medium">
-          Audio File (MP3) *
+      <CardField title="Audio File (MP3)">
           <input
             type="file"
             accept="audio/mpeg,audio/mp3"
@@ -106,29 +81,18 @@ const AudioUploader = ({ exampleId, onSuccess, onError, onSkip }) => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
-        </label>
-      </div>
+      </CardField>
       
-      <div className="flex space-x-4">
+      <CardField>
         <button
           type="button"
           onClick={handleUpload}
-          disabled={loading || !audioFile || (!exampleId && !selectedExampleId)}
+          disabled={loading || !audioFile || !selectedExampleId}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
         >
           {loading ? 'Uploading...' : 'Upload Audio'}
         </button>
-        {onSkip && (
-          <button
-            type="button"
-            onClick={handleSkip}
-            disabled={loading}
-            className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded"
-          >
-            Skip Audio Upload
-          </button>
-        )}
-      </div>
+      </CardField>
       
       {error && (
         <div className="text-red-500 mt-2">{error}</div>

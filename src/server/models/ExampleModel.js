@@ -7,10 +7,10 @@ import BaseModel from './BaseModel.js';
  * {
     "exampleId"        : "97353048-3d1d-49f0-92ce-ac99ce8967b0",
     "createdAt"        : 1747079328336,
-    "conjugatedSnippet": "armó un quilombo",
-    "idiomId"          : "ebfef004-a6d8-45ad-bc63-f6f6a48ca3e7",
+    "conjugatedSnippet": "armó un quilombo",  // MIGHT BE NULL
+    "idiomId"          : "ebfef004-a6d8-45ad-bc63-f6f6a48ca3e7", // MIGHT BE NULL
     "source"           : "openai",
-    "text"             : "Mi primo armó un quilombo bárbaro en la fiesta anoche."
+    "text"             : "Mi primo armó un quilombo bárbaro en la fiesta anoche.",
     "audio" : {
       publicUrl: 'http://....',
       url: 'http://....',

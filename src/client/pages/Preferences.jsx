@@ -34,8 +34,7 @@ const Preferences = () => {
                   <FontPicker />
                 </CardField>
                 {isAdmin && 
-                    <CardField hint={hints.admin}>
-                        <label className="block mb-1 font-medium">Next Example</label>
+                    <CardField hint={hints.admin} title="Next Example">
                         <input
                             type="text"
                             className="border rounded px-2 py-1 w-full"

@@ -1,43 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useIdiomExampleStore } from '../../stores';
+import { LoadingSpinner } from '../ui';
 
 const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
-  const [examples, setExamples] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  if( !idiomId ) {
+    return null;
+  }
 
+  const { data, loading, error, fetch } = useIdiomExampleStore();
+  
   useEffect(() => {
-    const fetchExamples = async () => {
-      if (!idiomId) {
-        setExamples([]);
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        // TODO: there's 0 way this should be here - only stores should call services
-        const response = null // await idiomService.getIdiomExamples(idiomId);
-        if (response && response.examples) {
-          setExamples(response.examples);
-        } else {
-          setExamples([]);
-        }
-      } catch (err) {
-        setError('Failed to load examples for the selected idiom');
-        console.error(err);
-        setExamples([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if( !loading && !data ) {
+      fetch(idiomId)
+    }
+  }, [loading, data, fetch]);
 
-    fetchExamples();
-  }, [idiomId]);
+  if( error ) {
+    return <p className="text-red-500 text-xs mt-1">{error}</p>;
+  }
+
+  if( loading ) {
+    return <LoadingSpinner />;
+  }
+
+  if( !data ) {
+    return <span>...</span>
+  }
+
+  const { examples } = data;
+
+  if( examples.length === 0 ) {
+    return  <p className="text-amber-500 text-xs mt-1">No examples found for this idiom</p>;
+  }
 
   return (
-    <div>
-      <label className="block text-sm font-medium">
-        Select Example {required && '*'}
-        <select
+      <select
           value={value}
           onChange={onChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -51,12 +48,6 @@ const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
             </option>
           ))}
         </select>
-      </label>
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-      {examples.length === 0 && idiomId && !loading && !error && (
-        <p className="text-amber-500 text-xs mt-1">No examples found for this idiom</p>
-      )}
-    </div>
   );
 };
 

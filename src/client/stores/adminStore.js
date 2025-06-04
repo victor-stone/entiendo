@@ -2,13 +2,21 @@
 import { create } from 'zustand';
 import adminService from '../services/adminService';
 import { storeFetch } from '../lib/storeUtils';
-const { createExample } = adminService;
+const { createExample, uploadExampleAudio } = adminService;
 
 export const useCreateExampleStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
   fetch: storeFetch(createExample, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const useUploadAudioStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(uploadExampleAudio, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 

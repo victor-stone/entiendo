@@ -15,6 +15,7 @@ import * as exerciseAPI from  '../api/exercise/index.js';
 import * as adminAPI    from  '../api/adminAPI.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
 
+
 /**
  * The route table maps HTTP methods and paths to handler functions
  * Each entry specifies:
@@ -103,10 +104,6 @@ export const routeTable = {
     },
     '/api/exercises/stats': {
       handler: (routeContext) => exerciseAPI.dueStats(routeContext),
-      auth: true
-    },
-    '/api/exercises/missed': {
-      handler: (routeContext) => exerciseAPI.missedWords(routeContext),
       auth: true
     },
     '/api/settings': {

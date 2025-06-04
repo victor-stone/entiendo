@@ -117,7 +117,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           </div>
           <div>
             {evaluation.mistakeType && <ExtraInfo text={evaluation.mistakeType} label="Mistake type" block />}
-            {evaluation.missedWords && <ExtraInfo text={evaluation.missedWords} label="Missed words" block />}
+            {evaluation.missedWords?.length && <ExtraInfo text={evaluation.missedWords.join(', ')} label="Missed words" block />}
             <ExtraInfo text={exercise.idiom.tone} label="Context" block />
           </div>
           <div>

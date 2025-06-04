@@ -31,11 +31,6 @@ const exerciseService = {
     return response;
   },
 
-  getMissedWords: async (authToken) => {
-    const response = await get("/api/exercises/missed", authToken);
-    return response;
-  },
-
     /**
    * Get examples for a specific idiom
    * @param {String} idiomId - ID of the idiom

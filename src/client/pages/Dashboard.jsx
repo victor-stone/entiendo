@@ -1,7 +1,7 @@
 import { useUserStore, useMissedWordsStore, useDueStatsStore } from '../stores';
 import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
-import MissedWordsPanel from '../components/MissedWordsPanel';
+import SandboxPanel from '../components/SandboxPanel';
 import { PageLink, Grid, LoadingIndicator } from '../components/ui';
 import { useEffect } from 'react';
 import { Card } from '../components/layout';
@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <PageLink page="/app/calendar" text="Calendar" />
             </Card.Section>}
             {data && data.numSeen > 0 && <Card.Section title="Missed Words">
-                <MissedWordsPanel getToken={getToken} dueStats={data} />
+                <SandboxPanel getToken={getToken} dueStats={data} />
             </Card.Section>}
         </Grid>
       </Card.Body>

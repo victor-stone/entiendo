@@ -1,6 +1,14 @@
 export { default as useUserStore } from './userStore';
 export { default as useExerciseStore } from './exerciseStore';
 export { default as useSettingsStore } from './settingsStore';
-export { useDueStatsStore, useDueListStore, useExampleStore, useMissedWordsStore } from './exerciseStore';
-export { useIdiomStore, useIdiomListStore, useIdiomTonesStore, useIdiomTableStore } from './idiomStore';
-export { useAdminStore, useCreateExampleStore } from './adminStore';
+
+export { useIdiomExampleStore, useDueStatsStore, useDueListStore, 
+    useExampleStore, useMissedWordsStore } from './exerciseStore';
+
+export { useIdiomStore, useIdiomListStore, useIdiomTonesStore, 
+    useIdiomTableStore } from './idiomStore';
+
+export { useAdminStore, useCreateExampleStore, 
+    useUploadAudioStore } from './adminStore';
+
+export { useProgressQuery } from './queryStore';
