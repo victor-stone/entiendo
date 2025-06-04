@@ -1,4 +1,4 @@
-import { useUserStore, useMissedWordsStore, useDueStatsStore } from '../stores';
+import { useUserStore, useDueStatsStore } from '../stores';
 import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
 import SandboxPanel from '../components/SandboxPanel';

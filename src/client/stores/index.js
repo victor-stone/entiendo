@@ -3,7 +3,7 @@ export { default as useExerciseStore } from './exerciseStore';
 export { default as useSettingsStore } from './settingsStore';
 
 export { useIdiomExampleStore, useDueStatsStore, useDueListStore, 
-    useExampleStore, useMissedWordsStore } from './exerciseStore';
+    useExampleStore } from './exerciseStore';
 
 export { useIdiomStore, useIdiomListStore, useIdiomTonesStore, 
     useIdiomTableStore } from './idiomStore';
