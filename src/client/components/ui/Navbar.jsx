@@ -9,7 +9,7 @@ import AdminMenu from './AdminMenu';
 const Navbar = () => {
   const user       = useUserStore(state => state.user);
   const isAdmin    = useUserStore(state => state.isAdmin);
-  const needBetaTest = useSettingsStore(state => state.needBetaTest);
+  const inBeta = useSettingsStore(state => state.inBeta);
   const isLoggedIn = !!user;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <nav style={{zIndex: 4}} className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="container-wide py-3">
         <div className="flex items-center justify-between">
           {/* Logo and app name */}
@@ -109,7 +109,7 @@ const Navbar = () => {
                   <LogoutButton />
                 </div>
               ) : 
-                !needBetaTest && <LoginButton />
+                !inBeta && <LoginButton />
               }
             </div>
           </div>

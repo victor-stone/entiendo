@@ -14,6 +14,7 @@ import * as userAPI     from  '../api/userAPI.js';
 import * as exerciseAPI from  '../api/exercise/index.js';
 import * as adminAPI    from  '../api/adminAPI.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
+import * as sandboxAPI  from  '../api/sandboxAPI.js';
 
 
 /**
@@ -68,6 +69,14 @@ export const routeTable = {
 
     '/api/admin/reportbug': {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
+      auth: true
+    },    
+    '/api/sandbox/next': {
+      handler: (routeContext) => sandboxAPI.getNext(routeContext),
+      auth: true
+    },
+    '/api/sandbox/evaluate': {
+      handler: (routeContext) => sandboxAPI.evaluate(routeContext),
       auth: true
     },
   },

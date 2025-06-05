@@ -44,35 +44,24 @@ export default class ProgressModel extends BaseModel {
   }
 
   async create(item) {
-    var usage = Number(item.usage);
-    return super.create({ ...item, usage, createdAt: Date.now() });
+    const spec = { ...item, createdAt: Date.now() };
+    if (spec.hasOwnProperty("usage")) {
+      spec.usage = Number(spec.usage);
+    }
+    const record = super.create(spec);
+    notifyUpdates();
+    return record;
   }
 
   async update(id, updates) {
     if (updates.hasOwnProperty("usage")) {
       updates.usage = Number(updates.usage);
     }
-    return super.update(id, updates);
+    const record = super.update(id, updates);
+    notifyUpdates();
+    return record;
   }
 
-  /**
-   * Find progress data for a specific user-idiom pair
-   * @param {String} userId - User ID
-   * @param {String} idiomId - Idiom ID
-   * @returns {Promise<Object>} - Progress data or null if not found
-   */
-  async findByUserAndIdiom(userId, idiomId) {
-    const filterExpression = {
-      expression: "userId = :userId AND idiomId = :idiomId",
-      values: {
-        ":userId": { S: userId },
-        ":idiomId": { S: idiomId },
-      },
-    };
-
-    const results = await this.findAll(filterExpression);
-    return results.length > 0 ? results[0] : null;
-  }
 
   /**
    * Find all progress data for a user
@@ -110,3 +99,10 @@ export default class ProgressModel extends BaseModel {
     return results.sort((a, b) => a.dueDate - b.dueDate);
   }
 }
+
+// TODO make this events
+const onUpdate = [];
+function notifyUpdates() {
+  onUpdate.forEach(u => u());
+}
+ProgressModel.onUpdate = (callback) => onUpdate.push(callback);

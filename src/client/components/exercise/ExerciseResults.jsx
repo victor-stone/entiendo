@@ -4,6 +4,9 @@ import { HighlightedText, Grid } from '../ui';
 import { Card } from '../layout';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
+import EvalTopic from '../EvalTopic';
+import EvalFeedback from '../EvalFeedback';
+import NextExercise from '../NextExercise';
 
 const ResultField = ({ title, text }) => (
   <div>
@@ -12,44 +15,11 @@ const ResultField = ({ title, text }) => (
   </div>
 );
 
-const EvalTopic = ({ title, text }) => (
-  <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-    <h4 className="text-sm text-gray-500 text-[70%] mb-1">{title}:</h4>
-    <p className="text-gray-700 dark:text-gray-300">{text}</p>
-  </div>
-);
-
-const EvalFeedback = ({
-  title,
-  userText,
-  classes,
-  accuracy,
-  feedback
-}) => (
-  <div className="p-3 bg-gray-100 dark:bg-gray-900 rounded-md">
-    <h4 className="text-gray-500 text-[70%] mb-1">Your {title}:</h4>
-    <p className="text-gray-700 dark:text-gray-300 mb-2">{userText}</p>
-
-    <div className="flex justify-between items-center">
-      <span className="text-sm text-gray-500 text-[70%]">Accuracy:</span>
-      <span className={`text-sm font-bold ${classes}`}>
-        {accuracy}
-      </span>
-    </div>
-    {feedback && (<p className="text-sm mt-2">{feedback}</p>)}
-  </div>
-);
-
-
 const ExtraInfo = ({ label, text }) => (
   <div className="mb-1">
     <span className="text-sm font-800">{label}: </span>
     <span className="text-sm">{text}</span>
   </div>
-);
-
-const EvalFeatured = ({ children }) => (
-  <p className="text-gray-700 dark:text-gray-300 mb-4">{children}</p>
 );
 
 /**
@@ -128,10 +98,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
       </Card.Section>
 
-      <div className="flex justify-end mt-4">
-        <Link to="/app/dashboard" className="btn">Dashboard</Link>
-        <button onClick={onNext} className="btn btn-primary">Next Exercise</button>
-      </div>
+      <NextExercise onNext={onNext} />
     </div>
   );
 };

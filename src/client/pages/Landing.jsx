@@ -9,14 +9,9 @@ const Landing = () => {
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
   const {
     verifiedBeta,
-    needBetaTest,
+    inBeta,
     verifyBetaPassword,
-    checkForBetaTest
   } = useSettingsStore();
-
-  useEffect(() => {
-    checkForBetaTest();
-  }, [checkForBetaTest]);
 
   if (isAuthenticated) {
     return <Navigate to="/app/dashboard" replace />;
@@ -33,7 +28,7 @@ const Landing = () => {
             fontVariant: 'small-caps',
             fontSize: '80%'
           }}>{APP_CATCHPHRASE}</p>
-        {!verifiedBeta && needBetaTest ? (
+        {!verifiedBeta && inBeta ? (
           <BetaLogin verifyBetaPassword={verifyBetaPassword} />
         ) : (
           <div><LoginButton /></div>

@@ -37,8 +37,8 @@ export function setupShutdownHandlers(server, rootDir) {
 
   // Track heartbeat termination
   process.on('exit', (code) => {
-    heartbeatInterval && clearInterval(heartbeatInterval);
-    heartbeatFile && fs.appendFileSync(heartbeatFile, `Server exit detected at ${new Date().toISOString()}\n`);
+    // heartbeatInterval && clearInterval(heartbeatInterval);
+    // heartbeatFile && fs.appendFileSync(heartbeatFile, `Server exit detected at ${new Date().toISOString()}\n`);
     logShutdown(`ENTIENDO Server is shutting down with exit code: ${code}`);
   });
 

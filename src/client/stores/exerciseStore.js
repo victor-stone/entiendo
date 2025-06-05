@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
 import { storeFetch } from '../lib/storeUtils';
-const { getDueList, getDueStats, 
-  getMissedWords, getExample, getIdiomExamples } = exerciseService;
+const { getDueList, getDueStats, getExample, 
+  getIdiomExamples } = exerciseService;
 
 export const useIdiomExampleStore = create((set, get) => ({
   loading: false,
@@ -86,8 +86,7 @@ const useExerciseStore = create((set, get) => ({
     set({ 
       exercise    : null,
       loading     : true,
-      error       : null,
-      calendarFull: false  // <-- Clear calendarFull at the start
+      error       : null
     });
     try {
       const token    = await getToken();
@@ -106,8 +105,7 @@ const useExerciseStore = create((set, get) => ({
       if (err.code === 'SERVICE_UNAVAILABLE') {
         set({
           error: 'No due idioms available. Please try again later.',
-          loading: false,
-          calendarFull: true // <-- Set calendarFull here
+          loading: false
         });
       } else {
         set({ 

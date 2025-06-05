@@ -2,7 +2,7 @@
 import { Octokit } from "@octokit/rest";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-console.log('Github token: ', process.env.GITHUB_TOKEN)
+//console.log('Github token: ', process.env.GITHUB_TOKEN)
 /**
  * Creates a GitHub issue for a bug report.
  * @param {string} title - The title of the bug.

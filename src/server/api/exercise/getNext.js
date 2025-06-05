@@ -1,9 +1,10 @@
 import debug from 'debug';
-import { ExampleModel, IdiomModel, ProgressModel } from '../../models/index.js';
+import { ExampleModel, IdiomModel, ProgressModel, ProgressModelQuery } from '../../models/index.js';
 import { NotFoundError, CalendarExhaustedError } from '../../../shared/constants/errorTypes.js';
 import { getSettings } from '../settingsAPI.js';
-import { finalizeExample, createExample } from '../exampleAPI.js';
 import { isNewAllowed } from './isNewAllowed.js';
+import { finalizeExample } from '../lib/finalizeExample.js';
+import { createExample } from '../lib/createExample.js';
 
 const debugGetNext = debug('api:exercise:getNext');
 
@@ -155,13 +156,12 @@ async function _getNewIdiom(routeContext) {
     const { query: { tone, usage }, user: { userId } } = routeContext;
 
     const idiomModel = new IdiomModel();
-    const progressModel = new ProgressModel();
+    const query = await ProgressModelQuery.create(userId);
 
     const idiomIds = await idiomModel.findIdsByCriteria({tone,usage})
-    const userHistory = await progressModel.findByUser(userId);
-
+    
     // Find first idiom not in user history
-    const seenIdiomIds = new Set(userHistory.map(progress => progress.idiomId));
+    const seenIdiomIds = query.idiomIds();
     const idiomId = idiomIds.find(id => !seenIdiomIds.has(id));
 
     if (idiomId) {

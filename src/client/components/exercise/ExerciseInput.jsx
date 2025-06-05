@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
  */
 const ExerciseInput = ({ exercise, onSubmit }) => {
   const [transcription, setTranscription] = useState('');
-  const [translation, setTranslation] = useState('');
+  const [translation,   setTranslation]   = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -194,7 +194,7 @@ export async function createIdiom(routeContext) {
 }
 
 /**
- * Create a single idiom example
+ * Save a new example to the database
  * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Created idiom example
  */
@@ -272,10 +272,10 @@ export async function uploadExampleAudio(routeContext) {
 }
 
 export async function reportAppBug(routeContext) {
-  const { payload: { title, body, labels }, user: { userId } } = routeContext;
+  const { payload: { title, body, labels }, user: { userId, name } } = routeContext;
   const bodyPlus = body + `
   
-  userId: ${userId}
+  user: ${name?.slice(0,5)}... / ${userId}
   `;
   const result = reportBug({title,body: bodyPlus,labels});
   return result;

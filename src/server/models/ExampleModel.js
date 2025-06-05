@@ -1,6 +1,12 @@
 // src/server/models/ExampleModel.js
 import BaseModel from './BaseModel.js';
 
+// TODO make this events
+const onUpdate = [];
+function notifyUpdates() {
+  onUpdate.forEach(u => u());
+}
+
 /**
  * Model for storing and retrieving example sentences for idioms
  * 
@@ -48,8 +54,8 @@ export default class ExampleModel extends BaseModel {
    */
   async createExample(idiomId, text, conjugatedSnippet, source = 'openai', audio = null) {
     const createdAt = Date.now();
-
-    return this.create({
+    
+    const record = this.create({
       idiomId,
       text,
       conjugatedSnippet,
@@ -57,10 +63,29 @@ export default class ExampleModel extends BaseModel {
       createdAt,
       audio
     });
+    notifyUpdates();
+    return record;
+  }
+
+  async createSandboxExample( text, basedOn, source = 'openai', audio = null) {
+    const createdAt = Date.now();
+
+    const record = this.create({
+      idiomId: null,
+      basedOn,
+      text,
+      source,
+      createdAt,
+      audio
+    });
+    notifyUpdates();
+    return record;
+    
   }
 
   async addAudio(exampleId, audio) {
     return this.update(exampleId, { audio });
   }
-
 }
+
+ExampleModel.onUpdate = (callback) => onUpdate.push(callback);

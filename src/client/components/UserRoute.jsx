@@ -7,23 +7,20 @@ const debugLogin = debug('app:login');
 
 // Protected route component to ensure only authenticated users and beta-verified users can access
 const UserRoute = ({ children }) => {
-  const isAuthenticated = useUserStore(state => state.isAuthenticated);
-  const isLoading = useUserStore(state => state.loading);
-  const needBetaTest = useSettingsStore(state => state.needBetaTest);
-  const verifiedBeta = useSettingsStore(state => state.verifiedBeta);
+  const { isAuthenticated, isLoading} = useUserStore();
+  const { inBeta, verifiedBeta }      = useSettingsStore();
 
-  // Wait for Auth0/Zustand to finish loading before making a decision
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  if (!isAuthenticated) {
+  // If beta test is required and not verified, redirect to landing
+  if (inBeta && !verifiedBeta) {
+    debugLogin('inBeta: %s  verifiedBeta: %s', inBeta, verifiedBeta);
     return <Navigate to="/" replace />;
   }
 
-  // If beta test is required and not verified, redirect to landing
-  if (needBetaTest && !verifiedBeta) {
-    debugLogin('needBetaTest: %s  verifiedBeta: %s', needBetaTest, verifiedBeta);
+  if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 

@@ -5,6 +5,7 @@ import debug from 'debug';
 
 const debugLogin = debug('app:login');
 
+
 const useUserStore = create((set, get) => ({
   // State
   user           : null,
@@ -30,6 +31,7 @@ const useUserStore = create((set, get) => ({
   },
 
   updatePreferences: async (prefs) => {
+    debugLogin('update preferences=%o', prefs);
     const { getToken } = get();
     set({ loading: true, error: null });
     try {
@@ -48,6 +50,8 @@ const useUserStore = create((set, get) => ({
   },
 
   setPreference: async (key, value) => {
+      debugLogin('set preference: %s => %o', key, value );
+
     set((state) => ({
       preferences: {
         ...state.preferences,
@@ -72,6 +76,9 @@ const useUserStore = create((set, get) => ({
 
   // Sync user profile with backend
   syncProfile: async (user) => {
+    
+    debugLogin('sync profile=%o', user);
+
     const { isAuthenticated, getToken } = get();
     if (!isAuthenticated || !getToken) return null;
     
@@ -79,16 +86,16 @@ const useUserStore = create((set, get) => ({
     try {
       const token  = await getToken();
       const result = await userService.syncUser(user, token);
-      
       set({ 
         profile    : result,
         isAdmin    : result.role === 'admin',
         preferences: { ...result.preferences },
         loading    : false
       });
-      
+      debugLogin('sync sync result=%o', result);
       return result;
     } catch (err) {
+      debugLogin('Sync error %o', err);
       set({ 
         error: err.message || 'Failed to sync profile',
         loading: false

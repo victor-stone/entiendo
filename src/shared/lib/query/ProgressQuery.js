@@ -56,4 +56,16 @@ export default class ProgressQuery extends query {
     upcoming() {
         return this._date('>')
     }
+    
+    idiomaticCreationDates() {
+        return this.q('..{.idiomId}.createdAt');
+    }
+
+    forIdiom(idiomId) {
+        return this.queryOne(`..{.idiomId == "${idiomId}"}`);
+    }
+
+    sandbox() {
+        return this.queryOne(`..{.isSandbox}`);
+    }
 }

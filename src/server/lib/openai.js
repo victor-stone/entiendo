@@ -23,7 +23,7 @@ export async function generateText(systemPrompt, userPrompt, options = {}) {
     const defaultOptions = {
       model      : process.env.OPENAI_MODEL || 'gpt-4o',
       temperature: 0.7,
-      max_tokens : 150,
+      max_tokens : 250,
       response_format: { type: "json_object" }
     };
     

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import settingsService from '../services/settingsService';
 import debug from 'debug';
 
-const debugSettings = debug('client:settings');
+const debugSettings = debug('app:settings');
 
 function getCookie(name) {
   if (typeof document === 'undefined') return null;
@@ -24,7 +24,7 @@ const useSettingsStore = create((set, get) => ({
   settings    : null,
   loading     : false,
   error       : null,
-  needBetaTest: false,
+  inBeta: false,
   verifiedBeta: false,
 
   // Actions
@@ -32,7 +32,7 @@ const useSettingsStore = create((set, get) => ({
     settings    : null,
     loading     : false,
     error       : null,
-    needBetaTest: false,
+    inBeta      : false,
     verifiedBeta: false
   }),
 
@@ -42,31 +42,24 @@ const useSettingsStore = create((set, get) => ({
     try {
       const settings = await settingsService.fetchSettings();
       debugSettings('got settings %o', settings)
-      set({ settings, loading: false });
+      let verifiedBeta = false;
+      if( settings.inBeta ) {
+        const betaKey = getCookie('betaKey');
+        verifiedBeta = betaKey && betaKey === settings.betaKey;
+      }
+      set({ 
+        settings, 
+        verifiedBeta,
+        inBeta: settings.inBeta,
+        loading: false 
+      });
       return settings;
     } catch (err) {
-      set({ error: err.message || 'Failed to fetch settings', loading: false });
+      set({ 
+        error: err.message || 'Failed to fetch settings', 
+        loading: false });
       return null;
     }
-  },
-
-  // Check if beta test is needed
-  checkForBetaTest: async () => {
-    let { settings, loading } = get();
-    if (!settings && !loading) {
-      settings = await get().getSettings();
-    }
-
-    set({ needBetaTest: settings.inBeta });
-
-    let verifiedBeta = false;
-    if( settings.inBeta ) {
-      const betaKey = getCookie('betaKey');
-      verifiedBeta = betaKey && betaKey === settings.betaKey;
-      set({ verifiedBeta });
-    }
-
-    return settings.inBeta && !verifiedBeta;
   },
 
   // Verify beta password
@@ -80,7 +73,7 @@ const useSettingsStore = create((set, get) => ({
     const result = hash === settings.betaKey;
     if (result) {
       document.cookie = `betaKey=${hash}; path=/; SameSite=Lax`;
-      set({ verifiedBeta: true, needBetaTest: false });
+      set({ verifiedBeta: true, inBeta: false });
     } else {
       set({ verifiedBeta: false });
     }

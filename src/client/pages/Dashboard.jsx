@@ -1,7 +1,7 @@
 import { useUserStore, useDueStatsStore } from '../stores';
 import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
-import SandboxPanel from '../components/SandboxPanel';
+import SandboxPanel from '../components/sandbox/SandboxPanel';
 import { PageLink, Grid, LoadingIndicator } from '../components/ui';
 import { useEffect } from 'react';
 import { Card } from '../components/layout';

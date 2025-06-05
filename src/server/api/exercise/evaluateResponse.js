@@ -1,4 +1,4 @@
-import { ExampleModel, IdiomModel, PromptModel, ProgressModel } from '../../models/index.js';
+import { ExampleModel, IdiomModel, PromptModel, ProgressModel, ProgressModelQuery } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 import processSirpState from '../../lib/sirp/process.js';
 
@@ -16,9 +16,9 @@ export async function evaluateResponse(routeContext) {
 }
 
 async function _markProgress(exampleId, idiomId, evaluation, userId) {
-    const progressModel = new ProgressModel();
-    let progress = await progressModel.findByUserAndIdiom(userId, idiomId);
-    let exists = !!progress;
+    const query    = await ProgressModelQuery.create(userId);
+    let   progress = query.forIdiom(idiomId);
+    let   exists   = !!progress;
     if (!progress) {
         const idiomModel = new IdiomModel();
         const idiom = await idiomModel.getById(idiomId);
@@ -43,6 +43,8 @@ async function _markProgress(exampleId, idiomId, evaluation, userId) {
         exampleId,
         evaluation
     });
+
+    const progressModel = new ProgressModel();
 
     return exists
         ? progressModel.update(progress.progressId, progress)

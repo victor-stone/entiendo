@@ -97,9 +97,7 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
   return (
     <div>
       {phase === 'prompt' && (
-        <ExercisePrompt 
-          exercise={exercise} 
-          onContinue={handlePromptContinue} 
+        <ExercisePrompt exercise={exercise} onContinue={handlePromptContinue} 
         />
       )}
       

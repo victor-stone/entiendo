@@ -89,6 +89,7 @@ export function Auth() {
           }
           debugLogin('Login token still fresh');
           setAuth(authSpec);
+          syncProfile(user);
         } catch(err) {
             debugLogin("token won't refresh, logging out");
             logout({ returnTo: window.location.origin });
@@ -99,12 +100,6 @@ export function Auth() {
     }
   }, [isLoading, isAuthenticated, user]);
   
-  // Call syncProfile when user is authenticated
-  useEffect(() => {
-    if (authReady && isAuthenticated && !isLoading) {
-      syncProfile(user);
-    }
-  }, [isAuthenticated, isLoading, authReady, syncProfile]);
   
   return null;
 }

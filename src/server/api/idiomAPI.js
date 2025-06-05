@@ -1,7 +1,7 @@
 // src/server/api/idiomAPI.js
 import { IdiomModel, ExampleModel } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
-import { finalizeExample } from './exampleAPI.js';
+import { finalizeExample } from './lib/finalizeExample.js';
 
 /**
  * Get all unique tones of idioms

@@ -1,6 +1,6 @@
-import { useProgressQuery } from '../stores';
+import { useProgressQuery } from '../../stores';
 import { useEffect } from 'react';
-import { PageLink, LoadingIndicator } from './ui';
+import { PageLink, LoadingIndicator } from '../ui';
 
 const SandboxPanel = ({getToken, dueStats}) => {
   if( !dueStats || !dueStats.numSeen ) {

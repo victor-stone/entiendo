@@ -1,7 +1,7 @@
-import ExampleQuery from '../../shared/lib/query/query.js'
+import {ExampleQuery} from '../../shared/lib/query/index.js'
 import ExampleModel from './ExampleModel.js';
 
-const query = null;
+let query = null;
 
 const ExampleModelQuery = {
     create: async () => {
@@ -15,5 +15,7 @@ const ExampleModelQuery = {
     reset: () => query = null
 
 }
+
+ExampleModel.onUpdate(ExampleModelQuery.reset);
 
 export default ExampleModelQuery;

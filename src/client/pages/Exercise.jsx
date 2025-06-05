@@ -5,9 +5,9 @@ import { useEffect } from 'react';
 
 
 const Exercise = () => {
-    const preferences = useUserStore    (state => state.preferences);
+    const preferences   = useUserStore    (state => state.preferences);
     const resetExercise = useExerciseStore(state => state.resetExercise);
-    const { reset } = useDueStatsStore();
+    const { reset }     = useDueStatsStore();
 
     useEffect(() => {
         resetExercise();
