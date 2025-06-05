@@ -18,10 +18,7 @@ const SandboxResults = ({userInput, evaluation, exercise, onNext}) => {
     return (
         <>
         <Card.Panel title="Original Sentence">
-            {exercise?.audio && <AudioPlayer url={exercise.audio.url} />}
-            {/* WHILE DEBUGGING */
-                !exercise && <p> AUDIO PLAYER GOES HERE</p>
-            }
+            {exercise.audio && <AudioPlayer url={exercise.audio.url} />}
          </Card.Panel>
       <Card.Section>
         <Grid columns={2}>
@@ -37,7 +34,7 @@ const SandboxResults = ({userInput, evaluation, exercise, onNext}) => {
           </div>
 
           <div>
-              <EvalTopic title="Correct Transcription" text={exercise?.text || 'DEBUGGING NOW'} />
+              <EvalTopic title="Correct Transcription" text={exercise.text} />
           </div>
           <div>           
               <EvalTopic title="Correct English Translation" text={evaluation.englishTranslation} />
@@ -46,7 +43,7 @@ const SandboxResults = ({userInput, evaluation, exercise, onNext}) => {
             <EvalTopic text={evaluation.targetWords.join(', ')} title="Target words" block />
           </div>
           <div>
-            <EvalTopic text={evaluation.missedWords.join(', ')} title="Misheard (again ;))" block />
+            <EvalTopic text={evaluation.missedWords.join(', ')} title="Misheard" block />
           </div>
 
         </Grid>

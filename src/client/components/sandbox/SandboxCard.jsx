@@ -18,7 +18,7 @@ const SandboxCard = ({query, handleNextExercise}) => {
     const { evaluate, data: evaluation } = useEvaluateSandboxStore();
 
     useEffect(() => {
-        if( phase == 'input' && /* <<-- WHILE DEBUGGING */ !exercise && !loading ) {
+        if( !exercise && !loading ) {
             const missedWords = query.missedWords();
             fetch(missedWords, getToken);
         }
@@ -28,8 +28,7 @@ const SandboxCard = ({query, handleNextExercise}) => {
         return <p className="text-red-500">{error}</p>;
     }
     
-    if( loading || 
-            (phase == PHASES.input && !exercise) ) { // <-- WHILE DEBUGGING
+    if( loading ) {
         return <LoadingIndicator />
     }
 
