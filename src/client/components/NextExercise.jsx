@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import ButtonBar from "./ui/ButtonBar";
 
 const NextExercise = ({ onNext }) => (
-  <div className="flex justify-end mt-4">
+  <ButtonBar>
     <Link to="/app/dashboard" className="btn">Dashboard</Link>
     <button onClick={onNext} className="btn btn-primary">Next Exercise</button>
-  </div>
+  </ButtonBar>
 );
 
 export default NextExercise;

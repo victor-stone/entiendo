@@ -13,3 +13,4 @@ export { default as HighlightedText } from './HighlightedText';
 export { default as Grid } from './Grid';
 export { default as Glyph } from './Glyph';
 export { default as PageLink } from './PageLink';
+export { default as ButtonBar } from './ButtonBar'
