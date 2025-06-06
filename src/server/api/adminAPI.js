@@ -1,6 +1,6 @@
 import { parse } from 'csv-parse/sync';
 import { ForbiddenError, ValidationError } from '../../shared/constants/errorTypes.js';
-import { IdiomModel, ExampleModel } from '../models/index.js';
+import { IdiomModel, ExampleModel, IdiomModelQuery } from '../models/index.js';
 import { uploadAudioToS3 } from '../lib/audio.js';
 import { reportBug } from '../lib/github.js';
 
@@ -75,9 +75,10 @@ function _validateIdiom(idiom) {
  * @returns {Promise<Object>} - Object containing validated idioms, errors, and duplicates
  */
 async function _validateIdioms(records, idiomModel) {
-  const idioms = [];
-  const errors = [];
+  const idioms     = [];
+  const errors     = [];
   const duplicates = [];
+  const query      = await IdiomModelQuery.create();
 
   // Map records to idiom objects
   for (let i = 0; i < records.length; i++) {
@@ -96,7 +97,7 @@ async function _validateIdioms(records, idiomModel) {
       if (!validation.valid) {
         errors.push(`Row ${i + 2}: ${validation.errors.join(', ')}`);
       } else {
-        const existingIdiom = await idiomModel.findByText(idiomData.text);
+        const existingIdiom = query.matchText(idiomData.text);
         
         if (existingIdiom) {
           debugAdmin('validateIdioms duplicate: %s', idiomData.text);
@@ -174,21 +175,18 @@ export async function importValidateCSV(routeContext) {
  */
 export async function createIdiom(routeContext) {
   const { payload: idiomData, user: { role } } = routeContext;
-  
-  // Check admin role
+  const query = await IdiomModelQuery.create();
+
   if (!role || role !== 'admin') {
     throw new ForbiddenError('Unauthorized. Admin role required.');
   }
   
-  const idiomModel = new IdiomModel();
-  
-  // Check if idiom already exists
-  const existingIdiom = await idiomModel.findByText(idiomData.text);
+  const existingIdiom = query.matchText(idiomData.text);
   if (existingIdiom) {
     throw new ValidationError('Idiom with this text already exists');
   }
   
-  // Create the idiom
+  const idiomModel = new IdiomModel();  
   const createdIdiom = await idiomModel.create(idiomData);
   return createdIdiom;
 }

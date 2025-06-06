@@ -1,5 +1,5 @@
 // src/server/api/lib/createExample.js
-import { PromptModel } from '../../models/index.js';
+import { ExampleModel, PromptModel } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 
 async function _generateExampleSentence(idiom, existingExamples) {
@@ -19,9 +19,8 @@ async function _generateExampleSentence(idiom, existingExamples) {
 }
 
 export async function createExample(idiom, model, existingExamples) {
-    // Generate new example sentence with position info
     const exampleData = await _generateExampleSentence(idiom, existingExamples);
-
+    if( !model ) model = new ExampleModel();
     return await model.createExample(
         idiom.idiomId,
         exampleData.text,

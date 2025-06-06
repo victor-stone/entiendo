@@ -1,59 +1,39 @@
-import React, { useEffect, useState, useRef } from 'react';
-import idiomService from '../../services/idiomService';
+import { useEffect, useState, useRef } from 'react';
+import { useIdiomQuery } from '../../stores';
+import { LoadingSpinner } from '../ui';
 
-const IdiomSelector = ({ value, onChange, required = false, onIdiomsLoaded = null }) => {
-  const [idioms,         setIdioms]         = useState([]);
+const IdiomSelector = ({ value, onChange, required = false }) => {
   const [inputValue,     setInputValue]     = useState('');
   const [filteredIdioms, setFilteredIdioms] = useState([]);
   const [isOpen,         setIsOpen]         = useState(false);
-  const [loading,        setLoading]        = useState(true);
-  const [error,          setError]          = useState('');
+
+  const { query, loading, error, fetch } = useIdiomQuery();
 
   const wrapperRef = useRef(null);
 
   useEffect(() => {
-    const fetchIdioms = async () => {
-      try {
-        setLoading(true);
-        const response = await idiomService.getIdiomsList();
-        if (response && response.idioms) {
-          // Sort idioms alphabetically by text
-          const sortedIdioms = [...response.idioms].sort((a, b) => 
-            a.text.localeCompare(b.text)
-          );
-          setIdioms(sortedIdioms);
-          if (onIdiomsLoaded) {
-            onIdiomsLoaded(sortedIdioms);
-          }
-        }
-      } catch (err) {
-        setError('Failed to load idioms');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchIdioms();
-  }, [onIdiomsLoaded]);
+    if( !query && !loading ) {
+      fetch();
+    }
+  }, [query, loading, fetch]);
 
   useEffect(() => {
-    // Set the input value based on the selected idiom
-    const selectedIdiom = idioms.find(idiom => idiom.idiomId === value);
-    setInputValue(selectedIdiom ? selectedIdiom.text : '');
-  }, [value, idioms]);
+    if( query ) {
+      // Set the input value based on the selected idiom
+      const selectedIdiom = value && query.idiom(value);
+      setInputValue(selectedIdiom ? selectedIdiom.text : '');
+    }
+  }, [value, query]);
 
   useEffect(() => {
     // Filter idioms based on input
     if (inputValue.trim() === '') {
-      setFilteredIdioms(idioms);
+      setFilteredIdioms([]);
     } else {
-      const filtered = idioms.filter(idiom => 
-        idiom.text.toLowerCase().includes(inputValue.toLowerCase())
-      );
+      const filtered = query.containsText(inputValue);
       setFilteredIdioms(filtered);
     }
-  }, [inputValue, idioms]);
+  }, [inputValue, query]);
 
   useEffect(() => {
     // Close dropdown when clicking outside
@@ -68,6 +48,13 @@ const IdiomSelector = ({ value, onChange, required = false, onIdiomsLoaded = nul
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  if( error ) {
+    return <p className="text-red-500">{error}</p>;
+  }
+  if( loading || !query ) {
+    return <LoadingSpinner />
+  }
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -112,7 +99,6 @@ const IdiomSelector = ({ value, onChange, required = false, onIdiomsLoaded = nul
           )}
         </div>
       )}
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 };

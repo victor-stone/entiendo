@@ -3,11 +3,16 @@ import { useIdiomTonesStore } from '../stores';
 import { LoadingSpinner} from './ui';
 import { CardField } from './layout';
 import toneDescriptions from '../../shared/constants/toneDescriptions';
+import debug from 'debug';
+
+const debugRender = debug('app:render');
 
 const hint = 'Prioritize which idioms you see based on the context they are likely to be used in.';
 
 const ToneSelector = ({ getToken, value, onChange, required = false, allowSystem = false }) => {
   const { data, fetch, loading, error } = useIdiomTonesStore();
+
+  debugRender('Tone selector value: %s', value);
 
   useEffect(() => {
     if (!data && !loading) {
@@ -47,15 +52,15 @@ const ToneSelector = ({ getToken, value, onChange, required = false, allowSystem
   );
 };
 
-export const ToneSelectorField = ({getToken, setTone, tone}) => {
+export const ToneSelectorField = ({getToken, onChange, value}) => {
   return <>
       <CardField hint={hint}>
-          <ToneSelector getToken={getToken} value={tone || ""} onChange={setTone} />
+          <ToneSelector getToken={getToken} value={value || ""} onChange={onChange} />
       </CardField>
-      {    toneDescriptions[tone] &&
+      {    toneDescriptions[value] &&
           <CardField>
               <ul className="list-disc pl-5">
-              {toneDescriptions[tone].map((t,i) => 
+              {toneDescriptions[value].map((t,i) => 
                   <li key={i} className="mb-1">{t}</li>)}
               </ul>
           </CardField>

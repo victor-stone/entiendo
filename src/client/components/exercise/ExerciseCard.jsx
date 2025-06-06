@@ -5,6 +5,9 @@ import ExercisePrompt from './ExercisePrompt';
 import ExerciseInput from './ExerciseInput';
 import ExerciseEval from './ExerciseEval';
 import ExerciseResults from './ExerciseResults';
+import debug from 'debug';
+
+const debugExercise = debug('app:exercise');
 
 /** 
 exercise example:
@@ -42,6 +45,7 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
     resetExercise
   } = useExerciseStore();
 
+  debugExercise('Entering Card:[%s] %s - %s', phase, loading ? 'loading' : '', exercise?.text);
   useEffect(() => {
     const fetchExercise = async () => {
       if (criteria && getToken && !exercise && !loading && !error) {

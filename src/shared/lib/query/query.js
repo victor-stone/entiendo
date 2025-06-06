@@ -13,7 +13,14 @@ export default class query {
     }
 
     q(q) {
-        return (this.data && jspath(q,this.data)) || [];
+        try {
+            const result = jspath(q,this.data) || [];
+            return result;
+        } catch(err) {
+            console.error('JSPATH Parse error for ', q);
+            console.error(err);
+            return [];
+        }
     }
 
     queryOne(q) {

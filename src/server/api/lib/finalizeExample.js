@@ -4,13 +4,11 @@ import { ExampleModel } from '../../models/index.js';
 
 const { generateSpeech, generatePresignedUrl } = ttl;
 
-export async function finalizeExample(example, idiom = null, model = null, debug = null) {
-    const needAudio = _ensureAudioAccess(example, debug);
+export async function finalizeExample(example, {force = true, idiom = null, model = null, debug = null} ) {
+    const needAudio = _ensureAudioAccess(example, debug, force);
     if (needAudio) {
         example = await needAudio();
-        if( !model ) {
-            model = new ExampleModel();
-        }
+        if( !model ) model = new ExampleModel();
         example = await model.addAudio(example.exampleId, example.audio);
     }
     if( idiom ) {
@@ -33,7 +31,7 @@ export async function finalizeExample(example, idiom = null, model = null, debug
     return example;
 }
 
-function _ensureAudioAccess(example, debug) {
+function _ensureAudioAccess(example, debug, force) {
     const publicUrl = example.audio?.publicUrl;
     if (publicUrl) {
         if (example.audio.expires < Date.now()) {
@@ -49,11 +47,13 @@ function _ensureAudioAccess(example, debug) {
         }
         if (debug) debug('existing audio found and public url is current');
     } else {
-        return async () => {
-            const { id, name } = _getRandomVoiceOption();
-            example.audio = await generateSpeech(example.text, id);
-            if (debug) debug('generating audio for example with ' + name);
-            return example;
+        if( force) {
+            return async () => {
+                const { id, name } = _getRandomVoiceOption();
+                example.audio = await generateSpeech(example.text, id);
+                if (debug) debug('generating audio for example with ' + name);
+                return example;
+            }
         }
     }
     return null;

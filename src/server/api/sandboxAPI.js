@@ -4,16 +4,37 @@ import { ExampleModel, ExampleModelQuery,
 import { finalizeExample } from "./lib/finalizeExample.js";
 
 export async function getNext(routeContext) {
-    const { payload: { basedOn } } = routeContext;
+    const { payload: { basedOn }, user: { userId } } = routeContext;
 
-    const basedOnX  = basedOn.slice(0,12);  // TODO: tweak this number 
+    const basedOnX = _randomSliceBasedOn(basedOn);
 
-    let example = await _getExistingSandboxExamples(basedOnX);
+    let example = await _getExistingUnseenExample(basedOnX, userId);
     if( example ) {
         return example;
     }
-
+    example = await _reuseSeenExample(basedOnX,userId);
+    if( example ) {
+        return example;
+    }
     return _generateNewSandboxExamples(basedOnX);
+}
+
+async function _reuseSeenExample(basedOn, userId) {
+    return null;
+}
+
+function _randomSliceBasedOn(basedOn) {
+    const minLen = 4;
+    const maxLen = 12;
+    if( basedOn.length <= maxLen ) {
+        return basedOn;
+    }
+    const sliceLen = Math.min(
+                            Math.max(minLen, Math.floor(Math.random() * basedOn.length)), 
+                            maxLen);
+    const startIdx = Math.floor(Math.random() * (basedOn.length - sliceLen + 1));
+    const basedOnX = basedOn.slice(startIdx, startIdx + sliceLen);
+    return basedOnX;
 }
 
 export async function evaluate(routeContext) {
@@ -24,11 +45,13 @@ export async function evaluate(routeContext) {
     return evaluation;
 }
 
+const MAX_PER_SANDBOX = 10;
+
 async function _markProgress(exampleId, evaluation, userId) {
-    const query    = await ProgressModelQuery.create(userId);
-    let   progress = query.sandbox();
-    let   exists   = !!progress;
-    if (!progress) {
+    const query       = await ProgressModelQuery.create(userId);
+    let   progress    = query.sandbox();
+    let   useExisting = !progress || progress.history.length < MAX_PER_SANDBOX;  // hahahaha
+    if (!useExisting) {
         progress = {
             userId,
             isSandbox: true,
@@ -44,7 +67,7 @@ async function _markProgress(exampleId, evaluation, userId) {
 
     const progressModel = new ProgressModel();
 
-    return exists
+    return useExisting
         ? progressModel.update(progress.progressId, progress)
         : progressModel.create(progress);
 }
@@ -66,14 +89,14 @@ async function _evaluate(exampleId, userTranscription, userTranslation) {
     return JSON.parse(result);
 }
 
-async function _getExistingSandboxExamples(basedOn) {
-    const query = await ExampleModelQuery.create();
-    
-    const existing = query.basedOn(basedOn);
-
-    if( existing.length ) {
-        const example = await finalizeExample(existing[0])
-        return example;
+async function _getExistingUnseenExample(basedOn, userId) {
+    const exQuery        = await ExampleModelQuery.create();
+    const progQuery      = await ProgressModelQuery.create(userId);
+    const seenExampleIds = progQuery.exampleIds();
+    const existing       = exQuery.basedOn(basedOn);
+    const unSeen         = existing.find( ({exampleId}) => !seenExampleIds.includes(exampleId));
+    if( unSeen ) {
+        return await finalizeExample(unSeen)
     }
     return null;
 }
@@ -93,7 +116,7 @@ async function _generateNewSandboxExamples(basedOn) {
 
 async function _generateSandboxSentence(basedOn) {
     const model         = new PromptModel();
-    const systemPrompt  = await model.getPromptByName('TUNEUP_SYSTEM_PROMPT');
+    const systemPrompt  = await model.getPromptByName('SANDBOX_SYSTEM_PROMPT');
     let   userPrompt    = `The words are: ${basedOn.map(w => `'${w}`).join(', ')}`; 
     const result        = await generateText(systemPrompt, userPrompt);
     return JSON.parse(result);

@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { ExampleModel, IdiomModel, ProgressModel, ProgressModelQuery } from '../../models/index.js';
+import { ExampleModel, IdiomModel, ExampleModelQuery, IdiomModelQuery,  ProgressModelQuery } from '../../models/index.js';
 import { NotFoundError, CalendarExhaustedError } from '../../../shared/constants/errorTypes.js';
 import { getSettings } from '../settingsAPI.js';
 import { isNewAllowed } from './isNewAllowed.js';
@@ -7,8 +7,6 @@ import { finalizeExample } from '../lib/finalizeExample.js';
 import { createExample } from '../lib/createExample.js';
 
 const debugGetNext = debug('api:exercise:getNext');
-
-const PAST_DUE = true;
 
 export async function getNext(routeContext) {
     debugGetNext('**** Getting next exercise for user %s *****', routeContext.user.userId);
@@ -55,26 +53,26 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
         EXAMPLE_PER_IDIOM_THRESHOLD, 
         ATTEMPTS_PER_EXAMPLE_THRESHOLD } = await getSettings();
 
-    const model               = new ExampleModel();
-    const seenExampleIdCounts = {};
-    const seenExampleIds      = [];
+    const exQuery = await ExampleModelQuery.create();
 
-    progress.history.forEach(({ exampleId }) => {
-        seenExampleIds.push(exampleId);
-        seenExampleIdCounts[exampleId] = (seenExampleIdCounts[exampleId] || 0) + 1;
-    });
+    const seenExampleIds      = progress.history.map( ({exampleId}) => exampleId);
+    const seenExampleIdCounts = seenExampleIds.reduce( (obj, id) => {
+        if( !obj[id] ) obj[id] = 0;
+        obj[id]++;
+        return obj;
+    }, {});
 
     // If user hasn't seen enough examples, try to find or create a new one
     if (seenExampleIds.length < EXAMPLE_PER_IDIOM_THRESHOLD) {
-        const examplesForIdiom = await model.findByIdiomId(idiom.idiomId);
+        const examplesForIdiom = exQuery.forIdiom(idiom.idiomId);
         let exercise = examplesForIdiom.find(({ exampleId }) => !seenExampleIds.includes(exampleId));
         if (!!exercise) {
-            debugGetNext('Found an example the user has not seen');
-            return await finalizeExample(exercise, idiom, model, debugGetNext);
+            debugGetNext('Found an example the user has not seen %s', exercise.exampleId);
+            return await finalizeExample(exercise, {idiom, debug: debugGetNext});
         }
         debugGetNext('User has seen all existing samples, making a new one');
-        exercise = await createExample(idiom, model, examplesForIdiom);
-        return await finalizeExample(exercise, idiom, model, debugGetNext);
+        exercise = await createExample(idiom, null, examplesForIdiom);
+        return await finalizeExample(exercise, {idiom, debug: debugGetNext});
     }
 
     // User has seen all examples, pick one they've seen the least (or random)
@@ -89,8 +87,8 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
         exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
         debugGetNext('WARNING: User has seen all the examples max times, picking one random');
     }
-    const exercise = await model.getById(exampleToUse);
-    return await finalizeExample(exercise, idiom, model, debugGetNext);
+    const exercise = exQuery.example(exampleToUse);
+    return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }
 
 async function _isNewAllowed(routeContext) {
@@ -133,7 +131,7 @@ async function _getExerciseForNewIdiom(routeContext) {
         exercise = await createExample(idiom, model);
         debugGetNext('created a new exercise');
     }
-    return await finalizeExample(exercise, idiom, model, debugGetNext);
+    return await finalizeExample(exercise, {idiom, model, debug: debugGetNext});
 }
 
 async function _getNextDueIdiom(routeContext) {
@@ -141,13 +139,13 @@ async function _getNextDueIdiom(routeContext) {
     debugGetNext('Finding due idiom (tone: %s, usage: %s )', 
         tone || '-', usage || '-');
 
-    const idiomModel    = new IdiomModel();
-    const progressModel = new ProgressModel();
-    const dueItems      = await progressModel.findDueItems(userId, {tone, usage}, PAST_DUE);
-    let dueItem, idiom;
-    if (dueItems && dueItems.length) {
-        dueItem = dueItems[0];
-        idiom = await idiomModel.getById(dueItem.idiomId);
+    const progQuery   = await ProgressModelQuery.create(userId);
+    const dueItem = progQuery.nextDue(tone,usage);
+
+    let idiom = null;
+    if (dueItem ) {
+        const idQuery = await IdiomModelQuery.create();
+        idiom = idQuery.idiom(dueItem.idiomId);
     }
     return [idiom, dueItem]
 }
@@ -155,14 +153,11 @@ async function _getNextDueIdiom(routeContext) {
 async function _getNewIdiom(routeContext) {
     const { query: { tone, usage }, user: { userId } } = routeContext;
 
-    const idiomModel = new IdiomModel();
-    const query = await ProgressModelQuery.create(userId);
-
-    const idiomIds = await idiomModel.findIdsByCriteria({tone,usage})
-    
-    // Find first idiom not in user history
-    const seenIdiomIds = query.idiomIds();
-    const idiomId = idiomIds.find(id => !seenIdiomIds.has(id));
+    const progQuery    = await ProgressModelQuery.create(userId);
+    const idQuery      = await IdiomModelQuery.create();
+    const idiomIds     = await idQuery.byCriteria(tone,usage);
+    const seenIdiomIds = new Set(progQuery.idiomIds());
+    const idiomId      = idiomIds.find(id => !seenIdiomIds.has(id));
 
     if (idiomId) {
         // debugGetNext("Found match: %s - %s: %s", tone, usage, idiom.text);
@@ -175,7 +170,7 @@ async function _getNewIdiom(routeContext) {
         throw new NotFoundError(`Wups, turns out there's nothing here... Refresh your browser(!)`);
     }
 
-    const idiom = idiomModel.getById(idiomId);
+    const idiom = idQuery.idiom(idiomId);
     return idiom;
 }
 
@@ -187,7 +182,7 @@ function _getAdminBypassExercise(routeContext) {
         const idioms         = new IdiomModel();
         let exercise         = await model.getById(preferences.getNextExample);
         let idiom            = await idioms.getById(exercise.idiomId);
-        return await finalizeExample(exercise, idiom, model, debugGetNext);
+        return await finalizeExample(exercise, {idiom, model, debug: debugGetNext});
     } : null;
 }
 

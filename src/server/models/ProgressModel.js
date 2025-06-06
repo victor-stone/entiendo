@@ -1,6 +1,5 @@
 // src/server/models/ProgressModel.js
 import BaseModel from "./BaseModel.js";
-import criteriaToFilterExpression from "../lib/criteriaToFilter.js";
 
 /**
 {
@@ -62,12 +61,6 @@ export default class ProgressModel extends BaseModel {
     return record;
   }
 
-
-  /**
-   * Find all progress data for a user
-   * @param {String} userId - User ID
-   * @returns {Promise<Array>} - Array of progress data objects
-   */
   async findByUser(userId) {
     const filterExpression = {
       expression: "userId = :userId",
@@ -77,26 +70,6 @@ export default class ProgressModel extends BaseModel {
     };
 
     return this.findAll(filterExpression);
-  }
-
-  async findDueItems(userId, criteria, pastDue = false) {
-    const now = Date.now();
-    let filterExpression = criteriaToFilterExpression(criteria, userId);
-
-    if (pastDue) {
-      const clause = "dueDate < :now";
-      if( filterExpression ) {
-        filterExpression.expression += (" AND " + clause);
-      } else {
-        filterExpression = { expression: clause, values: [] };
-      }
-      filterExpression.values[":now"] = { N: now.toString() };
-    }
-
-    const results = await this.findAll(filterExpression);
-
-    // Sort by dueDate ascending
-    return results.sort((a, b) => a.dueDate - b.dueDate);
   }
 }
 

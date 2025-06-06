@@ -31,16 +31,24 @@ export const useExampleStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getExample, set)
+  fetch: storeFetch(getExample, set),
+  reset: () => set({ data: null, error: null, loading: false })
 }));
 
 const useExerciseStore = create((set, get) => ({
 
-  loading     : false,
-  error       : null,
+  loading   : false,   // this is for getNext/evaluateResponse
+  error     : null,
+  exercise  : null,
+  evaluation: null,
+  progress  : null,
+
+  userInput: {
+    transcription: '',
+    translation: ''
+  },
+
   phase       : 'prompt',
-  evaluation  : null,
-  progress    : null,
 
   // Set the current phase of the exercise flow
   setPhase: (newPhase) => {
@@ -68,14 +76,19 @@ const useExerciseStore = create((set, get) => ({
   
   // Reset exercise state for a new exercise
   resetExercise: () => {
+
     set({
-      phase: 'prompt',
-      userInput: {
+      loading   : false,   // this is for getNext/evaluateResponse
+      error     : null,
+      exercise  : null,
+      evaluation: null,
+      progress  : null,
+
+      phase     : 'prompt',
+      userInput : {
         transcription: '',
         translation: ''
       },
-      evaluation: null,
-      loading: false,
     });
   },
   

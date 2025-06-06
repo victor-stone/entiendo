@@ -11,7 +11,7 @@ export { useIdiomStore, useIdiomListStore, useIdiomTonesStore,
 export { useAdminStore, useCreateExampleStore, 
     useUploadAudioStore } from './adminStore';
 
-export { useProgressQuery } from './queryStore';
+export { useProgressQuery, useIdiomQuery } from './queryStore';
 
 export { useGetNextSandboxStore, useSandboxStore, 
     PHASES, useEvaluateSandboxStore } from './sandboxStore';

@@ -1,5 +1,5 @@
 // src/server/api/idiomAPI.js
-import { IdiomModel, ExampleModel } from '../models/index.js';
+import { IdiomModelQuery, ExampleModelQuery } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { finalizeExample } from './lib/finalizeExample.js';
 
@@ -9,11 +9,9 @@ import { finalizeExample } from './lib/finalizeExample.js';
  * @returns {Promise<Object>} - Object containing array of tones
  */
 export async function getTones() {
-  const idiomModel = new IdiomModel();
-  const tones = await idiomModel.getTones();
-  return tones;
+  const query = await IdiomModelQuery.create();
+  return query.tones();
 }
-
 
 /**
  * Get a specific idiom by ID
@@ -22,19 +20,14 @@ export async function getTones() {
  */
 export async function getIdiom(routeContext) {
   const { params: { idiomId } } = routeContext;
-  const idiomModel = new IdiomModel();
-  
-  const idiom = await idiomModel.getById(idiomId);
 
-  if (!idiom) {
-    throw new NotFoundError('Idiom not found');
-  }
-  
-  const model          = new ExampleModel();
-  let   examples       = await model.findByIdiomId(idiomId);
-        examples       = examples.map( e => finalizeExample(e) );
-        idiom.examples = await Promise.all(examples);
-  
+  const query   = await IdiomModelQuery.create();
+  const exQuery = await ExampleModelQuery.create();
+  const idiom   = query.idiom(idiomId);
+
+  if (!idiom) { throw new NotFoundError('Idiom not found'); }
+
+  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,{force: false}) ));
   return idiom;
 }
 
@@ -45,11 +38,9 @@ export async function getIdiom(routeContext) {
  */
 export async function getIdiomsList(routeContext) {
   const { query: { full = false } } = routeContext;
-  const idiomModel = new IdiomModel();
-  let idioms = null;
+  const query = await IdiomModelQuery.create();
   if( full ) {
-    return await idiomModel.findAll();
+    return query.idioms();
   }
-  idioms = await idiomModel.getIdiomsList();
-  return { idioms };
+  return query.getIdiomsList();
 }

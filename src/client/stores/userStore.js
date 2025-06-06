@@ -71,8 +71,8 @@ const useUserStore = create((set, get) => ({
     await setPreference('filter', newFilter);
   },
 
-  setTone:   (tone)   => get().setFilter('tone', tone),
-  setUsage:  (usage)  => get().setFilter('usage', usage),
+  setTone : (tone)   => get().setFilter('tone', tone),
+  setUsage: (usage)  => get().setFilter('usage', usage),
 
   // Sync user profile with backend
   syncProfile: async (user) => {

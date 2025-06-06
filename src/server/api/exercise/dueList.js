@@ -1,17 +1,16 @@
-import { ProgressModel } from "../../models/index.js";
+import { ProgressModelQuery } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 
 export async function dueList(routeContext) {
   const userId   = routeContext.user.userId;
-  const model    = new ProgressModel();
-  let   progress = await model.findDueItems(userId, {}, 0);
-
-  progress = progress.map(item => {
+  const query    = await ProgressModelQuery.create(userId);
+  const progress = query.schedule().map(item => {
     item.range      = usageToRange(item.usage);
     item.confidence = _confidence(item);
     return item;
   });  
+
   return progress;
 }
 
@@ -28,8 +27,8 @@ function _confidence(item) {
 export async function dueStats(routeContext) {
   const { user: { userId } } = routeContext;
 
-  const model    = new ProgressModel();  
-  const progress = await model.findDueItems(userId, {}, 0);
+  const query = await ProgressModelQuery.create(userId);
+  const progress = query.schedule();
 
   if( progress.length == 0 ) {
     return {
@@ -37,15 +36,9 @@ export async function dueStats(routeContext) {
     }
   }
 
-  const numDue   = progress.length;
-  const earliest = numDue ? progress[0] : null;
-  const now      = Date.now();
-  const pastDue  = progress.filter( ({dueDate}) => dueDate < now );
-  const next     = progress.reduce((min, item) => 
-    (item.dueDate > now && (min === null || item.dueDate < min.dueDate))
-        ? item
-        : min
-  , null);
+  const earliest = progress[0];
+  const pastDue  = query.due();
+  const next     = query.upcoming()[0];
 
   const stats = {
     pastDueDate: earliest?.dueDate || 0,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useUserStore, useUploadAudioStore, useIdiomExampleStore } from '../../stores';
 import IdiomSelector from './IdiomSelector';
 import ExampleSelector from './ExampleSelector';

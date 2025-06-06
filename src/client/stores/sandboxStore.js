@@ -20,10 +20,10 @@ export const useEvaluateSandboxStore = create((set) => ({
 }))
 
 export const PHASES = {
-  prompt: 'prompt',
-  input: 'input',
+  prompt    : 'prompt',
+  input     : 'input',
   evaluation: 'evaluation',
-  results: 'results'
+  results   : 'results'
 };
 
 export const useSandboxStore = create((set, get) => ({

@@ -1,10 +1,14 @@
 import { get, post } from "../lib/apiClient";
+import debug from 'debug';
+
+const debugExercise = debug('app:exercise');
 
 /**
  * Service for interacting with the Exercise API
  */
 const exerciseService = {
   getNext: async (criteria, authToken) => {
+
     const params = new URLSearchParams();
 
     // Add each criteria property as an individual query parameter
@@ -16,7 +20,7 @@ const exerciseService = {
 
     const queryString = params.toString();
     const url = `/api/exercises/next${queryString ? `?${queryString}` : ""}`;
-
+    debugExercise('Fetching next %s', url)
     const response = await get(url, authToken);
     return response;
   },

@@ -5,17 +5,17 @@ import { Card } from "../layout";
 import ExercisePrompt from "../exercise/ExercisePrompt";
 import ExerciseInput from "../exercise/ExerciseInput";
 import ExerciseEval from "../exercise/ExerciseEval";
-import EvalFeedback from "../EvalFeedback";
-import EvalTopic from "../EvalTopic";
 import { LoadingIndicator, AudioPlayer, Grid } from "../ui";
-import NextExercise from "../NextExercise";
 import SandboxResults from "./SandboxResults";
 
-const SandboxCard = ({query, handleNextExercise}) => {
-    const getToken = useUserStore(s => s.getToken);
-    const { fetch, loading, error, data: exercise } = useGetNextSandboxStore();
-    const { phase, userInput, setPhase, setUserInput } = useSandboxStore();
-    const { evaluate, data: evaluation } = useEvaluateSandboxStore();
+const SandboxCard = ({query}) => {
+    const getToken                                     = useUserStore(s => s.getToken);
+    const { evaluate, data: evaluation, 
+                reset: resetEval }                     = useEvaluateSandboxStore();
+    const { fetch, loading, error, 
+                data: exercise, reset: resetNext }     = useGetNextSandboxStore();
+    const { phase, userInput, setPhase, 
+                setUserInput, reset }                  = useSandboxStore();
 
     useEffect(() => {
         if( !exercise && !loading ) {
@@ -41,6 +41,12 @@ const SandboxCard = ({query, handleNextExercise}) => {
         }
     }
 
+    const handleNextExercise = () => {
+        reset();
+        resetNext();
+        resetEval();
+    }
+    
     return (
         <Card title="Sandbox Example">
             <Card.Body>

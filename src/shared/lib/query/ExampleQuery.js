@@ -26,4 +26,11 @@ export default class ExampleQuery extends query {
         return this.q(`..{${expr}}`);
     }
 
+    forIdiom(idiomId) {
+        return this.q(`..{.idiomId == "${idiomId}"}`);
+    }
+
+    example(exampleId) {
+        return this.queryOne(`..{.exampleId = "${exampleId}"}`)
+    }
 }

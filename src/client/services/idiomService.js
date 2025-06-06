@@ -21,6 +21,10 @@ const idiomService = {
     return await get(`/api/idioms${query}`);
   },
   
+  getIdioms: async() => {
+    return get('/api/idioms?full=true');
+  },
+
   getIdiom: async (idiomId) => {
     return await get(`/api/idiom/${idiomId}`);
   }
