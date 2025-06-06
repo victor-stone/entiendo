@@ -4,7 +4,7 @@ import { ExampleModel } from '../../models/index.js';
 
 const { generateSpeech, generatePresignedUrl } = ttl;
 
-export async function finalizeExample(example, {force = true, idiom = null, model = null, debug = null} ) {
+export async function finalizeExample(example, {force = true, idiom = null, model = null, debug = null} = {force: true}) {
     const needAudio = _ensureAudioAccess(example, debug, force);
     if (needAudio) {
         example = await needAudio();
