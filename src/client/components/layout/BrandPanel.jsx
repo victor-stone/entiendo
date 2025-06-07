@@ -1,13 +1,61 @@
 import { useEffect } from 'react';
 import logo from '../../assets/images/entiendoLogo-trans.png';
 import sandbox from '../../assets/images/sandbox.jpg';
+import lantern from '../../assets/images/lantern.png';
+import candle from '../../assets/images/candle.png';
+import blocks from '../../assets/images/blocks.png';
 import { useBrandImageStore } from '../../stores';
 
 const imgs = {
   logo,
-  sandbox
+  sandbox,
+  lantern,
+  candle,
+  blocks
 }
 const styles = {
+  blocks: {
+    position: 'absolute',
+    top: 50,
+    left: '5%',
+    width: 300, // matches aspect ratio
+    height: 612, // matches aspect ratio
+    backgroundImage: `url(${blocks})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top left',
+    backgroundSize: 'contain', // proportional scaling
+    opacity: 0.2,
+    pointerEvents: 'none',
+    zIndex: 0
+  },
+  candle: {
+    position: 'absolute',
+    top: 50,
+    left: '5%',
+    width: 300, // matches aspect ratio
+    height: 612, // matches aspect ratio
+    backgroundImage: `url(${candle})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top left',
+    backgroundSize: 'contain', // proportional scaling
+    opacity: 0.2,
+    pointerEvents: 'none',
+    zIndex: 0
+  },
+  lantern: {
+    position: 'absolute',
+    top: 50,
+    left: '15%',
+    width: 300, // matches aspect ratio
+    height: 612, // matches aspect ratio
+    backgroundImage: `url(${lantern})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top left',
+    backgroundSize: 'contain', // proportional scaling
+    opacity: 0.2,
+    pointerEvents: 'none',
+    zIndex: 0
+  },
   logo: {
           position: 'absolute',
           top: 0,

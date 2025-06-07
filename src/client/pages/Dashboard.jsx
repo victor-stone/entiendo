@@ -1,4 +1,4 @@
-import { useUserStore, useDueStatsStore } from '../stores';
+import { useUserStore, useDueStatsStore, useBrandImageStore } from '../stores';
 import UserStats from '../components/UserStats';
 import FilterInfo from '../components/FilterInfo';
 import SandboxPanel from '../components/sandbox/SandboxPanel';
@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import { Card } from '../components/layout';
 import { format } from 'timeago.js'
 import debug from 'debug';
+import img1 from "../assets/images/icecream.png";
+import img2 from "../assets/images/clock.png";
+import img3 from "../assets/images/doll.png";
 
 const debugRender = debug('app:render');
 
@@ -30,8 +33,10 @@ const Dashboard = () => {
   debugRender('Rendering Dashboard');
   const getToken = useUserStore(state => state.getToken);
   const { data, fetch, loading, error } = useDueStatsStore();
+  const { setImage } = useBrandImageStore();
 
   useEffect(() => {
+    setImage('candle');
     if (!data && !loading) {
       fetch(getToken);
     }
@@ -47,18 +52,23 @@ const Dashboard = () => {
   return (
     <Card title={<DashboardTitle dueStats={data} getToken={getToken} />}>
       <Card.Body>
-        <Grid columns={3}>
-            <Card.Section title="Idioms">
-                <FilterInfo  />
-                <PageLink page="/app/preferences" text="Select Idioms" />
-            </Card.Section>
-            {data && data.numSeen > 0 && <Card.Section title="Progress">
-                <UserStats dueStats={data}/>
+        <Grid columns={3} className="place-items-center text-center">
+            <div><img src={img1} alt="Ice Cream" className="w-20 h-20 object-contain mx-auto" /></div>
+            <div><img src={img2} alt="Clock" className="w-20 h-20 object-contain mx-auto" /></div>
+            <div><img src={img3} alt="Doll" className="w-20 h-20 object-contain mx-auto" /></div>
+            <div className="place-items-center text-center">
+              <div className='text-left'><FilterInfo  /></div>
+              <PageLink page="/app/preferences" text="Preferences" />
+            </div>
+                
+            {data && data.numSeen > 0 && <div className="place-items-center text-center">
+                <div className='text-left'><UserStats dueStats={data}/></div>
                 <PageLink page="/app/calendar" text="Calendar" />
-            </Card.Section>}
-            {data && data.numSeen > 0 && <Card.Section title="Missed Words">
-                <SandboxPanel getToken={getToken} dueStats={data} />
-            </Card.Section>}
+              </div>
+            }
+            {data && data.numSeen > 0 && <div className="place-items-center text-center">
+                <div className='text-left'><SandboxPanel getToken={getToken} dueStats={data} /></div>
+            </div>}
         </Grid>
       </Card.Body>
     </Card>
