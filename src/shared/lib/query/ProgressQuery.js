@@ -56,7 +56,7 @@ export default class ProgressQuery extends query {
     }
 
     sandbox() {
-        return this.queryOne(`..{.isSandbox}`);
+        return this.q(`..{.isSandbox}`);
     }
 }
 

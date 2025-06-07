@@ -18,7 +18,6 @@ export default class query {
             return result;
         } catch(err) {
             console.error('JSPATH Parse error for ', q);
-            console.error(err);
             return [];
         }
     }

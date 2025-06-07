@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
-import { setFontClass } from '../lib/fontLoader';
+import { setFontClass, FontPicks } from '../lib/fontLoader';
 
-const fontOptions = [
-  { label: 'Nunito (Google)', value: 'nunito' },
-  { label: 'Lato (Google)', value: 'lato' },
-  { label: 'Avenir Next (Apple)', value: 'avenir' },
-  { label: 'Noto Sans (Google)', value: 'noto' }
-];
+const fontOptions = Object.values(FontPicks);
 
 export default function FontPicker() {
   const [font, setFont] = useState(() => {
@@ -22,7 +17,7 @@ export default function FontPicker() {
     <div>
       <label className="block mb-2 font-medium">Font</label>
       <select
-        className="form-select"
+        className="border rounded px-2 py-1"
         value={font}
         onChange={e => setFont(e.target.value)}
       >

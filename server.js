@@ -17,7 +17,7 @@ import debug from 'debug';
 debug.enable(process.env.DEBUG);
 debug.inspectOpts.hideDate = true;
 
-const debugServer = debug('app:server');
+const debugServer = debug('server:express');
 
 // Get directory name in ESM
 const __filename = fileURLToPath(import.meta.url);

@@ -9,7 +9,7 @@ import { createExample } from '../lib/createExample.js';
 const debugGetNext = debug('api:exercise:getNext');
 
 export async function getNext(routeContext) {
-    debugGetNext('**** Getting next exercise for user %s *****', routeContext.user.userId);
+    debugGetNext('**** Getting next exercise for user %s *****', routeContext.user.name || routeContext.user.userId);
 
     const bypassExercise = _getAdminBypassExercise(routeContext);
     if (bypassExercise) 
@@ -155,11 +155,11 @@ async function _getNewIdiom(routeContext) {
 
     const progQuery    = await ProgressModelQuery.create(userId);
     const idQuery      = await IdiomModelQuery.create();
-    const idiomIds     = await idQuery.byCriteria(tone,usage);
+    const idioms       = await idQuery.byCriteria(tone,usage);
     const seenIdiomIds = new Set(progQuery.idiomIds());
-    const idiomId      = idiomIds.find(id => !seenIdiomIds.has(id));
+    const idiom        = idioms.find(({idiomId}) => !seenIdiomIds.has(idiomId));
 
-    if (idiomId) {
+    if (idiom) {
         // debugGetNext("Found match: %s - %s: %s", tone, usage, idiom.text);
     } else {
         if( tone || usage ) {
@@ -169,8 +169,7 @@ async function _getNewIdiom(routeContext) {
         debugGetNext("OOPS User has seen all idioms that match: %s - %s", tone, usage)
         throw new NotFoundError(`Wups, turns out there's nothing here... Refresh your browser(!)`);
     }
-
-    const idiom = idQuery.idiom(idiomId);
+    
     return idiom;
 }
 

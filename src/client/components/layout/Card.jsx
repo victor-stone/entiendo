@@ -68,7 +68,16 @@ const CardPanel = ({ children, title }) => (
 //   </div>
 // );
 
-const CardInfo = ({ text, icon: Icon, iconName, color, label, link, inline = false }) => {
+const CardInfo = ({ 
+  text, 
+  icon: Icon, 
+  iconName, 
+  color, 
+  label, 
+  link, 
+  inline = false,
+  className
+}) => {
   if (iconName) {
     Icon = icons[iconName];
   }
@@ -76,8 +85,8 @@ const CardInfo = ({ text, icon: Icon, iconName, color, label, link, inline = fal
   return text && <div className={`${blockage}flex items-center gap-1 text-xs 
                             font-medium px-2 py-0.5  
                             ${color || defColor} 
-                            mr-2`}>
-    {Icon && <Icon className="w-4 h-4" />}
+                            mr-2 ${className}`}>
+    {Icon && <Icon className="text-primary-500 w-4 h-4" />}
     {label && <label>{label}</label>}
     {text}
     { link && <Link to={link}><ArrowTopRightOnSquareIcon className="w-4 h-4" /></Link>}

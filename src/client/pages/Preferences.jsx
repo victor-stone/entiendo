@@ -1,7 +1,7 @@
-import { useUserStore } from "../stores";
+import { useUserStore, useBrandImageStore } from "../stores";
 import { Card, CardField } from '../components/layout';
 import { PageLink, LoadingSpinner } from "../components/ui";
-
+import { useEffect } from "react";
 import { ToneSelectorField } from "../components/ToneSelector";
 import UsageRangeSelector from "../components/UsageRangeSelector";
 import FontPicker from '../components/FontPicker';
@@ -23,6 +23,12 @@ const Preferences = () => {
         getToken
      } = useUserStore();
 
+       const { setImage } = useBrandImageStore();
+     
+    useEffect(() => {
+        setImage('icecream');
+    }, [setImage])
+
     return (
         <Card title={<span>Preferences {loading ? <LoadingSpinner /> : ''}</span>}>
             <Card.Body>
@@ -33,6 +39,18 @@ const Preferences = () => {
                 <CardField hint={hints.font}>
                   <FontPicker />
                 </CardField>
+                {/* Theme selector doesn't work */ '' &&
+            <CardField title="Theme">
+                <select
+                className="border rounded px-2 py-1"
+                value={preferences?.theme || ''}
+                onChange={e => setPreference('theme', e.target.value)}
+                >
+                <option value="">System Default</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                </select>
+            </CardField>}
                 {isAdmin && 
                     <CardField hint={hints.admin} title="Next Example">
                         <input

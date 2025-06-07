@@ -13,33 +13,45 @@ function ensureFontLink({ id, href }) {
 }
 
 const gurl = f => `https://fonts.googleapis.com/css2?family=${f}:wght@400;700&display=swap`
-const fonts = {
+export const FontPicks = {
+  avenir: { 
+    label: 'Avenir Next (Apple)', 
+    value: 'avenir',
+    cls: 'font-avenir'
+  },
   nunito: {
       id: 'nunito-font',
       href: gurl('Nunito'),
-      cls: 'font-nunito'
+      cls: 'font-nunito',
+      label: 'Nunito (Google)',
+      value: 'nunito'
     },
   lato: {
       id: 'lato-font',
       href: gurl('Lato'),
-      cls: 'font-lato'
+      cls: 'font-lato',
+      label: 'Lato (Google)',
+      value: 'lato'
     },
   noto: {
       id: 'noto-font',
       href: gurl('Noto+Sans'),
-      cls: 'font-noto'
+      cls: 'font-noto',
+      label: 'Noto Sans (Google)',
+      value: 'noto'
     }
 }
+
 /**
  * Loads the Nunito font from Google Fonts if needed and sets the font class on <html>.
  * @param {string} font - 'nunito' or 'avenir'
  */
 export function setFontClass(font) {
-  fonts[font] && ensureFontLink(fonts[font]);
+  FontPicks[font] && ensureFontLink(FontPicks[font]);
   const html = document.documentElement;
   html.classList.remove('font-nunito', 'font-avenir', 'font-lato', 'font-noto');
-  if( fonts[font] ) {
-    html.classList.add(font[font].cls);
+  if( FontPicks[font] ) {
+    html.classList.add(FontPicks[font].cls);
   } else {
     html.classList.add('font-avenir');
   }

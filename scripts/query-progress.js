@@ -1,7 +1,14 @@
 import jspath from 'jspath';
+import ProgressQuery from '../src/shared/lib/query/ProgressQuery.js';
 import progress from '../staging/import/progress.js';
 import util from 'util';
 import { format } from 'timeago.js'
+
+const query = new ProgressQuery(progress);
+
+function avaiableSandbox(max) {
+    return jspath(`..{.isSandbox && (.history.length < ${max})}`, progress)[0];
+}
 
 function getMissedWordsByMistakeType(data) {
     return jspath('..evaluation', data).reduce( (dict,{mistakeType,missedWords}) => {
@@ -18,11 +25,12 @@ function findIdiom(data) {
     return jspath(`..{.idiomId == "${testIdiom}"}`, data);
 }
 
-const result = findIdiom(progress);
-console.log(util.inspect(result, { depth: null, colors: true }));
-
 function getMissedWords(data) {
     let result = jspath('..missedWords', data);
         result = [... new Set(result)].sort();
     return result;
 }
+
+const result = avaiableSandbox(3);
+console.log(util.inspect(result, { depth: null, colors: true }));
+

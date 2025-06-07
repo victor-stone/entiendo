@@ -48,7 +48,7 @@ const SandboxCard = ({query}) => {
     }
     
     return (
-        <Card title="Playroom Example">
+        <Card title="Playroom Exercise">
             <Card.Body>
                 {phase === PHASES.prompt && (
                     <ExercisePrompt exercise={exercise} onContinue={() => setPhase(PHASES.input)}/>

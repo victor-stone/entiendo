@@ -29,63 +29,62 @@ html.font-noto, html.font-noto body {
     @apply font-sans text-gray-900 dark:text-white;
   }
 
-  /* Default theme (grayscale) */
-  :root {
-    /* Primary colors (dark gray) */
-    --color-primary-50: #f9fafb;
-    --color-primary-100: #f3f4f6;
-    --color-primary-200: #e5e7eb;
-    --color-primary-300: #d1d5db;
-    --color-primary-400: #9ca3af;
-    --color-primary-500: #6b7280;
-    --color-primary-600: #4b5563;
-    --color-primary-700: #374151;
-    --color-primary-800: #1f2937;
-    --color-primary-900: #111827;
-    --color-primary-950: #030712;
+:root {
+  /* Primary colors (sepia ink tones) */
+  --color-primary-50:  #fdf9f3;  /* aged paper */
+  --color-primary-100: #f6efe5;
+  --color-primary-200: #e8dbc6;
+  --color-primary-300: #d6c2a6;
+  --color-primary-400: #bfa07c;
+  --color-primary-500: #a57c56;  /* classic mid-sepia */
+  --color-primary-600: #8b6547;
+  --color-primary-700: #70503a;
+  --color-primary-800: #5c412f;
+  --color-primary-900: #4a3527;
+  --color-primary-950: #2f1f16;
 
-    /* Secondary colors (medium gray) */
-    --color-secondary-50 : #fafafa;
-    --color-secondary-100: #f4f4f5;
-    --color-secondary-200: #e4e4e7;
-    --color-secondary-300: #d4d4d8;
-    --color-secondary-400: #a1a1aa;
-    --color-secondary-500: #71717a;
-    --color-secondary-600: #52525b;
-    --color-secondary-700: #3f3f46;
-    --color-secondary-800: #27272a;
-    --color-secondary-900: #18181b;
-    --color-secondary-950: #09090b;
+  /* Secondary colors (warm beige & rosy shadows) */
+  --color-secondary-50:  #fefaf6;
+  --color-secondary-100: #f9f0e7;
+  --color-secondary-200: #e7d9c9;
+  --color-secondary-300: #d1bfae;
+  --color-secondary-400: #bfa093;
+  --color-secondary-500: #a47f74;  /* rosy-brown shadow */
+  --color-secondary-600: #89655e;
+  --color-secondary-700: #704f4a;
+  --color-secondary-800: #5a3d39;
+  --color-secondary-900: #412d2a;
+  --color-secondary-950: #261916;
 
-    /* Accent colors (black/white) */
-    --color-accent-50: #ffffff;
-    --color-accent-100: #f5f5f5;
-    --color-accent-200: #e5e5e5;
-    --color-accent-300: #d4d4d4;
-    --color-accent-400: #a3a3a3;
-    --color-accent-500: #737373;
-    --color-accent-600: #525252;
-    --color-accent-700: #404040;
-    --color-accent-800: #262626;
-    --color-accent-900: #171717;
-    --color-accent-950: #0a0a0a;
+  /* Accent colors (ink & cream contrast) */
+  --color-accent-50:  #ffffff;
+  --color-accent-100: #fcfbfa;
+  --color-accent-200: #ede7df;
+  --color-accent-300: #d7cfc1;
+  --color-accent-400: #b8a88e;
+  --color-accent-500: #8b7454;  /* ink highlight */
+  --color-accent-600: #6f5a3f;
+  --color-accent-700: #58452f;
+  --color-accent-800: #443324;
+  --color-accent-900: #2e2218;
+  --color-accent-950: #1a130d;
 
-    /* Background colors */
-    --color-background-light: #f9fafb;
-    --color-background-dark: #111827;
+  /* Background colors */
+  --color-background-light: #fdf9f3;
+  --color-background-dark: #2e2218;
 
-    /* Surface colors */
-    --color-surface-light: #ffffff;
-    --color-surface-dark: #1f2937;
+  /* Surface colors */
+  --color-surface-light: #ffffff;
+  --color-surface-dark: #4a3527;
 
-    /* Text colors */
-    --color-text-primary  : #111827;
-    --color-text-secondary: #4b5563;
-    --color-text-light    : #f9fafb;
-    --color-text-dark     : #111827;
-  }
+  /* Text colors */
+  --color-text-primary  : #4a3527;
+  --color-text-secondary: #70503a;
+  --color-text-light    : #fdf9f3;
+  --color-text-dark     : #2e2218;
+}
 
-  /* Light theme - activated with .theme-light class on html or body element */
+/* Light theme - activated with .theme-light class on html or body element */
   .theme-light {
     /* Primary colors (light gray) */
     --color-primary-50: #fafafa;
@@ -287,6 +286,11 @@ button {
 }
 button:disabled {
   opacity: 0.5;
+}
+
+.font-bold, b, strong {
+    font-weight: 600;
+    font-family: sans-serif;
 }
 
 @font-face {

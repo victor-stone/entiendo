@@ -9,7 +9,7 @@ const Exercise = () => {
     const {preferences, loading }   = useUserStore    ();
     const resetExercise = useExerciseStore(state => state.resetExercise);
     const { reset }     = useDueStatsStore();
-console.log('In Exercise ', preferences)
+
     useEffect(() => {
         resetExercise();
         return () => resetExercise();

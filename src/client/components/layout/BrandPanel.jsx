@@ -1,88 +1,51 @@
-import { useEffect } from 'react';
-import logo from '../../assets/images/entiendoLogo-trans.png';
-import sandbox from '../../assets/images/sandbox.jpg';
 import lantern from '../../assets/images/lantern.png';
 import candle from '../../assets/images/candle.png';
 import blocks from '../../assets/images/blocks.png';
+import clock from '../../assets/images/clock.png';
+import icecream from '../../assets/images/icecream.png';
 import { useBrandImageStore } from '../../stores';
 
 const imgs = {
-  logo,
-  sandbox,
   lantern,
   candle,
-  blocks
+  blocks,
+  clock,
+  icecream
 }
-const styles = {
-  blocks: {
+const _default = {
     position: 'absolute',
     top: 50,
     left: '5%',
     width: 300, // matches aspect ratio
     height: 612, // matches aspect ratio
-    backgroundImage: `url(${blocks})`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top left',
     backgroundSize: 'contain', // proportional scaling
     opacity: 0.2,
     pointerEvents: 'none',
     zIndex: 0
+  };
+
+const styles = {
+  clock: { 
+    ..._default,
+    backgroundImage: `url(${clock})`
+  },
+  blocks: { 
+    ..._default,
+    backgroundImage: `url(${blocks})`
   },
   candle: {
-    position: 'absolute',
-    top: 50,
-    left: '5%',
-    width: 300, // matches aspect ratio
-    height: 612, // matches aspect ratio
-    backgroundImage: `url(${candle})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top left',
-    backgroundSize: 'contain', // proportional scaling
-    opacity: 0.2,
-    pointerEvents: 'none',
-    zIndex: 0
+    ..._default,
+    backgroundImage: `url(${candle})`
   },
   lantern: {
-    position: 'absolute',
-    top: 50,
-    left: '15%',
-    width: 300, // matches aspect ratio
-    height: 612, // matches aspect ratio
-    backgroundImage: `url(${lantern})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top left',
-    backgroundSize: 'contain', // proportional scaling
-    opacity: 0.2,
-    pointerEvents: 'none',
-    zIndex: 0
+    ..._default,
+    backgroundImage: `url(${lantern})`
   },
-  logo: {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 650,
-          height: 650,
-          backgroundImage: `url(${logo})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top left', // fixed at top left
-          backgroundSize: '650px 650px',
-          opacity: 0.2,
-          pointerEvents: 'none',
-          zIndex: 0
-        },
-  sandbox: {
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100%',
-          backgroundImage: `url(${sandbox})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top left', // fixed at top left
-          backgroundSize: 'cover',
-          opacity: 0.4,
-          pointerEvents: 'none',
-          zIndex: 1
+  icecream: {
+    ..._default,
+    backgroundImage: `url(${icecream})`
   }
 }
 export default function BrandPanel({ children }) {

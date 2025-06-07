@@ -4,7 +4,7 @@ import React from 'react';
  * HighlightedText component
  * Displays text with a specific snippet highlighted
  */
-const HighlightedText = ({ text, highlightedSnippet, textClassName, highlightClassName }) => {
+const HighlightedText = ({ text, highlightedSnippet, highlightClassName }) => {
   if (!text || !highlightedSnippet) return text || null;
   
   return (
@@ -13,7 +13,7 @@ const HighlightedText = ({ text, highlightedSnippet, textClassName, highlightCla
         <React.Fragment key={index}>
           {part}
           {index < array.length - 1 && (
-            <span className={highlightClassName || "underline font-bold text-primary-600 dark:text-primary-400"}>
+            <span className={highlightClassName || "font-bold text-primary-600 dark:text-primary-400"}>
               {highlightedSnippet}
             </span>
           )}

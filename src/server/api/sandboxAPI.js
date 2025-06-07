@@ -2,11 +2,14 @@ import { generateText } from "../lib/openai.js";
 import { ExampleModel, ExampleModelQuery, 
     ProgressModel, ProgressModelQuery, PromptModel } from "../models/index.js";
 import { finalizeExample } from "./lib/finalizeExample.js";
+import debug from 'debug';
+const debugSB = debug('api:sandbox');
 
 export async function getNext(routeContext) {
-    const { payload: { basedOn }, user: { userId } } = routeContext;
+    const { payload: { basedOn }, user: { userId, name } } = routeContext;
 
     const basedOnX = _randomSliceBasedOn(basedOn);
+    debugSB('getNext for %s based on: %o', name || userId, basedOnX);
 
     let example = await _getExistingUnseenExample(basedOnX, userId);
     if( example ) {
@@ -38,8 +41,9 @@ function _randomSliceBasedOn(basedOn) {
 }
 
 export async function evaluate(routeContext) {
-    const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
-
+    const { payload: { exampleId, userTranscription, userTranslation }, 
+            user: { name, userId } } = routeContext;
+    debugSB('Evaluating for %s', name || userId);
     const evaluation = await _evaluate(exampleId, userTranscription, userTranslation);
     await _markProgress(exampleId, evaluation, userId);
     return evaluation;
@@ -49,17 +53,21 @@ const MAX_PER_SANDBOX = 10;
 
 async function _markProgress(exampleId, evaluation, userId) {
     const query       = await ProgressModelQuery.create(userId);
-    let   progress    = query.sandbox();
-    let   useExisting = !progress || progress.history.length < MAX_PER_SANDBOX;  // hahahaha
-    if (!useExisting) {
-        progress = {
+    let   sandboxes   = query.sandbox();
+    let   sanbox      = sandboxes.find( s => s.history.length < MAX_PER_SANDBOX );
+    let   useExisting = !!sanbox;
+    if (useExisting) {
+        debugSB('Using existing sandbox %s', sanbox.progressId);
+    } else {
+        debugSB('Creating a new sandbox')
+        sanbox = {
             userId,
             isSandbox: true,
             history: []
         }
     }
 
-    progress.history.push({
+    sanbox.history.push({
         date: Date.now(),
         exampleId,
         evaluation
@@ -68,8 +76,8 @@ async function _markProgress(exampleId, evaluation, userId) {
     const progressModel = new ProgressModel();
 
     return useExisting
-        ? progressModel.update(progress.progressId, progress)
-        : progressModel.create(progress);
+        ? progressModel.update(sanbox.progressId, sanbox)
+        : progressModel.create(sanbox);
 }
 
 async function _evaluate(exampleId, userTranscription, userTranslation) {
@@ -96,21 +104,25 @@ async function _getExistingUnseenExample(basedOn, userId) {
     const existing       = exQuery.basedOn(basedOn);
     const unSeen         = existing.find( ({exampleId}) => !seenExampleIds.includes(exampleId));
     if( unSeen ) {
+        debugSB('Found an unseen example %s', unSeen.text)
         return await finalizeExample(unSeen)
     }
     return null;
 }
 
 async function _generateNewSandboxExamples(basedOn) {
+    debugSB('Generating new examples for missed words')
     const response = await _generateSandboxSentence(basedOn);
     const model    = new ExampleModel();
     const examples = response.sentences;
 
     for( var i = 0; i < examples.length; i++ ) {
         const { text, basedOn } = examples[i];
+        debugSB('[%s] %s', basedOn.join(', '), text);
         examples[i] = await model.createSandboxExample(text, basedOn);
     }
-    const example = await finalizeExample(examples[0]);
+    const example = await finalizeExample(examples[0], { debug: debugSB });
+    debugSB('Using example: %s', example.text)
     return example;
 }
 
@@ -119,5 +131,10 @@ async function _generateSandboxSentence(basedOn) {
     const systemPrompt  = await model.getPromptByName('SANDBOX_SYSTEM_PROMPT');
     let   userPrompt    = `The words are: ${basedOn.map(w => `'${w}`).join(', ')}`; 
     const result        = await generateText(systemPrompt, userPrompt);
-    return JSON.parse(result);
+    try {
+        JSON.parse(result);
+    } catch(err) {
+        debugSB('ERROR generating new Sandbox example %s', err.message);
+        throw err;
+    }
 }

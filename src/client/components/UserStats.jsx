@@ -7,7 +7,8 @@ const makeStatsArray = ({
   numPastDue,
   numSeen,
   score,
-  nextDueDate
+  nextDueDate,
+  isNewAllowed
 }) => 
   [
     {
@@ -20,7 +21,7 @@ const makeStatsArray = ({
           : ''
     },
     {
-      icon: 'ChevronUpIcon',
+      icon: 'EyeIcon',
       label: "Total Seen",
       value: numSeen
     },
@@ -33,6 +34,11 @@ const makeStatsArray = ({
       icon: 'CalendarIcon',
       label: "Next Due",
       value: nextDueDate ? format(nextDueDate) : 'none'
+    },
+    {
+      icon: 'SparklesIcon',
+      label: isNewAllowed ? 'New available' : '',
+      value: isNewAllowed ? '(!)' : ''
     }
   ];
 

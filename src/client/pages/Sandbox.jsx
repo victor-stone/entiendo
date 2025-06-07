@@ -14,11 +14,10 @@ const SandboxIntro = ({click}) => (
                 <div><img src={img1} alt="Ice Cream" className="w-20 h-20 object-contain mx-auto" /></div>
                 <div><img src={img2} alt="Clock" className="w-20 h-20 object-contain mx-auto" /></div>
                 <div><img src={img3} alt="Doll" className="w-20 h-20 object-contain mx-auto" /></div>
-                <div>When you no longer have any exercises as part of your schedule calendar, 
-                    this is where you come to practice the words you've misheard</div>
+                <div>Finished with your calendar for now? This is where you come to practice the words you've misheard.</div>
                 <div><span className="bold italic">You'll never learn a language if you don't know how it sounds.</span></div>
-                <div>These exercises are not tracked. You either get them or you don't. 
-                    There is no keeping score. You do it until you understand it. 
+                <div>There is no keeping score. You either get them or you don't. 
+                    You do it until you understand it. 
                 </div>
             </Grid>
             <ButtonBar>
