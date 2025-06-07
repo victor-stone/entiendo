@@ -40,29 +40,36 @@ const Dashboard = () => {
     <Card title={<DoExerciseTitle title="¡Bienvenido!" dueStats={data} getToken={getToken} />}>
       <Card.Body>
         <Grid columns={3} className="place-items-center text-center">
-            <div><img src={img1} alt="Ice Cream" className="w-20 h-20 object-contain mx-auto" /></div>
-            <div><img src={img2} alt="Clock" className="w-20 h-20 object-contain mx-auto" /></div>
-            <div><img src={img3} alt="Doll" className="w-20 h-20 object-contain mx-auto" /></div>
+            <div></div>
+            <div></div>
+            <div></div>
 
             <div className="place-items-center text-center">
+              <img src={img1} alt="Ice Cream" className="w-20 h-20 object-contain mx-auto" />
               <div className='text-left'><FilterInfo  /></div>
               <PageLink page="/app/preferences" text="Preferences" />
             </div>
                 
-            {showCalendar
-              ? (<div className="place-items-center text-center">
-                    <div className='text-left'><UserStats dueStats={data}/></div>
-                    <PageLink page="/app/calendar" text="Calendar" />
-                  </div>)
-              : (<div >Your calendar is empty.</div>)
-            }
-            {showSandbox
-              ? (<div className="place-items-center text-center">
-                    <div className='text-left'><SandboxPanel dueStats={data} /></div>
-                    <PageLink page="/app/sandbox" text="Practice" />
-                 </div>)
-              : (<div >Your playroom is empty.</div>)
-            }
+            <div className="place-items-center text-center">
+                    <img src={img2} alt="Clock" className="w-20 h-20 object-contain mx-auto" />
+                    {showCalendar
+                      ? <>
+                        <div className='text-left'><UserStats dueStats={data}/></div>
+                        <PageLink page="/app/calendar" text="Calendar" />
+                      </>
+                      :<div >Your calendar is empty.</div>
+                    }
+            </div>
+            <div className="place-items-center text-center">
+                <img src={img3} alt="Doll" className="w-20 h-20 object-contain mx-auto" />
+                {showSandbox 
+                  ? <>
+                      <div className='text-left'><SandboxPanel dueStats={data} /></div>
+                      <PageLink page="/app/sandbox" text="Practice" />
+                    </>
+                  : <div >Your playroom is empty.</div>
+                }
+            </div>
         </Grid>
       </Card.Body>
     </Card>
