@@ -43,6 +43,8 @@ const useExerciseStore = create((set, get) => ({
   evaluation: null,
   progress  : null,
 
+  calendarFull: false,
+
   userInput: {
     transcription: '',
     translation: ''
@@ -84,6 +86,8 @@ const useExerciseStore = create((set, get) => ({
       evaluation: null,
       progress  : null,
 
+      calendarFull:false,
+
       phase     : 'prompt',
       userInput : {
         transcription: '',
@@ -99,7 +103,8 @@ const useExerciseStore = create((set, get) => ({
     set({ 
       exercise    : null,
       loading     : true,
-      error       : null
+      error       : null,
+      calendarFull: false
     });
     try {
       const token    = await getToken();
@@ -117,8 +122,9 @@ const useExerciseStore = create((set, get) => ({
       // Check for CalendarExhaustedError by code
       if (err.code === 'SERVICE_UNAVAILABLE') {
         set({
-          error: 'No due idioms available. Please try again later.',
-          loading: false
+          error       : 'No due idioms available. Please try again later.',
+          loading     : false,
+          calendarFull: true
         });
       } else {
         set({ 

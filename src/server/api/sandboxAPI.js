@@ -95,7 +95,7 @@ async function _markProgress(exampleId, evalResults, userId) {
     } else {
         debugSB('Creating a new sandbox')
         sandbox = {
-            ...model.genIdKey(),
+            ...progressModel.genIdKey(),
             userId,
             isSandbox: true,
             history: [],

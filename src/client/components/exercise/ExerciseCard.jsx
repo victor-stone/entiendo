@@ -6,6 +6,7 @@ import ExerciseInput from './ExerciseInput';
 import ExerciseEval from './ExerciseEval';
 import ExerciseResults from './ExerciseResults';
 import debug from 'debug';
+import { useNavigate } from 'react-router-dom';
 
 const debugExercise = debug('app:exercise');
 
@@ -42,8 +43,16 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
     setPhase,
     setUserInput,
     evaluateResponse,
-    resetExercise
+    resetExercise,
+    calendarFull
   } = useExerciseStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (calendarFull) {
+      navigate('/app/dashboard');
+    }
+  }, [calendarFull, navigate]);
 
   debugExercise('Entering Card:[%s] %s%s', phase, loading ? 'loading' : '', exercise?.text || null);
   useEffect(() => {

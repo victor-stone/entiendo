@@ -77,9 +77,8 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
 
     // User has seen all examples, pick one they've seen the least (or random)
     let exampleToUse = seenExampleIds
-        .slice() // copy
-        .reverse()
-        .find(id => seenExampleIdCounts[id] < ATTEMPTS_PER_EXAMPLE_THRESHOLD);
+            .sort( (a,b) => seenExampleIdCounts[b] - seenExampleIdCounts[a])
+            .find(id => seenExampleIdCounts[id] < ATTEMPTS_PER_EXAMPLE_THRESHOLD);
 
     if (exampleToUse) {
         debugGetNext('User has seen this example before but within threshold');
