@@ -29,6 +29,10 @@ import {
       const entityType = this.tableName.slice(0, -1).toLowerCase();
       return idField || this.idField || `${entityType}Id`;
     }
+
+    genIdKey() {
+      return { [this.getIdKey()]: uuidv4() }
+    }
   
     /**
      * Create a new item in the database

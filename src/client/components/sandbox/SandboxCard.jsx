@@ -19,7 +19,8 @@ const SandboxCard = ({query}) => {
 
     useEffect(() => {
         if( !exercise && !loading ) {
-            const missedWords = query.missedWords();
+            // empty list means get all missed words
+            const missedWords = []; // query.missedWords();
             fetch(missedWords, getToken);
         }
     });

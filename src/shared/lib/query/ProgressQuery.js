@@ -55,9 +55,39 @@ export default class ProgressQuery extends query {
         return this.queryOne(`..{.idiomId == "${idiomId}"}`);
     }
 
-    sandbox() {
+    sandboxes() {
         return this.q(`..{.isSandbox}`);
     }
+
+    exampleById(exampleId) {
+        return this.q(`..{.exampleId == "${exampleId}"}`)
+    }
+
+    firstBasedOnWord(word) {
+        return this.firstBasedOn([word]);
+    }
+
+    sandboxExample(exampleId) {
+        return this.queryOne(`..{.sandbox && .exampleId == "${exampleId}"}`)
+    }
+    
+    sandbox(sandboxId) {
+        return this.queryOne(`..{.progressId == "${sandboxId}"}`)
+    }
+
+    oldestSandboxExample(list) {
+        if( !list.length ) {
+            return null;
+        }
+        let expr = list
+                    .map( w => `.missedWords == "${w}"`)
+                    .join(' || ');
+        // .sandbox && .evaluation{.missedWords == 'queda' || .missedWords == 'prendo'}                    
+        expr = `{.sandbox && .evaluation{${expr}}}`
+        list = this.q(`..${expr}`).sort((a,b) => a.date - b.date) || [];
+        return list[0];
+    }
+
 }
 
     // missedWordsByMistakeType() {

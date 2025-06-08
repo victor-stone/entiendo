@@ -6,10 +6,6 @@ import { format } from 'timeago.js'
 
 const query = new ProgressQuery(progress);
 
-function avaiableSandbox(max) {
-    return jspath(`..{.isSandbox && (.history.length < ${max})}`, progress)[0];
-}
-
 function getMissedWordsByMistakeType(data) {
     return jspath('..evaluation', data).reduce( (dict,{mistakeType,missedWords}) => {
         if( missedWords.length ) dict[mistakeType] = new Set( [ ...(dict[mistakeType] || []) , ...missedWords].sort() )
@@ -31,6 +27,15 @@ function getMissedWords(data) {
     return result;
 }
 
-const result = avaiableSandbox(3);
+function findExample() {
+    return jspath(`..
+        {
+            .sandbox && .evaluation{.missedWords == 'podía'}
+        }
+        `, progress);
+}
+
+const result = query.oldestSandboxExample(['podía']);
+
 console.log(util.inspect(result, { depth: null, colors: true }));
 

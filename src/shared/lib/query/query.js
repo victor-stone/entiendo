@@ -2,19 +2,16 @@ import jspath from 'jspath'
 
 
 export default class query {
-    constructor(data, key) {
-        this.data = data;
-        this.key = key;
-    }
-
-    // base classes override this
-    refresh(data) {
+    constructor(data) {
         this.data = data;
     }
 
-    q(q) {
+    q(q, data = null) {
+        if( !data ) {
+            data = this.data;
+        }
         try {
-            const result = jspath(q,this.data) || [];
+            const result = jspath(q,data) || [];
             return result;
         } catch(err) {
             console.error('JSPATH Parse error for ', q);
@@ -26,7 +23,4 @@ export default class query {
         return this.q(q)[0];
     }
 
-    getKeys() {
-        return this.q(`..${this.key}`);
-    }
 }

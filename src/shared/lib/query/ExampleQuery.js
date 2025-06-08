@@ -17,10 +17,6 @@ export default class ExampleQuery extends query {
         return [... new Set(this.q('..exampleId')) ]
     }
 
-    sandBoxed() {
-        return this.q('..{.basedOn}')
-    }
-
     basedOn(list) {
         const expr = list.map( w => `.basedOn == "${w}"`).join(' || ');
         return this.q(`..{${expr}}`);
