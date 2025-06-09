@@ -32,7 +32,8 @@ export async function dueStats(routeContext) {
 
   if( progress.length == 0 ) {
     return {
-      numSeen: 0
+      numSeen: 0,
+      enableGetNext: true
     }
   }
 
@@ -53,6 +54,8 @@ export async function dueStats(routeContext) {
     missed      : missed.length,
     unique      : unique.length
   }
+
+  stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;
 
   return stats;
 

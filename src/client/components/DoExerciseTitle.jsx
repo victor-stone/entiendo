@@ -6,9 +6,9 @@ const DoExerciseTitle = ({ title, dueStats }) => {
     <div className="flex items-center justify-between w-full">
       <div className="text-left">{title}</div>
       <div className="text-right">
-        {dueStats && (!dueStats.numSeen || dueStats.isNewAllowed || dueStats.numPastDue)
+        {dueStats?.enableGetNext
           ? <PageLink page="/app/exercise" text="Start Exercise" className="btn btn-primary" />
-          : dueStats.nextDueDate
+          : dueStats?.nextDueDate
             ? `Next exercise due ${format(dueStats.nextDueDate)}`
             : ''
         }

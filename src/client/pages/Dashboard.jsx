@@ -32,8 +32,8 @@ const Dashboard = () => {
   if (loading || !data) {
     return <LoadingIndicator />
   }
-  const showCalendar = data && data.numSeen > 0;
-  const showSandbox = data && data.numSeen > 0 && data.missed;
+  const showCalendar = data.numSeen > 0;
+  const showSandbox = !data.enableGetNext && data.missed;
 
   return (
     <Card title={<DoExerciseTitle title="¡Bienvenido!" dueStats={data} getToken={getToken} />}>
@@ -64,7 +64,9 @@ const Dashboard = () => {
                 <div className='text-left'><SandboxPanel dueStats={data} /></div>
                 <PageLink page="/app/sandbox" text="Practice" />
               </>
-              : <div >Your playroom is empty.</div>
+              : data.enableGetNext 
+                  ? <div>Unlock this by clearing your calendar</div>
+                  : <div>Your playroom is empty.</div>
             }
           </div>
           

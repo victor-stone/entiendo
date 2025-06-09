@@ -50,8 +50,8 @@ async function _getNextDueExercise(routeContext) {
 
 async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
     const { 
-        EXAMPLE_PER_IDIOM_THRESHOLD, 
-        ATTEMPTS_PER_EXAMPLE_THRESHOLD } = await getSettings();
+        GET_NEXT_EXAMPLES_PER_IDIOM, 
+        GET_NEXT_ATTEMPTS_PER_EXAMPLE } = getSettings();
 
     const exQuery = await ExampleModelQuery.create();
 
@@ -63,7 +63,7 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
     }, {});
 
     // If user hasn't seen enough examples, try to find or create a new one
-    if (seenExampleIds.length < EXAMPLE_PER_IDIOM_THRESHOLD) {
+    if (seenExampleIds.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
         const examplesForIdiom = exQuery.forIdiom(idiom.idiomId);
         let exercise = examplesForIdiom.find(({ exampleId }) => !seenExampleIds.includes(exampleId));
         if (!!exercise) {
@@ -78,7 +78,7 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
     // User has seen all examples, pick one they've seen the least (or random)
     let exampleToUse = seenExampleIds
             .sort( (a,b) => seenExampleIdCounts[b] - seenExampleIdCounts[a])
-            .find(id => seenExampleIdCounts[id] < ATTEMPTS_PER_EXAMPLE_THRESHOLD);
+            .find(id => seenExampleIdCounts[id] < GET_NEXT_ATTEMPTS_PER_EXAMPLE);
 
     if (exampleToUse) {
         debugGetNext('User has seen this example before but within threshold');
@@ -92,12 +92,12 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
 
 async function _isNewAllowed(routeContext) {
     /*
-        if total number of progress < MAX_INITIAL_NEW_IDIOMS then return true.
+        if total number of progress < GET_NEXT_MAX_INITIAL_IDIOMS then return true.
 
         If the user has any progress record older than 24 hours and the total number of 
-        progress is < (MAX_INITIAL_NEW_IDIOMS * 2) then return true;
+        progress is < (GET_NEXT_MAX_INITIAL_IDIOMS * 2) then return true;
 
-        After that only allow MAX_NEW_IDIOMS for the last 24 hours.
+        After that only allow GET_NEXT_MAX_NEW_IDIOMS for the last 24 hours.
 
         You can calcuate the date of usage by looking at exercise.history[n].date
     */

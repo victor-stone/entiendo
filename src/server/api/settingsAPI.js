@@ -1,15 +1,17 @@
-import PromptModel from '../models/PromptModel.js';
+import { SettingsModel } from "../models/index.js";
 
-/**
- * Fetches the SETTINGS prompt from the Prompts table.
- * @returns {Promise<string|null>} The settings string, or null if not found.
- */
-export async function getSettings() {
-  const promptModel = new PromptModel();
-  const settings = await promptModel.getValueByName('SETTINGS');
-  return settings;
+export function getSettings() {
+  return SettingsModel.all();
 }
 
-export default {
-  getSettings
-};
+export function putSettings(routeContext) {
+  const { payload: { settings } } = routeContext;
+  const model = new SettingsModel();
+  return model.put(settings);
+}
+
+export function addSettings(routeContext) {
+  const { payload: { settings } } = routeContext;
+  const model = new SettingsModel();
+  return model.add(settings);
+}

@@ -1,5 +1,4 @@
 // src/server/models/ExampleModel.js
-import { PropertyCollection } from 'microsoft-cognitiveservices-speech-sdk';
 import BaseModel from './BaseModel.js';
 
 /**
@@ -17,11 +16,7 @@ export default class PromptModel extends BaseModel {
 
   async getPromptByName(name, substitutions = {}) {
     const r = await this.getById(name);
-    return r ? r.prompt.replace(/\$\{(\w+)\}/g, (_, k) => k in substitutions ? substitutions[k] : '${'+k+'}') : null;
-  }
-
-  async getValueByName(name) {
-    return this.getById(name);
+    return r.prompt.replace(/\$\{(\w+)\}/g, (_, k) => k in substitutions ? substitutions[k] : '${'+k+'}');
   }
 
 }
