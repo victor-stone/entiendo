@@ -4,12 +4,10 @@ import { PageLink, LoadingSpinner } from "../components/ui";
 import { useEffect } from "react";
 import { ToneSelectorField } from "../components/ToneSelector";
 import UsageRangeSelector from "../components/UsageRangeSelector";
-import FontPicker from '../components/FontPicker';
 
 const hints = {
-    usage : 'Prioritize which idioms you see based on how frequently they are used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.',
-    admin : 'Admin: Next example ID',
-    font  : 'Choose your preferred font for the app.'
+    usage: 'Prioritize which idioms you see based on how frequently they are used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.',
+    admin: 'Admin: Next example ID'
 };
 
 const Preferences = () => {
@@ -21,10 +19,10 @@ const Preferences = () => {
         loading,
         isAdmin,
         getToken
-     } = useUserStore();
+    } = useUserStore();
 
-       const { setImage } = useBrandImageStore();
-     
+    const { setImage } = useBrandImageStore();
+
     useEffect(() => {
         setImage('icecream');
     }, [setImage])
@@ -35,23 +33,20 @@ const Preferences = () => {
                 <CardField hint={hints.usage}>
                     <UsageRangeSelector value={preferences?.filter?.usage} onChange={setUsage} />
                 </CardField>
-                <ToneSelectorField getToken={getToken} value={preferences?.filter?.tone || ""} onChange={setTone} /> 
-                <CardField hint={hints.font}>
-                  <FontPicker />
-                </CardField>
+                <ToneSelectorField getToken={getToken} value={preferences?.filter?.tone || ""} onChange={setTone} />
                 {/* Theme selector doesn't work */ '' &&
-            <CardField title="Theme">
-                <select
-                className="border rounded px-2 py-1"
-                value={preferences?.theme || ''}
-                onChange={e => setPreference('theme', e.target.value)}
-                >
-                <option value="">System Default</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-                </select>
-            </CardField>}
-                {isAdmin && 
+                    <CardField title="Theme">
+                        <select
+                            className="border rounded px-2 py-1"
+                            value={preferences?.theme || ''}
+                            onChange={e => setPreference('theme', e.target.value)}
+                        >
+                            <option value="">System Default</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </CardField>}
+                {isAdmin &&
                     <CardField hint={hints.admin} title="Next Example">
                         <input
                             type="text"

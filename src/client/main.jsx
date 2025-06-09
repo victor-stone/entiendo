@@ -3,14 +3,12 @@ import ReactDOM from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Auth } from './components/Auth.jsx'
 import './styles/index.css'
-import { applyInitialFont } from './lib/fontLoader.js'
 import { checkAuth0LocalStorage } from './lib/checkAuth0LocalStorage.js'
 import { RouterProvider } from 'react-router-dom'
 import router from './pages/router.jsx'
 import { useUserStore } from './stores'
 import { LoadingIndicator } from './components/ui'
 
-applyInitialFont()
 checkAuth0LocalStorage()
 
 function EntiendoApp() {
