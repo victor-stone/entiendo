@@ -17,7 +17,6 @@ if (!stagedir) {
   process.exit(1);
 }
 
-
 const workDir = path.dirname(process.argv[1]);
 const baseDir = path.join(workDir, "stages", stagedir);
 const files   = fs.readdirSync(baseDir);
@@ -27,6 +26,58 @@ if (!files.includes(csvFile)) {
   console.error(`No ${csvFile} file found in`, baseDir);
   process.exit(1);
 }
+
+function verifyStageFiles() {
+  // Check audio directory exists
+  const audioPath = path.join(baseDir, "audio");
+  if (!fs.existsSync(audioPath) || !fs.statSync(audioPath).isDirectory()) {
+    console.error(`Missing audio directory: ${audioPath}`);
+    process.exit(1);
+  }
+  // Check for at least one mp3 file
+  const audioFiles = fs.readdirSync(audioPath).filter(f => f.endsWith('.mp3'));
+  if (audioFiles.length === 0) {
+    console.error(`No .mp3 files found in audio directory: ${audioPath}`);
+    process.exit(1);
+  }
+  // Check CSV columns
+  const csvPath = path.join(baseDir, csvFile);
+  const csvContent = fs.readFileSync(csvPath, "utf8");
+  const [headerLine] = csvContent.split(/\r?\n/);
+  const expectedColumns = [
+    'text', 'translation', 'transcript', 'snippet', 'voice', 'num', 'idiomId'
+  ];
+  const actualColumns = headerLine.split(',').map(s => s.trim());
+  const missing = expectedColumns.filter(col => !actualColumns.includes(col));
+  if (missing.length > 0) {
+    console.error(`CSV file missing columns: ${missing.join(', ')}`);
+    process.exit(1);
+  }
+  // Check all audio files referenced in CSV exist
+  const records = parse(csvContent, {
+    columns: true,
+    skip_empty_lines: true,
+    trim: true,
+  });
+  let missingAudio = [];
+  for (const rec of records) {
+    const row = rec.num;
+    // Accept both "." and " " after row number, as in main()
+    const regex = new RegExp(`^${row}(\\.| ).*\\.mp3$`);
+    const found = audioFiles.find(f => regex.test(f));
+    if (!found) {
+      missingAudio.push(`${row}: ${rec.text || rec.snippet || ''}`);
+    }
+  }
+  if (missingAudio.length > 0) {
+    console.error('Missing audio files for the following rows:');
+    missingAudio.forEach(msg => console.error(msg));
+    process.exit(1);
+  }
+  console.log('Stage verification passed: audio directory and CSV columns are valid.');
+}
+
+verifyStageFiles();
 
 function parseMap() {
   const csvPath   = path.join(baseDir, csvFile);

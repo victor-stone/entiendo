@@ -44,6 +44,11 @@ export default class ExampleModel extends BaseModel {
     return this.findAll(filterExpression);
   }
 
+  async create(obj) {
+    const { idiomId, text, conjugatedSnippet, source = 'api' } = obj;
+    return this.createExample(idiomId, text, conjugatedSnippet, source )
+  }
+
   /**
    * Create a new example for an idiom
    * @param {String} idiomId - Idiom ID
@@ -55,7 +60,7 @@ export default class ExampleModel extends BaseModel {
   async createExample(idiomId, text, conjugatedSnippet, source = 'openai', audio = null) {
     const createdAt = Date.now();
     
-    const record = this.create({
+    const record = super.create({
       idiomId,
       text,
       conjugatedSnippet,
@@ -81,6 +86,12 @@ export default class ExampleModel extends BaseModel {
     notifyUpdates();
     return record;
     
+  }
+
+  async update(key, updates) {
+    const record = super.update(key,updates);
+    notifyUpdates();
+    return record;
   }
 
   async addAudio(exampleId, audio) {

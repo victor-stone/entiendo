@@ -13,6 +13,8 @@ import DoExerciseTitle from '../components/DoExerciseTitle';
 
 const debugRender = debug('app:render');
 
+const HeaderImage = ({img,alt}) => <img src={img} alt={alt} className="w-20 h-20 object-contain mx-auto mb-4" />
+
 const Dashboard = () => {
   debugRender('Rendering Dashboard');
   const getToken = useUserStore(state => state.getToken);
@@ -41,13 +43,13 @@ const Dashboard = () => {
         <Grid columns={3} className="place-items-center text-center">
 
           <div className="place-items-center text-center">
-            <img src={img1} alt="Ice Cream" className="w-20 h-20 object-contain mx-auto" />
+            <HeaderImage img={img1} alt="Ice Cream" />
             <div className='text-left'><FilterInfo /></div>
             <PageLink page="/app/preferences" text="Preferences" />
           </div>
 
           <div className="place-items-center text-center">
-            <img src={img2} alt="Clock" className="w-20 h-20 object-contain mx-auto" />
+            <HeaderImage img={img2} alt="Clock" />
             {showCalendar
               ? <>
                 <div className='text-left'><UserStats dueStats={data} /></div>
@@ -58,14 +60,14 @@ const Dashboard = () => {
           </div>
 
           <div className="place-items-center text-center">
-            <img src={img3} alt="Doll" className="w-20 h-20 object-contain mx-auto" />
+            <HeaderImage img={img3} alt="Doll" />
             {showSandbox
               ? <>
                 <div className='text-left'><SandboxPanel dueStats={data} /></div>
                 <PageLink page="/app/sandbox" text="Practice" />
               </>
               : data.enableGetNext 
-                  ? <div>Unlock this by clearing your calendar</div>
+                  ? <div>🔒 Unlock the Playroom by clearing your calendar</div>
                   : <div>Your playroom is empty.</div>
             }
           </div>

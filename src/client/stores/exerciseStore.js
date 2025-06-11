@@ -3,6 +3,9 @@ import exerciseService from '../services/exerciseService';
 import { storeFetch } from '../lib/storeUtils';
 const { getDueList, getDueStats, getExample, 
   getIdiomExamples } = exerciseService;
+import debug from 'debug';
+
+const debugStore = debug('app:store');
 
 export const useIdiomExampleStore = create((set, get) => ({
   loading: false,
@@ -17,14 +20,21 @@ export const useDueStatsStore = create((set, get) => ({
   error: null,
   data: null,
   fetch: storeFetch(getDueStats, set),
-  reset: () => set({ data: null, error: null, loading: false })
+  reset: () => {
+    debugStore('Clearing useDueStatsStore')
+    return set({ data: null, error: null, loading: false })
+  }
 }));
 
 export const useDueListStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getDueList, set)
+  fetch: storeFetch(getDueList, set),
+  reset: () => {
+    debugStore('Clearing useDueListStore')
+    return set({ data: null, error: null, loading: false })
+  }
 }));
 
 export const useExampleStore = create((set, get) => ({
