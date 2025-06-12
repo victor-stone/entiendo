@@ -23,7 +23,7 @@ function ex() { // aka .sandBoxed
 
 // const result = jspath('..{!.basedOn}', data)
 
-const result = data.examples.filter( 
+const result2 = data.examples.filter( 
                                 ex => (!Object.hasOwn(ex, 'idiomId') || !ex.idiomId) && 
                                        !Object.hasOwn(ex, 'basedOn') )
                               .map( ex => {
@@ -31,5 +31,16 @@ const result = data.examples.filter(
                                 return ex;
                               })
 
+const result = data.examples.filter( ex => {
+    return !Object.hasOwn(ex,'createdAt');
+})
+
 console.log(util.inspect(result, { depth: null, colors: true }));
 
+🔥
+/*
+Semestre Invierno 2025 lanza este Domingo @La Infinita 
+
+Por Favor - confirmar tu asistencia 
+
+*/

@@ -29,6 +29,20 @@ export default class ExampleModel extends BaseModel {
     super('IdiomExamples', 'exampleId');
   }
 
+  async create(obj) {
+    const createdAt = Date.now();
+    const spec      = { createdAt, ...obj };
+    const record    = super.create(spec);
+    notifyUpdates();
+    return record;
+  }
+  
+  async update(key, updates) {
+    const record = super.update(key,updates);
+    notifyUpdates();
+    return record;
+  }
+
   async findByIdiomId(idiomId) {
     const filterExpression = {
       expression: 'idiomId = :idiomId',
@@ -40,13 +54,6 @@ export default class ExampleModel extends BaseModel {
     return this.findAll(filterExpression);
   }
 
-  async create(obj) {
-    const createdAt = Date.now();
-    const spec = { createdAt, ...obj };
-    const record = super.create(spec);
-    notifyUpdates();
-    return record;
-  }
 
   async createExample(
           idiomId, 
@@ -60,7 +67,6 @@ export default class ExampleModel extends BaseModel {
       text,
       conjugatedSnippet,
       source,
-      createdAt,
       audio
     });
   }
@@ -76,11 +82,6 @@ export default class ExampleModel extends BaseModel {
     });
   }
 
-  async update(key, updates) {
-    const record = super.update(key,updates);
-    notifyUpdates();
-    return record;
-  }
 
   async addAudio(exampleId, audio) {
     return this.update(exampleId, { audio });
