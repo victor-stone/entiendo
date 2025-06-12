@@ -11,6 +11,7 @@ function notifyUpdates() {
  * Model for storing and retrieving example sentences for idioms
  * 
  * {
+ *  "basedOn"          : ['foo', 'bar'] // MIGHT BE NULL
     "exampleId"        : "97353048-3d1d-49f0-92ce-ac99ce8967b0",
     "createdAt"        : 1747079328336,
     "conjugatedSnippet": "armó un quilombo",  // MIGHT BE NULL
@@ -28,11 +29,6 @@ export default class ExampleModel extends BaseModel {
     super('IdiomExamples', 'exampleId');
   }
 
-  /**
-   * Find examples for a specific idiom
-   * @param {String} idiomId - Idiom ID
-   * @returns {Promise<Array>} - Array of examples for the idiom
-   */
   async findByIdiomId(idiomId) {
     const filterExpression = {
       expression: 'idiomId = :idiomId',
@@ -45,22 +41,21 @@ export default class ExampleModel extends BaseModel {
   }
 
   async create(obj) {
-    const { idiomId, text, conjugatedSnippet, source = 'api' } = obj;
-    return this.createExample(idiomId, text, conjugatedSnippet, source )
+    const createdAt = Date.now();
+    const spec = { createdAt, ...obj };
+    const record = super.create(spec);
+    notifyUpdates();
+    return record;
   }
 
-  /**
-   * Create a new example for an idiom
-   * @param {String} idiomId - Idiom ID
-   * @param {String} text - Example sentence text
-   * @param {String} conjugatedSnippet - Conjugated snippet of the idiom in the text
-   * @param {String} source - Source of the example (e.g., 'openai', 'manual', 'user')
-   * @returns {Promise<Object>} - Created example
-   */
-  async createExample(idiomId, text, conjugatedSnippet, source = 'openai', audio = null) {
-    const createdAt = Date.now();
+  async createExample(
+          idiomId, 
+          text, 
+          conjugatedSnippet, 
+          source = 'openai', 
+          audio = null) {
     
-    const record = super.create({
+    return this.create({
       idiomId,
       text,
       conjugatedSnippet,
@@ -68,14 +63,10 @@ export default class ExampleModel extends BaseModel {
       createdAt,
       audio
     });
-    notifyUpdates();
-    return record;
   }
 
   async createSandboxExample( text, basedOn, source = 'openai', audio = null) {
-    const createdAt = Date.now();
-
-    const record = this.create({
+    return this.create({
       idiomId: null,
       basedOn,
       text,
@@ -83,9 +74,6 @@ export default class ExampleModel extends BaseModel {
       createdAt,
       audio
     });
-    notifyUpdates();
-    return record;
-    
   }
 
   async update(key, updates) {
