@@ -8,13 +8,17 @@ import { RouterProvider } from 'react-router-dom'
 import router from './pages/router.jsx'
 import { useUserStore } from './stores'
 import { LoadingIndicator } from './components/ui'
+import debug from 'debug';
+
+const debugApp = debug('app');
+const debugLogin = debug('app:login');
 
 checkAuth0LocalStorage()
 
 function EntiendoApp() {
-  console.log('Entiendo app');
+  debugApp('Entiendo app');
   const authReady = useUserStore(state => state.authReady)
-  console.log('AUTH READY: ', authReady);
+  debugLogin('AUTH READY: ', authReady);
   return (
     <>
       <Auth />
