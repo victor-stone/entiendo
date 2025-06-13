@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
-import { storeFetch } from '../lib/storeUtils';
 const { getDueList, getDueStats, getExample, 
   getIdiomExamples } = exerciseService;
 import debug from 'debug';
-
 const debugStore = debug('app:store');
+import { storeFetch } from '../lib/storeUtils';
+
 
 export const useIdiomExampleStore = create((set, get) => ({
   loading: false,

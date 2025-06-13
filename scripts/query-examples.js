@@ -31,13 +31,17 @@ const result2 = data.examples.filter(
                                 return ex;
                               })
 
-const result = data.examples.filter( ex => {
+const result3 = data.examples.filter( ex => {
     return !Object.hasOwn(ex,'createdAt');
 })
 
+let result = query.example("51545e59-442d-410e-8ccd-be4ffb2f7b90");
+// result.fooBaz = 'flalaha';
+// result = query.example("7ba4e19f-e4d7-4d1f-86bb-29d81c23217f");
+
 console.log(util.inspect(result, { depth: null, colors: true }));
 
-🔥
+
 /*
 Semestre Invierno 2025 lanza este Domingo @La Infinita 
 

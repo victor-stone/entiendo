@@ -1,8 +1,18 @@
 import { create } from 'zustand';
 import settingsService from '../services/settingsService';
+const { fetchSettings, putSettings } = settingsService;
 import debug from 'debug';
-
 const debugSettings = debug('app:settings');
+import { storeFetch } from '../lib/storeUtils';
+
+
+export const usePutSettingsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  put: storeFetch(putSettings, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
 
 function getCookie(name) {
   if (typeof document === 'undefined') return null;
@@ -19,16 +29,16 @@ async function hashPassword(input, testKey) {
     .join('');
 }
 
-const useSettingsStore = create((set, get) => ({
+export const useGetSettingsStore = create((set, get) => ({
   // State
   settings    : null,
   loading     : false,
   error       : null,
-  inBeta: false,
+  inBeta      : false,
   verifiedBeta: false,
 
   // Actions
-  resetState: () => set({
+  reset: () => set({
     settings    : null,
     loading     : false,
     error       : null,
@@ -40,7 +50,7 @@ const useSettingsStore = create((set, get) => ({
   getSettings: async () => {
     set({ loading: true, error: null });
     try {
-      const settings = await settingsService.fetchSettings();
+      const settings = await fetchSettings();
       debugSettings('got settings %o', settings)
       let verifiedBeta = false;
       if( settings.inBeta ) {
@@ -81,4 +91,3 @@ const useSettingsStore = create((set, get) => ({
   }
 }));
 
-export default useSettingsStore;

@@ -3,7 +3,8 @@ import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
   Calendar, BugReport, Sandbox } from './index';
 import { IdiomListPage, IdiomImportPage, 
-  AudioUploadPage, NewIdiomExamplePage, NewIdiomPage } from './admin';
+  AudioUploadPage, NewIdiomExamplePage, NewIdiomPage,
+  SettingsPage } from './admin';
 import AdminRoute from '../components/admin/AdminRoute';
 import UserRoute from '../components/UserRoute';
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx';
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
           { path: 'import',  element: <IdiomImportPage /> },
           { path: 'example', element: <NewIdiomExamplePage /> },
           { path: 'audio',   element: <AudioUploadPage /> },
+          { path: 'settings',element: <SettingsPage /> },
           { path: 'example/:idiomId', element: <NewIdiomExamplePage /> },
           { path: 'audio/:exampleId', element: <AudioUploadPage /> },
         ],

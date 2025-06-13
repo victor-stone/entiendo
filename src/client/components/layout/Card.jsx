@@ -1,6 +1,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid'; 
 import * as icons from '@heroicons/react/24/solid'; 
 import { Link } from 'react-router-dom';
+import Grid from '../ui/Grid';
 
 const defColor = 'bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-200';
 
@@ -29,7 +30,7 @@ function CardBody({ children, className, style }) {
 
 export const CardField = ({ children, hint, title, isFull = true }) => (
   <div className="mb-3 p-5">
-    {title && <label className="block mb-1 font-medium">{title}</label>}
+    {title && <label className="block mb-1 font-bold">{title}</label>}
     <div className={isFull ? 'w-full' : 'w-fit'}>
       {children}
     </div>
@@ -40,6 +41,23 @@ export const CardField = ({ children, hint, title, isFull = true }) => (
     )}
   </div>
 );
+
+const CardGrid = ({children, className}) => {
+  return <Grid columns={2} className={className}>{children}</Grid>
+}
+const CardGridLabel = ({ title }) => (
+  <div>
+    <label className="font-bold text-right w-full block">{title}</label>
+  </div>
+);
+const CardGridField = ({ children, hint }) => <div>
+  {children}
+  {hint && (
+    <div className="w-full text-xs text-gray-500 mt-2">
+      {hint}
+    </div>
+  )}
+</div>;
 
 function CardSection({ title, children, className = '' }) {
   return (
@@ -106,3 +124,7 @@ Card.Body = CardBody;
 Card.Info = CardInfo;
 Card.Panel = CardPanel;
 Card.Section = CardSection;
+Card.Field = CardField;
+Card.Grid = CardGrid;
+Card.GridLabel = CardGridLabel;
+Card.GridField = CardGridField;

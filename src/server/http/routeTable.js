@@ -56,6 +56,11 @@ export const routeTable = {
       auth: true
     },
 
+    '/api/settings': {
+      handler: (routeContext) => settingsAPI.putSettings(routeContext),
+      auth: true
+    },
+
     // User routes
     '/api/users/sync': {
       handler: (routeContext) => userAPI.syncUserFromAuth0(routeContext),

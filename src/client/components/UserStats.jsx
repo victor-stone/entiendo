@@ -14,10 +14,10 @@ const makeStatsArray = ({
     {
       icon: 'ExclamationTriangleIcon',
       label: numPastDue
-          ? 'Past Due'
+          ? numPastDue + ' Past Due'
           : 'All caught up!',
       value: numPastDue
-          ? numPastDue + ' (' + format(pastDueDate) + ')'
+          ? ' (' + format(pastDueDate) + ')'
           : ''
     },
     {

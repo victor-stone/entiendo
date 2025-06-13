@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useUserStore, useSettingsStore } from '../stores';
+import { useUserStore, useGetSettingsStore } from '../stores';
 import { LoadingSpinner } from './ui/LoadingIndicator';
 import debug from 'debug';
 import { useEffect } from 'react';
@@ -9,7 +9,7 @@ const debugLogin = debug('app:login');
 // Protected route component to ensure only authenticated users and beta-verified users can access
 const UserRoute = ({ children }) => {
   const { isAuthenticated, isLoading, preferences} = useUserStore();
-  const { inBeta, verifiedBeta }      = useSettingsStore();
+  const { inBeta, verifiedBeta }      = useGetSettingsStore();
 
   // Set theme from preferences
   useEffect(() => {

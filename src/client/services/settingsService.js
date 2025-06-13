@@ -1,4 +1,4 @@
-import { get } from '../lib/apiClient';
+import { get, post } from '../lib/apiClient';
 import debug from 'debug';
 
 const debugSettings = debug('client:settings');
@@ -14,6 +14,12 @@ const settingsService = {
   fetchSettings: async () => {
     debugSettings('Fetching settings from /api/settings');
     return await get('/api/settings');
+  },
+
+  putSettings: async (settings, authToken) => {
+    // send it as { settings: { ... } } as opposed to invidual
+    // post/header values
+    return post('/api/settings', {settings}, authToken )
   }
 };
 

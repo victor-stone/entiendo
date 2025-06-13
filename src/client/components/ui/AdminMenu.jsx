@@ -25,6 +25,9 @@ const AdminMenu = ({ isMobile, onClose }) => {
     {
       path: '/admin/audio', label: 'Upload Audio'
     },
+    {
+      path: '/admin/settings', label: 'Settings'
+    },
   ];
 
   if (isMobile) {

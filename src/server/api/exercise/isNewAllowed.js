@@ -12,12 +12,15 @@ export async function isNewAllowed(userId) {
 
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-    // 1. If total number of progress < GET_NEXT_MAX_INITIAL_IDIOMS then return true.
+    // 1. Let the user build MAX_INITIAL amount
+    //    no matter how long it takes.
     if (dates.length < GET_NEXT_MAX_INITIAL_IDIOMS) {
         return true;
     }
 
-    // 2. If any progress is older than 24 hours and total < (GET_NEXT_MAX_INITIAL_IDIOMS * 2) then return true
+    // 2. If the user has used the app for more than 24 hours
+    //    but have not wracked up (MAX_INITIAL * 2) then let them
+    //    keep building their calendar
     const hasOldProgress = dates.some(d => (now - d) > ONE_DAY_MS);
     if (hasOldProgress && dates.length < (GET_NEXT_MAX_INITIAL_IDIOMS * 2)) {
         return true;

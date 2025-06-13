@@ -3,8 +3,8 @@ import BaseModel from './BaseModel.js';
 
 // TODO make this events
 const onUpdate = [];
-function notifyUpdates() {
-  onUpdate.forEach(u => u());
+function notifyUpdates(key, value) {
+  onUpdate.forEach(u => u(key, value));
 }
 
 /**
@@ -39,7 +39,7 @@ export default class ExampleModel extends BaseModel {
   
   async update(key, updates) {
     const record = super.update(key,updates);
-    notifyUpdates();
+    notifyUpdates(key, updates);
     return record;
   }
 
@@ -77,7 +77,6 @@ export default class ExampleModel extends BaseModel {
       basedOn,
       text,
       source,
-      createdAt,
       audio
     });
   }

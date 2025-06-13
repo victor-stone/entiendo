@@ -1,4 +1,4 @@
-import { IdiomModel, ExampleModel } from '../../models/index.js';
+import { IdiomModel, ExampleModel, ExampleModelQuery } from '../../models/index.js';
 import { NotFoundError } from '../../../shared/constants/errorTypes.js';
 
 /**

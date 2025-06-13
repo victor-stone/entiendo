@@ -35,7 +35,9 @@ function findExample() {
         `, progress);
 }
 
-const result = query.oldestSandboxExample(['podía']);
+const result2 = query.oldestSandboxExample(['podía']);
+
+const result = query.sandboxExample("51545e59-442d-410e-8ccd-be4ffb2f7b90");
 
 console.log(util.inspect(result, { depth: null, colors: true }));
 
