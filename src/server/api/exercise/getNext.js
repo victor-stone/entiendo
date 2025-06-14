@@ -77,11 +77,12 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
 
     // User has seen all examples, pick one they've seen the least (or random)
     let exampleToUse = seenExampleIds
-            .sort( (a,b) => seenExampleIdCounts[b] - seenExampleIdCounts[a])
+            .sort( (a,b) => seenExampleIdCounts[a] - seenExampleIdCounts[b])
             .find(id => seenExampleIdCounts[id] < GET_NEXT_ATTEMPTS_PER_EXAMPLE);
 
     if (exampleToUse) {
-        debugGetNext('User has seen this example before but within threshold');
+        debugGetNext('Using: %s', exampleToUse )
+        debugGetNext('User has seen this example before %o', seenExampleIdCounts);
     } else {
         exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
         debugGetNext('WARNING: User has seen all the examples max times, picking one random');

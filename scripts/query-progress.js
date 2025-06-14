@@ -22,7 +22,7 @@ function findIdiom(data) {
 }
 
 function getMissedWords(data) {
-    let result = jspath('..missedWords', data);
+    let result = jspath('..missedWords', data).map( w => w.toLowerCase() )
         result = [... new Set(result)].sort();
     return result;
 }
@@ -37,7 +37,23 @@ function findExample() {
 
 const result2 = query.oldestSandboxExample(['podía']);
 
-const result = query.sandboxExample("51545e59-442d-410e-8ccd-be4ffb2f7b90");
+const result3 = query.sandboxExample("51545e59-442d-410e-8ccd-be4ffb2f7b90");
+
+const result6 = query.schedule()
+    .filter( ({userId}) => userId == "google-oauth2|101722812212104773442")
+    .sort( (a,b) => b.createdAt - a.createdAt )
+    .map( ex => {
+    ex.dueDate = format(ex.dueDate);
+    ex.createdAt = format(ex.createdAt);
+    ex.history = ex.history.map( h => {
+        h.date = format(h.date);
+        return h;
+    })
+    return ex;
+});
+
+const result = getMissedWords(progress);
 
 console.log(util.inspect(result, { depth: null, colors: true }));
-
+console.log(result)
+result;

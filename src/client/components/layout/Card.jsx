@@ -42,12 +42,12 @@ export const CardField = ({ children, hint, title, isFull = true }) => (
   </div>
 );
 
-const CardGrid = ({children, className}) => {
-  return <Grid columns={2} className={className}>{children}</Grid>
+const CardGrid = ({children, className, columns = 2}) => {
+  return <Grid columns={columns} className={className}>{children}</Grid>
 }
-const CardGridLabel = ({ title }) => (
+const CardGridLabel = ({ title, right = true }) => (
   <div>
-    <label className="font-bold text-right w-full block">{title}</label>
+    <label className={`font-bold ${right ? 'text-right' : ''} w-full block`}>{title}</label>
   </div>
 );
 const CardGridField = ({ children, hint }) => <div>

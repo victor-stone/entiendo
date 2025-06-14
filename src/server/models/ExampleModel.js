@@ -1,10 +1,10 @@
 // src/server/models/ExampleModel.js
-import BaseModel from './BaseModel.js';
+import BaseModel from "./BaseModel.js";
 
 // TODO make this events
 const onUpdate = [];
 function notifyUpdates(key, value) {
-  onUpdate.forEach(u => u(key, value));
+  onUpdate.forEach((u) => u(key, value));
 }
 
 /**
@@ -26,61 +26,59 @@ function notifyUpdates(key, value) {
  */
 export default class ExampleModel extends BaseModel {
   constructor() {
-    super('IdiomExamples', 'exampleId');
+    super("IdiomExamples", "exampleId");
   }
 
   async create(obj) {
     const createdAt = Date.now();
-    const spec      = { createdAt, ...obj };
-    const record    = super.create(spec);
+    const spec = { createdAt, ...obj };
+    const record = super.create(spec);
     notifyUpdates();
     return record;
   }
-  
+
   async update(key, updates) {
-    const record = super.update(key,updates);
+    const record = super.update(key, updates);
     notifyUpdates(key, updates);
     return record;
   }
 
   async findByIdiomId(idiomId) {
     const filterExpression = {
-      expression: 'idiomId = :idiomId',
+      expression: "idiomId = :idiomId",
       values: {
-        ':idiomId': { S: idiomId }
-      }
+        ":idiomId": { S: idiomId },
+      },
     };
 
     return this.findAll(filterExpression);
   }
 
-
   async createExample(
-          idiomId, 
-          text, 
-          conjugatedSnippet, 
-          source = 'openai', 
-          audio = null) {
-    
+    idiomId,
+    text,
+    conjugatedSnippet,
+    source = "openai",
+    audio = null
+  ) {
     return this.create({
       idiomId,
       text,
       conjugatedSnippet,
       source,
-      audio
+      audio,
     });
   }
 
-  async createSandboxExample( text, basedOn, source = 'openai', audio = null) {
+  async createSandboxExample(text, basedOn, source = "openai", audio = null) {
     return this.create({
       idiomId: null,
       basedOn,
       text,
       source,
-      audio
+      audio,
     });
   }
-
 
   async addAudio(exampleId, audio) {
     return this.update(exampleId, { audio });

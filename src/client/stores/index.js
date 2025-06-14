@@ -1,7 +1,8 @@
 export { default as useUserStore } from './userStore';
 export { default as useExerciseStore } from './exerciseStore';
 
-export { usePutSettingsStore, useGetSettingsStore } from './settingsStore';
+export { usePutSettingsStore, useBetaSettingStore,
+        useSimpleSettingsStore } from './settingsStore';
 
 export { useIdiomExampleStore, useDueStatsStore, useDueListStore, 
     useExampleStore } from './exerciseStore';
@@ -10,7 +11,7 @@ export { useIdiomStore, useIdiomListStore, useIdiomTonesStore,
     useIdiomTableStore } from './idiomStore';
 
 export { useAdminStore, useCreateExampleStore, 
-    useUploadAudioStore } from './adminStore';
+    useUploadAudioStore, usePromptsStore, usePutPromptsStore } from './adminStore';
 
 export { useProgressQuery, useIdiomQuery } from './queryStore';
 

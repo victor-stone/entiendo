@@ -2,13 +2,30 @@
 import { create } from 'zustand';
 import adminService from '../services/adminService';
 import { storeFetch } from '../lib/storeUtils';
-const { createExample, uploadExampleAudio } = adminService;
+const { createExample, uploadExampleAudio, 
+    prompts, putPrompts } = adminService;
 
 export const useCreateExampleStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
   fetch: storeFetch(createExample, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const usePromptsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(prompts, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const usePutPromptsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  put: storeFetch(putPrompts, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 

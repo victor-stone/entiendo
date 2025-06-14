@@ -1,32 +1,46 @@
 import { generateText } from "../lib/openai.js";
-import { ExampleModel, ExampleModelQuery, 
+import { ExampleModel, ExampleModelQuery, SettingsModel,
     ProgressModel, ProgressModelQuery, PromptModel } from "../models/index.js";
 import { finalizeExample } from "./lib/finalizeExample.js";
 import {format} from 'timeago.js';
-
+import { cleanMissedWords } from "../lib/cleanMissedWords.js";
 import debug from 'debug';
+
 const debugSB = debug('api:sandbox');
 
-const SANDBOX_MAX_EXAMPLES_PER = 10;
-const SANDBOX_CUTOFF_DAYS      = 4;
-const SANDBOX_MAX_BASED_ON     = 6;
+async function _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYet(userId,words) {
+    const query   = await ProgressModelQuery.create(userId)
+    const queryEx = await ExampleModelQuery.create();
+
+    const examplesBasedOnWithAudio = queryEx.basedOnWithAudio(words);
+
+    const exampleIds = examplesBasedOnWithAudio
+                            .map( ({exampleId}) => exampleId )
+                            .sort(() => Math.random() - 0.5);
+    const userSeen   = query.exampleIds();
+    
+    const unseenExampleId = exampleIds.find(id => !userSeen.includes(id));
+    return unseenExampleId && finalizeExample(queryEx.example(unseenExampleId), { debug: debugSB });
+}
 
 export async function getNext(routeContext) {
-    let { payload: { basedOn }, user: { userId, name } } = routeContext;
+    let { user: { userId } } = routeContext;
 
-    if( !basedOn || !basedOn.length ) {
-        const query  = await ProgressModelQuery.create(userId);
-        basedOn = query.missedWords(true);
+    const query  = await ProgressModelQuery.create(userId);
+    const basedOn = query.missedWords(true);
+
+    let example = await _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYet(userId, basedOn);
+    if( example ) {
+        debugSB("Found unseen example based on %o", example.basedOn)
+        return example;
     }
-    const basedOnX = basedOn.slice().sort(() => Math.random() - 0.5).slice(0,SANDBOX_MAX_BASED_ON);
-    debugSB('getNext for %s based on: %o', name || userId, basedOnX);
 
-    let example = await _getExistingUnseenExample(basedOnX, userId);
+    example = await _getExistingUnseenExample(basedOn, userId);
     if( example ) {
         return example;
     }
 
-    example = await _reuseSeenExample(basedOnX,userId);
+    example = await _reuseSeenExample(basedOn,userId);
     if( example ) {
         return example;
     }
@@ -41,6 +55,7 @@ olders ones and using them instead more and more
 instead of generating new ones.
 */
 async function _reuseSeenExample(basedOn, userId) {
+    const { SANDBOX_CUTOFF_DAYS } = SettingsModel.all();
     const query  = await ProgressModelQuery.create(userId);
     const cutoff = Date.now() - (24 * 60 * 60 * 1000 * SANDBOX_CUTOFF_DAYS);
 
@@ -78,6 +93,7 @@ async function _checkForPreviousUseOfExample(userId, exampleId) {
 }
 
 async function _markProgress(exampleId, evalResults, userId) {
+    const { SANDBOX_MAX_EXAMPLES_PER } = SettingsModel.all();
     const progressModel = new ProgressModel();
 
     let [ sandbox, record ] = await _checkForPreviousUseOfExample(userId, exampleId);
@@ -111,17 +127,15 @@ async function _markProgress(exampleId, evalResults, userId) {
         ...evaluation
     } = evalResults;
 
+    const { targetWords, missedWords } = evaluation;
+
     if( record ) {
         debugSB("Not the first time the user did this example.")
-        record.evaluation = {
-            ...evaluation,
-            missedWords: Array.from(new Set([
-            ...(record.evaluation.missedWords || []),
-            ...(evaluation.missedWords || [])
-            ]))
-        }
+        evaluation.missedWords = cleanMissedWords(targetWords, record.evaluation.missedWords, missedWords)
+        record.evaluation = { ...evaluation };
         record.date = now;
     } else {
+        evaluation.missedWords = cleanMissedWords(targetWords, [], missedWords)
         sandbox.history.push({
             date: now,
             exampleId,
@@ -154,19 +168,6 @@ async function _evaluate(exampleId, userTranscription, userTranslation) {
     return JSON.parse(result);
 }
 
-async function _getExistingUnseenExample(basedOn, userId) {
-    const exQuery        = await ExampleModelQuery.create();
-    const progQuery      = await ProgressModelQuery.create(userId);
-    const seenExampleIds = progQuery.exampleIds();
-    const existing       = exQuery.basedOn(basedOn);
-    const unSeen         = existing.find( ({exampleId}) => !seenExampleIds.includes(exampleId));
-    if( unSeen ) {
-        debugSB('Found an unseen example %s', unSeen.text)
-        return await finalizeExample(unSeen)
-    }
-    return null;
-}
-
 async function _generateNewSandboxExamples(basedOn) {
     debugSB('*** Generating new examples for missed words *** ')
     const response = await _generateSandboxSentence(basedOn);
@@ -196,3 +197,5 @@ async function _generateSandboxSentence(basedOn) {
         throw err;
     }
 }
+
+

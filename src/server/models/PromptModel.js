@@ -19,4 +19,11 @@ export default class PromptModel extends BaseModel {
     return r.prompt.replace(/\$\{(\w+)\}/g, (_, k) => k in substitutions ? substitutions[k] : '${'+k+'}');
   }
 
+  async updatePrompts(obj) {
+    const promises = [];
+    for (const [key, prompt] of Object.entries(obj)) {
+      promises.push(this.update(key, { prompt }));
+    }
+    return await Promise.all(promises);
+  }
 }

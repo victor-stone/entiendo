@@ -1,5 +1,8 @@
 import { ProgressModelQuery } from '../../models/index.js';
 import { getSettings } from '../settingsAPI.js';
+import debug from 'debug';
+
+const debugGN = debug('api:exercise:getNext');
 
 export async function isNewAllowed(userId) {
     const {
@@ -28,5 +31,6 @@ export async function isNewAllowed(userId) {
 
     // 3. After that only allow GET_NEXT_MAX_NEW_IDIOMS for the last 24 hours
     const recentCount = dates.filter(e => (now - e) < ONE_DAY_MS).length;
+    debugGN('Checking recent: %d against %d', recentCount, GET_NEXT_MAX_NEW_IDIOMS)
     return recentCount < GET_NEXT_MAX_NEW_IDIOMS;
 }

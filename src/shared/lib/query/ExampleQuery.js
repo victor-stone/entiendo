@@ -29,4 +29,14 @@ export default class ExampleQuery extends query {
     example(exampleId) {
         return this.queryOne(`..{.exampleId == "${exampleId}"}`)
     }
+
+    basedOnWithAudio(list) {
+        const wAudio = this.q('..{.audio.publicUrl}');
+        const wAudioBOn = wAudio.filter( s => {
+            if( s.basedOn?.length > 0 ) {
+                return s.basedOn.some(word => list.includes(word));
+            }
+        });
+        return wAudioBOn;
+    }
 }

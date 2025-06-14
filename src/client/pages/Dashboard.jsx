@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <Card title={<DoExerciseTitle title="¡Bienvenido!" dueStats={data} getToken={getToken} />}>
       <Card.Body>
-        <Grid columns={3} className="place-items-center text-center">
+        <Grid columns={3} className="text-center">
 
           <div className="place-items-center text-center">
             <HeaderImage img={img1} alt="Ice Cream" />

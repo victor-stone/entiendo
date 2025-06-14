@@ -5,6 +5,14 @@ import debug from 'debug';
 const debugSettings = debug('app:settings');
 import { storeFetch } from '../lib/storeUtils';
 
+export const useSimpleSettingsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(fetchSettings, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
 
 export const usePutSettingsStore = create((set, get) => ({
   loading: false,
@@ -29,7 +37,7 @@ async function hashPassword(input, testKey) {
     .join('');
 }
 
-export const useGetSettingsStore = create((set, get) => ({
+export const useBetaSettingStore = create((set, get) => ({
   // State
   settings    : null,
   loading     : false,

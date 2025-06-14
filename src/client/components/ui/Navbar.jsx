@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUserStore, useGetSettingsStore } from '../../stores';
+import { useUserStore, useBetaSettingStore } from '../../stores';
 import { Link } from 'react-router-dom';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
@@ -9,7 +9,7 @@ import AdminMenu from './AdminMenu';
 const Navbar = () => {
   const user       = useUserStore(state => state.user);
   const isAdmin    = useUserStore(state => state.isAdmin);
-  const inBeta     = useGetSettingsStore(state => state.inBeta);
+  const inBeta     = useBetaSettingStore(state => state.inBeta);
   const isLoggedIn = !!user;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

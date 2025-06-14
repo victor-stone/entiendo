@@ -19,11 +19,11 @@ const ExampleModelQuery = {
         return query;
     },
     reset: (key, update) => {
-        if( query && update ) {
+        if( query && key ) {
             let rec = query.example(key);
             rec = { ...rec, ...update };            
             debugData('Updated ExampleModel cache');
-        } else {
+        } else if( query ) {
             debugData('Clearing out the ExampleModel cache');
             query = null;
         }

@@ -28,6 +28,9 @@ const AdminMenu = ({ isMobile, onClose }) => {
     {
       path: '/admin/settings', label: 'Settings'
     },
+    {
+      path: '/admin/prompts', label: 'Prompts'
+    },
   ];
 
   if (isMobile) {

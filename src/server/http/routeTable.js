@@ -56,6 +56,11 @@ export const routeTable = {
       auth: true
     },
 
+    '/api/admin/prompts': { 
+      handler: (routeContext) => adminAPI.putPrompts(routeContext),
+      auth: true
+    },
+
     '/api/settings': {
       handler: (routeContext) => settingsAPI.putSettings(routeContext),
       auth: true
@@ -88,6 +93,11 @@ export const routeTable = {
   
   // GET routes
   GET: {
+    '/api/admin/prompts': { 
+      handler: (routeContext) => adminAPI.getPrompts(routeContext),
+      auth: true
+    },
+
     '/api/idioms': { 
       handler: (routeContext) => idiomAPI.getIdiomsList(routeContext),
       auth: false 

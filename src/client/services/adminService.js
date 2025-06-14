@@ -1,4 +1,4 @@
-import { post, postFile } from '../lib/apiClient';
+import { get, post, postFile } from '../lib/apiClient';
 import debug from 'debug';
 
 const debugAdmin = debug('client:admin');
@@ -27,6 +27,14 @@ const adminService = {
     return await post('/api/admin/idiom-examples', exampleData, authToken);
   },
   
+  prompts: async(authToken) => {
+    return await get('/api/admin/prompts', authToken);
+  },
+
+  putPrompts: async (prompts, authToken) => {
+    return await post('/api/admin/prompts', { prompts }, authToken );
+  },
+
   /**
    * Upload audio for an example
    * @param {String} exampleId - ID of the example
