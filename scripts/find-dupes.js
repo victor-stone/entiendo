@@ -55,7 +55,7 @@ async function main() {
       );
     } else {
       for (const idiom of notReferenced) {
-        await idiomModel.delete(idiom.idiomId);
+        // await idiomModel.delete(idiom.idiomId);
         deletedCount++;
         console.log(
           `Deleted duplicate idiomId=${idiom.idiomId} for text="${text}" (not referenced in ExampleModel)`

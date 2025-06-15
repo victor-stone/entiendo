@@ -1,12 +1,3 @@
-/**
- * This script exists to provide maintainers and contributors with a simple way
- * to export all idioms from the database into a CSV file for external use.
- * 
- * The exported CSV can be used for data analysis, sharing with collaborators,
- * or as a backup of the idioms data. The output is saved to the
- * `../staging/stages/idioms-export.csv` file relative to the project root.
- */
-
 import { IdiomModel } from '../src/server/models/index.js';
 import fs from 'fs';
 import path from 'path';

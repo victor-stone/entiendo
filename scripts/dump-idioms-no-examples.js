@@ -13,7 +13,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { escapeCSV } from "./escapeCSV.js";
 
-const USAGE_THRESHOLD = 8; // >= 'super_common'
+/************ SUPER COMMON *****************/
+const USAGE_THRESHOLD = 8; 
+/*******************************************/
+
 
 // Add these two lines to define __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);

@@ -1,9 +1,6 @@
 import SettingsModel from "../src/server/models/SettingsModel.js";
 
 const settings = {
-  inBeta                       : true,
-  betaKey                      : "66d6cb60157343d5d814beb1afa57f529d8933f5773e3837e7a8c5a4ff1f6370",
-  testKey                      : "b505bcba365779809dbda63b4283b9af",
   GET_NEXT_ATTEMPTS_PER_EXAMPLE: 3,
   GET_NEXT_EXAMPLES_PER_IDIOM  : 3,
   GET_NEXT_MAX_INITIAL_IDIOMS  : 5,
