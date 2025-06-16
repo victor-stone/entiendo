@@ -45,7 +45,7 @@ export const useExampleStore = create((set, get) => ({
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
-const useExerciseStore = create((set, get) => ({
+export const useExerciseStore = create((set, get) => ({
 
   loading   : false,   // this is for getNext/evaluateResponse
   error     : null,
@@ -173,5 +173,3 @@ const useExerciseStore = create((set, get) => ({
     error: null
   })
 }));
-
-export default useExerciseStore;

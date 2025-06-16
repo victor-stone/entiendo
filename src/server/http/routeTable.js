@@ -12,7 +12,7 @@
 import * as idiomAPI    from  '../api/idiomAPI.js';
 import * as userAPI     from  '../api/userAPI.js';
 import * as exerciseAPI from  '../api/exercise/index.js';
-import * as adminAPI    from  '../api/adminAPI.js';
+import * as adminAPI    from  '../api/admin/index.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
 import * as sandboxAPI  from  '../api/sandboxAPI.js';
 
@@ -26,69 +26,62 @@ import * as sandboxAPI  from  '../api/sandboxAPI.js';
 export const routeTable = {
   // POST routes
   POST: {
-    '/api/exercises/evaluate': {
-      handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
-      auth: true
-    },
-
-    '/api/admin/idioms/validate': {
-      handler: (routeContext) => adminAPI.importValidateCSV(routeContext),
-      auth: true
-    },
-
-    '/api/admin/idioms': {
-      handler: (routeContext) => adminAPI.importIdioms(routeContext),
-      auth: true
-    },
-
-    '/api/admin/idiom': {
-      handler: (routeContext) => adminAPI.createIdiom(routeContext),
-      auth: true
-    },
-
-    '/api/admin/idiom-examples': {
-      handler: (routeContext) => adminAPI.createIdiomExample(routeContext),
-      auth: true
-    },
-    
     '/api/admin/example-audio': {
       handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
       auth: true
     },
-
+    '/api/admin/idiom': {
+      handler: (routeContext) => adminAPI.createIdiom(routeContext),
+      auth: true
+    },
+    '/api/admin/idiom-examples': {
+      handler: (routeContext) => adminAPI.createIdiomExample(routeContext),
+      auth: true
+    },
+    '/api/admin/idiom/update': {
+      handler: (routeContext) => adminAPI.updateIdiom(routeContext),
+      auth: true
+    },
+    '/api/admin/idioms': {
+      handler: (routeContext) => adminAPI.importIdioms(routeContext),
+      auth: true
+    },
+    '/api/admin/idioms/validate': {
+      handler: (routeContext) => adminAPI.importValidateCSV(routeContext),
+      auth: true
+    },
     '/api/admin/prompts': { 
       handler: (routeContext) => adminAPI.putPrompts(routeContext),
       auth: true
     },
-
-    '/api/settings': {
-      handler: (routeContext) => settingsAPI.putSettings(routeContext),
-      auth: true
-    },
-
-    // User routes
-    '/api/users/sync': {
-      handler: (routeContext) => userAPI.syncUserFromAuth0(routeContext),
-      auth: true
-    },
-
-    '/api/users/preferences': {
-      handler: (routeContext) => userAPI.updatePreferences(routeContext),
-      auth: true
-    },
-
     '/api/admin/reportbug': {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
       auth: true
-    },    
-    '/api/sandbox/next': {
-      handler: (routeContext) => sandboxAPI.getNext(routeContext),
+    },
+    '/api/exercises/evaluate': {
+      handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
       auth: true
     },
     '/api/sandbox/evaluate': {
       handler: (routeContext) => sandboxAPI.evaluate(routeContext),
       auth: true
     },
+    '/api/sandbox/next': {
+      handler: (routeContext) => sandboxAPI.getNext(routeContext),
+      auth: true
+    },
+    '/api/settings': {
+      handler: (routeContext) => settingsAPI.putSettings(routeContext),
+      auth: true
+    },
+    '/api/users/preferences': {
+      handler: (routeContext) => userAPI.updatePreferences(routeContext),
+      auth: true
+    },
+    '/api/users/sync': {
+      handler: (routeContext) => userAPI.syncUserFromAuth0(routeContext),
+      auth: true
+    }
   },
   
   // GET routes
@@ -97,22 +90,9 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.getPrompts(routeContext),
       auth: true
     },
-
-    '/api/idioms': { 
-      handler: (routeContext) => idiomAPI.getIdiomsList(routeContext),
-      auth: false 
-    },
-    '/api/idiom/:idiomId': { 
-      handler: (routeContext) => idiomAPI.getIdiom(routeContext),
-      auth: false 
-    },
-    '/api/idioms/tones': { 
-      handler: (routeContext) => idiomAPI.getTones(routeContext),
-      auth: false 
-    },
-    '/api/exercises/:idiomId': {
-      handler: (routeContext) => exerciseAPI.getIdiomExamples(routeContext),
-      auth: false
+    '/api/exercises': {
+      handler: (routeContext) => exerciseAPI.dueList(routeContext),
+      auth: true
     },
     '/api/exercises/example/:exampleId': {
       handler: (routeContext) => exerciseAPI.getExampleById(routeContext),
@@ -122,13 +102,25 @@ export const routeTable = {
       handler: (routeContext) => exerciseAPI.getNext(routeContext),
       auth: true
     },
-    '/api/exercises': {
-      handler: (routeContext) => exerciseAPI.dueList(routeContext),
-      auth: true
-    },
     '/api/exercises/stats': {
       handler: (routeContext) => exerciseAPI.dueStats(routeContext),
       auth: true
+    },
+    '/api/exercises/:idiomId': {
+      handler: (routeContext) => exerciseAPI.getIdiomExamples(routeContext),
+      auth: false
+    },
+    '/api/idiom/:idiomId': { 
+      handler: (routeContext) => idiomAPI.getIdiom(routeContext),
+      auth: false 
+    },
+    '/api/idioms': { 
+      handler: (routeContext) => idiomAPI.getIdiomsList(routeContext),
+      auth: false 
+    },
+    '/api/idioms/tones': { 
+      handler: (routeContext) => idiomAPI.getTones(routeContext),
+      auth: false 
     },
     '/api/settings': {
       handler: (routeContext) => settingsAPI.getSettings(routeContext),

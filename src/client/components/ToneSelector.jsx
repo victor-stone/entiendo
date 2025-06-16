@@ -5,7 +5,7 @@ import { CardField } from './layout';
 import toneDescriptions from '../../shared/constants/toneDescriptions';
 import debug from 'debug';
 
-const debugRender = debug('app:render');
+const debugRender = debug('app:idiom');
 
 const hint = 'Prioritize which idioms you see based on the context they are likely to be used in.';
 

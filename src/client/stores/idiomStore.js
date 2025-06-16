@@ -15,7 +15,8 @@ export const useIdiomListStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getIdiomsList, set)
+  fetch: storeFetch(getIdiomsList, set),
+  reset: () => set({ data: null, error: null, loading: false })
 }));
 
 export const useIdiomTonesStore = create((set, get) => ({

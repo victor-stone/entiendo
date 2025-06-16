@@ -5,8 +5,7 @@ import debug from 'debug';
 
 const debugLogin = debug('app:login');
 
-
-const useUserStore = create((set, get) => ({
+export const useUserStore = create((set, get) => ({
   // State
   user           : null,
   profile        : null,
@@ -105,5 +104,3 @@ const useUserStore = create((set, get) => ({
   },
   
 }));
-
-export default useUserStore;

@@ -8,7 +8,7 @@ import IdiomDetail from '../../components/admin/IdiomDetail';
 function IdiomListPage() {  
   const [selectedIdiomId, setSelectedIdiomId] = useState(null);
   const getToken = useUserStore(s => s.getToken);
-  const { data, loading, fetch, error } = useIdiomListStore();
+  const { data, loading, fetch, error, reset } = useIdiomListStore();
   
   useEffect(() => {
     if (!data && !loading) {
@@ -22,12 +22,15 @@ function IdiomListPage() {
   if( loading || !data ) {
     return <LoadingIndicator />
   }
+  function onBack() {
+    setSelectedIdiomId(null)
+  }
 
   return (
     <Card title={`Idiom List (${data.length})`}>
       <Card.Body className="pb-0">
         {selectedIdiomId             
-            ? <IdiomDetail idiomId={selectedIdiomId} onBack={() => setSelectedIdiomId(null)} />            
+            ? <IdiomDetail idiomId={selectedIdiomId} onBack={onBack} onInvalidate={reset} />            
             : <IdiomTable idioms={data} onSelectIdiom={setSelectedIdiomId} />
         }
       </Card.Body>

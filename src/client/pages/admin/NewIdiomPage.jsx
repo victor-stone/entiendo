@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import NewIdiomForm from '../../components/admin/NewIdiomForm';
+import IdiomForm from '../../components/admin/IdiomForm';
 
 const NewIdiomPage = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const NewIdiomPage = () => {
     }
   };
 
-  return (<NewIdiomForm onSaveSuccess={handleSaveSuccess} />);
+  return (<IdiomForm onSaveSuccess={handleSaveSuccess} />);
   
 };
 
