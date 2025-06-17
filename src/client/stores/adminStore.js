@@ -112,11 +112,11 @@ export const useAdminStore = create((set, get) => ({
   },
 
   // Create an idiom example with optional audio
-  createIdiomExample: async (exampleData, audioFile, authToken) => {
+  createExample: async (exampleData, audioFile, authToken) => {
     set({ loading: true, error: null });
     
     try {
-      const result = await adminService.createIdiomExample(exampleData, audioFile, authToken);
+      const result = await adminService.createExample(exampleData, audioFile, authToken);
       set({ loading: false });
       return result;
     } catch (err) {

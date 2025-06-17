@@ -1,17 +1,17 @@
 import { create } from 'zustand';
-import exerciseService from '../services/exerciseService';
+import exampleService from '../services/exampleService';
 const { getDueList, getDueStats, getExample, 
-  getIdiomExamples } = exerciseService;
+  getExamples, updateExample } = exampleService;
 import debug from 'debug';
 const debugStore = debug('app:store');
 import { storeFetch } from '../lib/storeUtils';
 
 
-export const useIdiomExampleStore = create((set, get) => ({
+export const useUpdateExampleStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getIdiomExamples, set),
+  update: storeFetch(updateExample, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
@@ -44,6 +44,15 @@ export const useExampleStore = create((set, get) => ({
   fetch: storeFetch(getExample, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
+
+export const useExamplesStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getExamples, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
 
 export const useExerciseStore = create((set, get) => ({
 
@@ -118,7 +127,7 @@ export const useExerciseStore = create((set, get) => ({
     });
     try {
       const token    = await getToken();
-      const exercise = await exerciseService.getNext(criteria, token);
+      const exercise = await exampleService.getNext(criteria, token);
       
       set({ 
         exercise,
@@ -154,7 +163,7 @@ export const useExerciseStore = create((set, get) => ({
 
       const token    = await getToken();
       const exercise = get().exercise;
-      const { evaluation, progress } = await exerciseService.evaluateResponse(exercise.exampleId, userTranscription, userTranslation, token);
+      const { evaluation, progress } = await exampleService.evaluateResponse(exercise.exampleId, userTranscription, userTranslation, token);
       set({ 
         loading: false,
         evaluation,

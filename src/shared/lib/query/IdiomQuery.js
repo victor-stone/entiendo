@@ -19,15 +19,20 @@ export default class IdiomQuery extends query {
         return [... new Set(this.q('..tone')) ]
     }
 
+    ids() {
+        return this.q('..idiomId');
+    }
+
     idiom(idiomId) {
         return this.queryOne(`..{.idiomId == "${idiomId}"}`);
     }
 
-    byCriteria(tone,usage) {
+    byCriteria(tone,usage,field) {
+        const member = field ? `.${field}` : '';
         const s = [];
         if( tone )  s.push( `.tone == "${tone}"`);
         if( usage ) s.push( usageToPathRange(usage) );
-        const sp = `..{${s.join(' && ')}}`;
+        const sp = `..{${s.join(' && ')}}${member}`;
         return this.q(sp);
     }
 

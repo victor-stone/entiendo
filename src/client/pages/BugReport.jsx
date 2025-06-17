@@ -17,6 +17,7 @@ const BugReport = () => {
     "Audio is distored/too loud/too soft",
     "Audio does not play",
     "Translation is incorrect",
+    "Transcription is incorrect",
     "Other (describe below)"
   ];
   const { reportBug, loading, error, bugreport } = useAdminStore();

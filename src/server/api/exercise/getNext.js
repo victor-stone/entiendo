@@ -70,7 +70,7 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
             debugGetNext('Found an example the user has not seen %s', exercise.exampleId);
             return await finalizeExample(exercise, {idiom, debug: debugGetNext});
         }
-        debugGetNext('User has seen all existing samples, making a new one');
+        debugGetNext('User has seen all existing samples, making new %o', seenExampleIdCounts);
         exercise = await createExample(idiom, null, examplesForIdiom);
         return await finalizeExample(exercise, {idiom, debug: debugGetNext});
     }
@@ -81,12 +81,13 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
             .find(id => seenExampleIdCounts[id] < GET_NEXT_ATTEMPTS_PER_EXAMPLE);
 
     if (exampleToUse) {
-        debugGetNext('Using: %s', exampleToUse )
         debugGetNext('User has seen this example before %o', seenExampleIdCounts);
     } else {
         exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
-        debugGetNext('WARNING: User has seen all the examples max times, picking one random');
+        debugGetNext('WARNING: User has seen all the examples max times, picking one random %o', seenExampleIdCounts);
     }
+    debugGetNext('Using: %s', exampleToUse )
+    
     const exercise = exQuery.example(exampleToUse);
     return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }

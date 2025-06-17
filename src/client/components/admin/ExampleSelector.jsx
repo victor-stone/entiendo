@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useIdiomExampleStore } from '../../stores';
+import { useExamplesStore } from '../../stores';
 import { LoadingSpinner } from '../ui';
 
 const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
@@ -7,7 +7,7 @@ const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
     return null;
   }
 
-  const { data, loading, error, fetch } = useIdiomExampleStore();
+  const { data, loading, error, fetch } = useExamplesStore();
   
   useEffect(() => {
     if( !loading && !data ) {

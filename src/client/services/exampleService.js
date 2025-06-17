@@ -6,7 +6,35 @@ const debugExercise = debug('app:exercise');
 /**
  * Service for interacting with the Exercise API
  */
-const exerciseService = {
+const exampleService = {
+  getDueList: async (authToken) => {
+    const response = await get("/api/exercises", authToken);
+    return response;
+  },
+
+  getDueStats: async (authToken) => {
+    const response = await get("/api/exercises/stats", authToken);
+    return response;
+  },
+
+    /**
+   * Get examples for a specific idiom
+   * @param {String} idiomId - ID of the idiom
+   * @returns {Promise<Array>} - List of examples for the idiom
+   */
+  getExamples: async (idiomId) => {
+    return await get(`/api/exercises/${idiomId}`);
+  },
+
+  getExample: async (exampleId) => {
+    return await get(`/api/exercises/example/${exampleId}`);
+  },
+
+  updateExample: async (exampleId, data, token) => {
+    return await post(`/api/exercises/example/${exampleId}`, data, token);
+  },
+
+  // TODO: below should be exerciseService
   getNext: async (criteria, authToken) => {
 
     const params = new URLSearchParams();
@@ -23,29 +51,6 @@ const exerciseService = {
     debugExercise('Fetching next %s', url)
     const response = await get(url, authToken);
     return response;
-  },
-
-  getDueList: async (authToken) => {
-    const response = await get("/api/exercises", authToken);
-    return response;
-  },
-
-  getDueStats: async (authToken) => {
-    const response = await get("/api/exercises/stats", authToken);
-    return response;
-  },
-
-    /**
-   * Get examples for a specific idiom
-   * @param {String} idiomId - ID of the idiom
-   * @returns {Promise<Array>} - List of examples for the idiom
-   */
-  getIdiomExamples: async (idiomId) => {
-    return await get(`/api/exercises/${idiomId}`);
-  },
-
-  getExample: async (exerciseid) => {
-    return await get(`/api/exercises/example/${exerciseid}`);
   },
 
   evaluateResponse: async (
@@ -67,4 +72,4 @@ const exerciseService = {
   },
 };
 
-export default exerciseService;
+export default exampleService;

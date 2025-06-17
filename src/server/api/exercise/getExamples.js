@@ -6,7 +6,7 @@ import { NotFoundError } from '../../../shared/constants/errorTypes.js';
  * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Object containing array of examples for the idiom
  */
-export async function getIdiomExamples(routeContext) {
+export async function getExamples(routeContext) {
   const { params } = routeContext;
   
   if (!params.idiomId) {

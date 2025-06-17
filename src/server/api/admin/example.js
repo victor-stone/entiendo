@@ -7,7 +7,7 @@ import { uploadAudioToS3 } from '../../lib/audio.js';
  * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Created idiom example
  */
-export async function createIdiomExample(routeContext) {
+export async function createExample(routeContext) {
   const { payload: exampleData, user: { role } } = routeContext;
   
   // Check admin role

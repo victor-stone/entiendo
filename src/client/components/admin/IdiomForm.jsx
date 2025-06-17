@@ -96,7 +96,7 @@ const IdiomForm = ({ idiom, onSaveSuccess, onError }) => {
             type="text"
             value={text}
             onChange={(e) => setIdiomText(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
         </CardField>
@@ -106,7 +106,7 @@ const IdiomForm = ({ idiom, onSaveSuccess, onError }) => {
             type="text"
             value={translation}
             onChange={(e) => setTranslation(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
         </CardField>
@@ -124,7 +124,7 @@ const IdiomForm = ({ idiom, onSaveSuccess, onError }) => {
           <select
             value={usage}
             onChange={e => setUsage(e.target.value)}
-            className="mt-1 block border border-gray-300 rounded-md shadow-sm p-2"
+            className="block border border-gray-300 rounded-md shadow-sm p-2"
             disabled={updating || creating}
           >
             <option>1</option>

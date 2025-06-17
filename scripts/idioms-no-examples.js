@@ -17,7 +17,6 @@ import { escapeCSV } from "./escapeCSV.js";
 const USAGE_THRESHOLD = 8; 
 /*******************************************/
 
-
 // Add these two lines to define __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

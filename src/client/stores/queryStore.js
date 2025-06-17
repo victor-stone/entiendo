@@ -1,10 +1,10 @@
 import { ProgressQuery, IdiomQuery } from '../../shared/lib/query';
-import exerciseService from '../services/exerciseService';
+import exampleService from '../services/exampleService';
 import idiomService from '../services/idiomService';
 import { create } from 'zustand';
 import { storeFetch } from '../lib/storeUtils';
 
-const { getDueList } = exerciseService;
+const { getDueList } = exampleService;
 const { getIdioms } = idiomService;
 
 export const useProgressQuery = create((set, get) => ({

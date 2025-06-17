@@ -35,7 +35,7 @@ export const routeTable = {
       auth: true
     },
     '/api/admin/idiom-examples': {
-      handler: (routeContext) => adminAPI.createIdiomExample(routeContext),
+      handler: (routeContext) => adminAPI.createExample(routeContext),
       auth: true
     },
     '/api/admin/idiom/update': {
@@ -57,6 +57,10 @@ export const routeTable = {
     '/api/admin/reportbug': {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
       auth: true
+    },
+    '/api/exercises/example/:exampleId': {
+      handler: (routeContext) => exerciseAPI.updateExample(routeContext),
+      auth: false
     },
     '/api/exercises/evaluate': {
       handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
@@ -107,7 +111,7 @@ export const routeTable = {
       auth: true
     },
     '/api/exercises/:idiomId': {
-      handler: (routeContext) => exerciseAPI.getIdiomExamples(routeContext),
+      handler: (routeContext) => exerciseAPI.getExamples(routeContext),
       auth: false
     },
     '/api/idiom/:idiomId': { 

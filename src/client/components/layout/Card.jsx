@@ -28,10 +28,11 @@ function CardBody({ children, className, style }) {
     )
 }
 
-export const CardField = ({ children, hint, title, isFull = true }) => (
-  <div className="mb-3 p-5">
+export const CardField = ({ children, hint, title, text, isFull = true }) => (
+  <div className="mt-4">
     {title && <label className="block mb-1 font-bold">{title}</label>}
     <div className={isFull ? 'w-full' : 'w-fit'}>
+      {text}
       {children}
     </div>
     {hint && (
@@ -45,11 +46,13 @@ export const CardField = ({ children, hint, title, isFull = true }) => (
 const CardGrid = ({children, className, columns = 2}) => {
   return <Grid columns={columns} className={className}>{children}</Grid>
 }
+
 const CardGridLabel = ({ title, right = true }) => (
   <div>
     <label className={`font-bold ${right ? 'text-right' : ''} w-full block`}>{title}</label>
   </div>
 );
+
 const CardGridField = ({ children, hint }) => <div>
   {children}
   {hint && (

@@ -144,3 +144,4 @@ diag/
 staging/audio
 staging/stages
 staging/import
+staging/query

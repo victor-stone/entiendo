@@ -7,7 +7,9 @@ export default function AudioUploadPage() {
     
     return (
         <Card title="Upload Audio">
-            <AudioUploader exampleId={exampleId} />
+            <Card.Body>
+                <AudioUploader exampleId={exampleId} />
+            </Card.Body>            
         </Card>
     );
 } 

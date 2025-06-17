@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUserStore, useUploadAudioStore, useIdiomExampleStore } from '../../stores';
+import { useUserStore, useUploadAudioStore, useExamplesStore } from '../../stores';
 import IdiomSelector from './IdiomSelector';
 import ExampleSelector from './ExampleSelector';
 import { CardField } from '../layout';
@@ -11,7 +11,7 @@ const AudioUploader = ({ exampleId, onSuccess, onError }) => {
   const [selectedExampleId, setSelectedExampleId] = useState('');
 
   const { loading, error, fetch, data, reset } = useUploadAudioStore();
-  const { reset: exampleReset } = useIdiomExampleStore();
+  const { reset: exampleReset } = useExamplesStore();
 
   // Get authentication token function from user store
   const getToken = useUserStore(state => state.getToken);
@@ -62,7 +62,7 @@ const AudioUploader = ({ exampleId, onSuccess, onError }) => {
           />
         </CardField>
 
-        <CardField>
+        <CardField title="Example">
           <ExampleSelector 
             idiomId={selectedIdiomId} 
             value={selectedExampleId} 
@@ -78,20 +78,14 @@ const AudioUploader = ({ exampleId, onSuccess, onError }) => {
             type="file"
             accept="audio/mpeg,audio/mp3"
             onChange={handleFileChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
       </CardField>
       
       <CardField>
-        <button
-          type="button"
-          onClick={handleUpload}
-          disabled={loading || !audioFile || !selectedExampleId}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          {loading ? 'Uploading...' : 'Upload Audio'}
-        </button>
+        <button type="button" onClick={handleUpload} disabled={loading || !audioFile || !selectedExampleId}
+          className="btn btn-primary">{loading ? 'Uploading...' : 'Upload Audio'}</button>
       </CardField>
       
       {error && (
