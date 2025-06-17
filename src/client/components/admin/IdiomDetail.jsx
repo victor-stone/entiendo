@@ -7,45 +7,50 @@ import IdiomForm from './IdiomForm';
 import ExampleList from './ExampleList';
 import debug from 'debug';
 const debugId = debug('app:idiom');
+const debugRndr = debug('app:render');
 
 const IdiomInfo = ({ idiom }) => <>
-  <Card.Field text={idiom.text}        title="Text"  isFull={false}/>
-  <Card.Field text={idiom.translation} title="Translation" isFull={false}/>
-  <Card.Field text={idiom.tone}        title="Tone" isFull={false} />
-  <Card.Field text={idiom.usage}       title="Usage"  isFull={false}/>
+  { debugRndr('IdiomInfo') }
+  <Card.Grid className="bg-secondary-100 p-4 " style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+  <Card.GridLabel title="Text" /> <Card.GridField>{idiom.text}</Card.GridField> 
+  <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
+  <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
+  <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
+  </Card.Grid>
 </>;
 
-
-
 const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
+  debugRndr('IdiomDetail')
   const params   = useParams();
   const idiomId  = idiomIdProp || params.idiomId;
   const getToken = useUserStore(s => s.getToken);
 
-  const { data, loading, fetch, error, reset } = useIdiomStore();
+  const { data: idiom, loading, fetch, error, reset } = useIdiomStore();
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    if (!data && !loading) {
+    if (!idiom && !loading) {
+      debugId('Idiom Detail: fetching idiom')
       fetch(idiomId, getToken);
     }
-  }, [data, getToken, fetch, loading]);
+  }, [idiom, getToken, fetch, loading]);
 
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
 
-  if (loading || !data) {
+  if (loading || !idiom) {
     return <LoadingSpinner />
   }
 
   function _onBack() {
+      debugId('IdiomDetail._onBack reset idiom');
       reset();
       onBack && onBack();
   }
 
   function _onChange() {
-    debugId('IdiomDetail: resetting idiom %s', idiomId)
+    debugId('IdiomDetail._onChange resetting idiom %s', idiomId)
     setEditing(false);
     reset();
     // fetch(idiomId, getToken);
@@ -61,11 +66,11 @@ const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
       <Card.Panel>
         <Card.Body>
           {editing ? (
-            <IdiomForm idiom={data} onChange={_onChange} />
+            <IdiomForm idiom={idiom} onChange={_onChange} />
           ) : (
             <>
-              <IdiomInfo idiom={data} />
-              <ExampleList idiom={data} onChange={_onChange} />
+              <IdiomInfo idiom={idiom} />
+              <ExampleList idiom={idiom} onChange={_onChange} />
             </>
           )}
         </Card.Body>

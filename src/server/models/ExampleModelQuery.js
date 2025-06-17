@@ -20,8 +20,9 @@ const ExampleModelQuery = {
     },
     reset: (key, update) => {
         if( query && key ) {
-            let rec = query.example(key);
-            rec = { ...rec, ...update };            
+            const data = query.data;
+            let rec = data.find(({exampleId}) => exampleId == key);
+            rec && Object.assign(rec, update);
             debugData('Updated ExampleModel cache');
         } else if( query ) {
             debugData('Clearing out the ExampleModel cache');

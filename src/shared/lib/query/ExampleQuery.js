@@ -27,7 +27,7 @@ export default class ExampleQuery extends query {
     }
 
     example(exampleId) {
-        return this.queryOne(`..{.exampleId == "${exampleId}"}`)
+        return this.queryOne(`..{.exampleId == $exampleId}`, { exampleId });
     }
 
     basedOnWithAudio(list) {

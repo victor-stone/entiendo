@@ -1,4 +1,4 @@
-const Grid = ({ children, columns, className = null }) => {
+const Grid = ({ children, columns, className = null, style = null }) => {
   // Tailwind needs this to generate 
   // runtime css classes (default 1 col) -- how did this ever work?
   const colClass = {
@@ -9,7 +9,7 @@ const Grid = ({ children, columns, className = null }) => {
   }[columns] || "grid-cols-1 md:grid-cols-1";
 
   return (
-    <div className={`grid ${colClass} gap-4 mb-4 ${className}`}>
+    <div className={`grid ${colClass} gap-4 mb-4 ${className}`}  style={style} >
       {children}
     </div>
   );

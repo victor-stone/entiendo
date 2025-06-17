@@ -43,8 +43,8 @@ export const CardField = ({ children, hint, title, text, isFull = true }) => (
   </div>
 );
 
-const CardGrid = ({children, className, columns = 2}) => {
-  return <Grid columns={columns} className={className}>{children}</Grid>
+const CardGrid = ({children, className, style, columns = 2}) => {
+  return <Grid columns={columns} className={className} style={style}>{children}</Grid>
 }
 
 const CardGridLabel = ({ title, right = true }) => (

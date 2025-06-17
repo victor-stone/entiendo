@@ -6,12 +6,12 @@ export default class query {
         this.data = data;
     }
 
-    q(q, data = null) {
+    q(q, data = null, subs = null) {
         if( !data ) {
             data = this.data;
         }
         try {
-            const result = jspath(q,data) || [];
+            const result = jspath(q, data, subs) || [];
             return result;
         } catch(err) {
             console.error('JSPATH Parse error for ', q);
@@ -19,8 +19,8 @@ export default class query {
         }
     }
 
-    queryOne(q) {
-        return this.q(q)[0];
+    queryOne(q, subs = null ) {
+        return this.q(q,null,subs)[0];
     }
 
 }

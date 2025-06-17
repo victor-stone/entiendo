@@ -4,14 +4,19 @@ import { useIdiomListStore, useUserStore } from '../../stores';
 import { Card } from '../../components/layout/Card';
 import LoadingIndicator from '../../components/ui/LoadingIndicator';
 import IdiomDetail from '../../components/admin/IdiomDetail';
+import debug from 'debug';
+const debugId = debug('app:idiom');
+const debugRndr = debug('app:render');
 
 function IdiomListPage() {  
+  debugRndr('IdiomListPage')
   const [selectedIdiomId, setSelectedIdiomId] = useState(null);
   const getToken = useUserStore(s => s.getToken);
   const { data, loading, fetch, error, reset } = useIdiomListStore();
   
   useEffect(() => {
     if (!data && !loading) {
+      debugId('IdiomListPage: fetching data')
       fetch(getToken);
     }
   }, [data, getToken, fetch, loading]);

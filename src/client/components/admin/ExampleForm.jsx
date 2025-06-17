@@ -4,34 +4,32 @@ import { Card } from '../layout';
 
 import debug from 'debug';
 const debugId = debug('app:idiom');
+const debugRndr = debug('app:render');
 
-const ExampleForm = ({ example, onChange }) => {
+const ExampleForm = ({ example, onChange, onCancel }) => {
+    debugRndr('ExampleForm')
   const { getToken } = useUserStore();
-  const { update, error, loading, data: result } = useUpdateExampleStore();
+  const { update, error, loading } = useUpdateExampleStore();
 
   const [text, setText] = useState(example.text || "");
   const [conjugatedSnippet, setConjugatedSnippet] = useState(example.conjugatedSnippet || "");
 
-  useEffect(() => {
-    if (result && !error) {
-      debugId('ExampleForm: result %o', result)
-      onChange(result);
-    }
-  }, [result, error, onChange]);
-
-
-  function handleSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
     const postData = {
               text,
               conjugatedSnippet
            };
-    update(example.exampleId, postData, getToken);
+    const rec = await update(example.exampleId, postData, getToken);
+    if (rec && !error) {
+      debugId('ExampleForm: result %o', rec)
+      onChange(rec);
+    }
   }
 
   return (
     <Card.Section>
-      <form onSubmit={handleSubmit} className="space-y-4 w-full">
+      <form onSubmit={onSubmit} className="space-y-4 w-full">
         <Card.Field title="Text">
           <input
             className="input w-full"
@@ -54,6 +52,7 @@ const ExampleForm = ({ example, onChange }) => {
         <button className="btn btn-primary" type="submit" disabled={loading}>
           {loading ? "Saving..." : "Save"}
         </button>
+        <button className="btn" onClick={onCancel}>Cancel</button>
       </form>
     </Card.Section>
   );
