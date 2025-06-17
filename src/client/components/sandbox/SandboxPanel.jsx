@@ -1,9 +1,9 @@
-const SandboxPanel = ({dueStats}) => {
-  if( !dueStats  ) {
+const SandboxPanel = ({scheduleStats}) => {
+  if( !scheduleStats  ) {
     return <p></p>
   }
 
-  const { missed, unique } = dueStats;
+  const { missed, unique } = scheduleStats;
     
   if( !missed) return <p>You haven't missed any words!</p>;
 

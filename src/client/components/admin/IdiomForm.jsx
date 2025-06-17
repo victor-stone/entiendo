@@ -6,7 +6,7 @@ import debug from 'debug';
 
 const debugIF = debug('app:idiom');
 
-const IdiomForm = ({ idiom, onSaveSuccess, onError }) => {
+const IdiomForm = ({ idiom, onChange, onError }) => {
   debugIF('IdiomForm')
   const getToken = useUserStore(state => state.getToken);
   const { 
@@ -71,12 +71,12 @@ const IdiomForm = ({ idiom, onSaveSuccess, onError }) => {
   if (created) {
     debugIF('found created')
     createReset();
-    onSaveSuccess && onSaveSuccess(created);
+    onChange && onChange(created);
   }
 
   if( updated ) {
     debugIF('found updated');
-    onSaveSuccess && onSaveSuccess(updated);
+    onChange && onChange(updated);
   }
 
   if (error || createError) {

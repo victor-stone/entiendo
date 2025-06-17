@@ -42,9 +42,9 @@ const makeStatsArray = ({
     }
   ];
 
-const UserStats = ({ dueStats }) => {
+const ScheduleStats = ({ scheduleStats }) => {
 
-  if( !dueStats || dueStats.numSeen === 0 ) {
+  if( !scheduleStats || scheduleStats.numSeen === 0 ) {
     return (
       <>
           <Glyph name="LanguageIcon" />
@@ -54,7 +54,7 @@ const UserStats = ({ dueStats }) => {
   }
   return (
     <>
-      {makeStatsArray(dueStats).map(({ label, value, icon }) => (
+      {makeStatsArray(scheduleStats).map(({ label, value, icon }) => (
         <Card.Info key={label} text={value} label={label} 
             iconName={icon} color={'white'} />
       ))}
@@ -62,4 +62,4 @@ const UserStats = ({ dueStats }) => {
   );
 };
 
-export default UserStats;
+export default ScheduleStats;

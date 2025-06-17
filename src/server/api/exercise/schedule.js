@@ -2,7 +2,7 @@ import { ProgressModelQuery } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 
-export async function dueList(routeContext) {
+export async function schedule(routeContext) {
   const userId   = routeContext.user.userId;
   const query    = await ProgressModelQuery.create(userId);
   const progress = query.schedule().map(item => {
@@ -24,7 +24,7 @@ function _confidence(item) {
   return confidence;
 }
 
-export async function dueStats(routeContext) {
+export async function scheduleStats(routeContext) {
   const { user: { userId } } = routeContext;
 
   const query = await ProgressModelQuery.create(userId);

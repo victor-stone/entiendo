@@ -1,6 +1,7 @@
 export * from './userStore';
 export * from './settingsStore';
 export * from './exampleStore';
+export * from './exerciseStore';
 export * from './idiomStore';
 export * from './adminStore';
 export * from './queryStore';

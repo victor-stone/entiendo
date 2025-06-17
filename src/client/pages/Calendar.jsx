@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useUserStore, useDueListStore, useDueStatsStore, useBrandImageStore } from '../stores';
-import DueList from '../components/DueList';
+import Schedule from '../components/Schedule';
 import { Card } from '../components/layout';
 import { LoadingIndicator } from '../components/ui';
 import DoExerciseTitle from '../components/DoExerciseTitle';
-
 
 const Calendar = () => {
   const getToken = useUserStore(state => state.getToken);
@@ -42,10 +41,10 @@ const Calendar = () => {
   const hasNew = stats && stats.isNewAllowed;
 
   return (
-    <Card title={<DoExerciseTitle title="Calendar" dueStats={stats} />}>
+    <Card title={<DoExerciseTitle title="Calendar" scheduleStats={stats} />}>
       <Card.Body>
         {hasNew ? <Card.Info className="mb-2 w-fit border border-gray-200 rounded-[3px]" text="New exercises are avaiable" iconName="StarIcon" /> : ''}
-        <DueList dueList={data} loading={loading} error={error} />
+        <Schedule schedule={data} loading={loading} error={error} />
       </Card.Body>
     </Card>
   );

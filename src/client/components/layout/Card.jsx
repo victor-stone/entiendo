@@ -64,7 +64,7 @@ const CardGridField = ({ children, hint }) => <div>
 
 function CardSection({ title, children, className = '' }) {
   return (
-    <section className={`py-4 px-1 ${className}`}>
+    <section className={`py-4 px-1 w-full ${className}`}>
       {title && (
         <h2 className="text-lg font-semibold text-primary-700 dark:text-primary-200 mb-3 tracking-tight border-b border-primary-200 dark:border-primary-700 pb-1">
           {title}

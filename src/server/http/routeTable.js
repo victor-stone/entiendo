@@ -15,6 +15,7 @@ import * as exerciseAPI from  '../api/exercise/index.js';
 import * as adminAPI    from  '../api/admin/index.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
 import * as sandboxAPI  from  '../api/sandboxAPI.js';
+import * as exampleAPI  from  '../api/exampleAPI.js';
 
 
 /**
@@ -58,8 +59,8 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
       auth: true
     },
-    '/api/exercises/example/:exampleId': {
-      handler: (routeContext) => exerciseAPI.updateExample(routeContext),
+    '/api/example/:exampleId': {
+      handler: (routeContext) => exampleAPI.updateExample(routeContext),
       auth: false
     },
     '/api/exercises/evaluate': {
@@ -94,25 +95,25 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.getPrompts(routeContext),
       auth: true
     },
-    '/api/exercises': {
-      handler: (routeContext) => exerciseAPI.dueList(routeContext),
-      auth: true
-    },
-    '/api/exercises/example/:exampleId': {
-      handler: (routeContext) => exerciseAPI.getExampleById(routeContext),
+    '/api/example/:exampleId': {
+      handler: (routeContext) => exampleAPI.getExampleById(routeContext),
       auth: false
+    },
+    '/api/example/idiom/:idiomId': {
+      handler: (routeContext) => exampleAPI.getExamplesForIdiom(routeContext),
+      auth: false
+    },
+    '/api/exercises': {
+      handler: (routeContext) => exerciseAPI.schedule(routeContext),
+      auth: true
     },
     '/api/exercises/next': {
       handler: (routeContext) => exerciseAPI.getNext(routeContext),
       auth: true
     },
     '/api/exercises/stats': {
-      handler: (routeContext) => exerciseAPI.dueStats(routeContext),
+      handler: (routeContext) => exerciseAPI.scheduleStats(routeContext),
       auth: true
-    },
-    '/api/exercises/:idiomId': {
-      handler: (routeContext) => exerciseAPI.getExamples(routeContext),
-      auth: false
     },
     '/api/idiom/:idiomId': { 
       handler: (routeContext) => idiomAPI.getIdiom(routeContext),

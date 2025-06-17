@@ -1,5 +1,5 @@
 import { useUserStore, useDueStatsStore, useBrandImageStore } from '../stores';
-import UserStats from '../components/UserStats';
+import ScheduleStats from '../components/ScheduleStats';
 import FilterInfo from '../components/FilterInfo';
 import SandboxPanel from '../components/sandbox/SandboxPanel';
 import { PageLink, Grid, LoadingIndicator } from '../components/ui';
@@ -38,7 +38,7 @@ const Dashboard = () => {
   const showSandbox = !data.enableGetNext && data.missed;
 
   return (
-    <Card title={<DoExerciseTitle title="¡Bienvenido!" dueStats={data} getToken={getToken} />}>
+    <Card title={<DoExerciseTitle title="¡Bienvenido!" scheduleStats={data} getToken={getToken} />}>
       <Card.Body>
         <Grid columns={3} className="text-center">
 
@@ -52,7 +52,7 @@ const Dashboard = () => {
             <HeaderImage img={img2} alt="Clock" />
             {showCalendar
               ? <>
-                <div className='text-left'><UserStats dueStats={data} /></div>
+                <div className='text-left'><ScheduleStats scheduleStats={data} /></div>
                 <PageLink page="/app/calendar" text="Calendar" />
               </>
               : <div >Your calendar is empty.</div>
@@ -63,7 +63,7 @@ const Dashboard = () => {
             <HeaderImage img={img3} alt="Doll" />
             {showSandbox
               ? <>
-                <div className='text-left'><SandboxPanel dueStats={data} /></div>
+                <div className='text-left'><SandboxPanel scheduleStats={data} /></div>
                 <PageLink page="/app/sandbox" text="Practice" />
               </>
               : data.enableGetNext 

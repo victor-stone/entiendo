@@ -19,9 +19,11 @@ function IdiomListPage() {
   if( error ) {
     return <p className="text-red-500">{error}</p>;
   }
+  
   if( loading || !data ) {
     return <LoadingIndicator />
   }
+
   function onBack() {
     setSelectedIdiomId(null)
   }
@@ -30,7 +32,7 @@ function IdiomListPage() {
     <Card title={`Idiom List (${data.length})`}>
       <Card.Body className="pb-0">
         {selectedIdiomId             
-            ? <IdiomDetail idiomId={selectedIdiomId} onBack={onBack} onInvalidate={reset} />            
+            ? <IdiomDetail idiomId={selectedIdiomId} onBack={onBack} onChange={reset} />            
             : <IdiomTable idioms={data} onSelectIdiom={setSelectedIdiomId} />
         }
       </Card.Body>

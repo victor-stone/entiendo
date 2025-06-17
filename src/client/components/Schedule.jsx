@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Grid } from './ui';
 import DueItem from './DueItem';
 
-const DueList = ({ dueList }) => {
+const Schedule = ({ schedule }) => {
   const [groupByUsage, setGroupByUsage] = useState(false);
 
-  if (!dueList || dueList.length === 0) {
+  if (!schedule || schedule.length === 0) {
     return <div className="p-4 text-gray-500">No exercises due at this time.</div>;
   }
 
@@ -16,12 +16,12 @@ const DueList = ({ dueList }) => {
   // Group by usage.label if enabled
   let grouped = {};
   let groupCount = 0;
-  if (dueList && dueList.length > 0) {
-    const labels = new Set(dueList.map(item => item.range.label));
+  if (schedule && schedule.length > 0) {
+    const labels = new Set(schedule.map(item => item.range.label));
     groupCount = labels.size;
   }
   if (groupByUsage) {
-    for (const item of dueList) {
+    for (const item of schedule) {
       const label = item.range.label;
       if (!grouped[label]) grouped[label] = [];
       grouped[label].push(item);
@@ -57,7 +57,7 @@ const DueList = ({ dueList }) => {
           ))
         ) : (
           <Grid columns={3}>
-            {dueList.map((item, i) => (
+            {schedule.map((item, i) => (
               <DueItem
                 key={item.progressId || i}
                 item={item}
@@ -71,4 +71,4 @@ const DueList = ({ dueList }) => {
   );
 };
 
-export default DueList;
+export default Schedule;
