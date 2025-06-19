@@ -4,7 +4,7 @@ import { Card } from '../layout';
 
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('app:render');
+const debugRndr = debug('react:render');
 
 const ExampleForm = ({ example, onChange, onCancel }) => {
     debugRndr('ExampleForm')

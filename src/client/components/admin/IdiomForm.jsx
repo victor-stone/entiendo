@@ -85,43 +85,36 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
 
   return (
     <>
-      <Card.Body>
+<div className=" justify-center items-center flex">
+  <Card.Grid className="bg-secondary-100 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
         {(error || createError) &&
-          <CardField title="Error">
-            <p className="text-red-500">{'Error on save ' + (error || createError || '')}</p>
-          </CardField>
+        <><Card.GridLabel title="Error" /> <Card.GridField><p className="text-red-500">{'Error on save ' + (error || createError || '')}</p></Card.GridField></>
         }
-        <CardField title="Text">
-          <input
+
+  <Card.GridLabel title="Text" /> <Card.GridField>          <input
             type="text"
             value={text}
             onChange={(e) => setIdiomText(e.target.value)}
             className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
-        </CardField>
-
-        <CardField title="Translation *">
-          <input
+</Card.GridField> 
+  <Card.GridLabel title="Translation" /> <Card.GridField>          <input
             type="text"
             value={translation}
             onChange={(e) => setTranslation(e.target.value)}
             className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
-        </CardField>
-
-        <CardField>
-          <ToneSelector
+</Card.GridField> 
+  <Card.GridLabel title="Tone" /> <Card.GridField>          <ToneSelector
             value={tone}
             onChange={setTone}
             required={true}
             allowSystem={false}
           />
-        </CardField>
-
-        <CardField title="Usage">
-          <select
+</Card.GridField> 
+  <Card.GridLabel title="Usage" /> <Card.GridField>          <select
             value={usage}
             onChange={e => setUsage(e.target.value)}
             className="block border border-gray-300 rounded-md shadow-sm p-2"
@@ -138,7 +131,11 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
             <option>9</option>
             <option>10</option>
           </select>
-        </CardField>
+</Card.GridField> 
+  </Card.Grid>
+</div>
+
+      <Card.Body>
         <CardField>
           <button type="button" onClick={handleSaveIdiom}
             disabled={updating || creating} className="btn btn-primary">

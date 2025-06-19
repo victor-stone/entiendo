@@ -7,17 +7,18 @@ import IdiomForm from './IdiomForm';
 import ExampleList from './ExampleList';
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('app:render');
+const debugRndr = debug('react:render');
 
-const IdiomInfo = ({ idiom }) => <>
-  { debugRndr('IdiomInfo') }
-  <Card.Grid className="bg-secondary-100 p-4 " style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+const IdiomInfo = ({ idiom }) =>( 
+<div className=" justify-center items-center flex">
+  <Card.Grid className="bg-secondary-100 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
   <Card.GridLabel title="Text" /> <Card.GridField>{idiom.text}</Card.GridField> 
   <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
   <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
   <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
   </Card.Grid>
-</>;
+</div>
+);
 
 const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
   debugRndr('IdiomDetail')

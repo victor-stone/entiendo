@@ -1,22 +1,20 @@
 import { get, post } from "../lib/apiClient";
-import debug from 'debug';
+import debug from "debug";
 
-const debugExercise = debug('app:exercise');
+const debugExercise = debug("app:exercise");
 
 const exerciseService = {
-
-    getDueStats: async (authToken) => {
+  getScheduleStats: async (authToken) => {
     const response = await get("/api/exercises/stats", authToken);
     return response;
   },
 
-  getDueList: async (authToken) => {
+  getSchedule: async (authToken) => {
     const response = await get("/api/exercises", authToken);
     return response;
   },
 
   getNext: async (criteria, authToken) => {
-
     const params = new URLSearchParams();
 
     // Add each criteria property as an individual query parameter
@@ -28,7 +26,7 @@ const exerciseService = {
 
     const queryString = params.toString();
     const url = `/api/exercises/next${queryString ? `?${queryString}` : ""}`;
-    debugExercise('Fetching next %s', url)
+    debugExercise("Fetching next %s", url);
     const response = await get(url, authToken);
     return response;
   },

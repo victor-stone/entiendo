@@ -4,7 +4,7 @@ import ExampleForm from './ExampleForm';
 import { Card } from '../layout';
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('app:render');
+const debugRndr = debug('react:render');
 
 const Example = ({ example }) => {
   debugRndr('Example');
@@ -16,7 +16,6 @@ const Example = ({ example }) => {
 
 const ExampleList = ({ idiom, onChange }) => {
   debugRndr('ExampleList');
-
   const [editing, setEditing] = useState(null);
 
   if (!idiom.examples || !idiom.examples.length) {

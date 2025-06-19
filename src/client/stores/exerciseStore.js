@@ -1,28 +1,28 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
-const { getDueList, getDueStats, getNext, evaluateResponse } = exerciseService;
+const { getSchedule, getScheduleStats, getNext, evaluateResponse } = exerciseService;
 import debug from 'debug';
 const debugStore = debug('app:store');
 import { storeFetch } from '../lib/storeUtils';
 
-export const useDueStatsStore = create((set, get) => ({
+export const useScheduleStatsStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getDueStats, set),
+  fetch: storeFetch(getScheduleStats, set),
   reset: () => {
-    debugStore('Clearing useDueStatsStore')
+    debugStore('Clearing useScheduleStatsStore')
     return set({ data: null, error: null, loading: false })
   }
 }));
 
-export const useDueListStore = create((set, get) => ({
+export const useScheduleStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  fetch: storeFetch(getDueList, set),
+  fetch: storeFetch(getSchedule, set),
   reset: () => {
-    debugStore('Clearing useDueListStore')
+    debugStore('Clearing useScheduleStore')
     return set({ data: null, error: null, loading: false })
   }
 }));

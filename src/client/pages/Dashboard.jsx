@@ -1,4 +1,4 @@
-import { useUserStore, useDueStatsStore, useBrandImageStore } from '../stores';
+import { useUserStore, useScheduleStatsStore, useBrandImageStore } from '../stores';
 import ScheduleStats from '../components/ScheduleStats';
 import FilterInfo from '../components/FilterInfo';
 import SandboxPanel from '../components/sandbox/SandboxPanel';
@@ -11,14 +11,14 @@ import img2 from "../assets/images/clock.png";
 import img3 from "../assets/images/doll.png";
 import DoExerciseTitle from '../components/DoExerciseTitle';
 
-const debugRender = debug('app:render');
+const debugRender = debug('react:render');
 
 const HeaderImage = ({img,alt}) => <img src={img} alt={alt} className="w-20 h-20 object-contain mx-auto mb-4" />
 
 const Dashboard = () => {
   debugRender('Rendering Dashboard');
   const getToken = useUserStore(state => state.getToken);
-  const { data, fetch, loading, error } = useDueStatsStore();
+  const { data, fetch, loading, error } = useScheduleStatsStore();
   const { setImage } = useBrandImageStore();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Dashboard = () => {
     return <LoadingIndicator />
   }
   const showCalendar = data.numSeen > 0;
-  const showSandbox = !data.enableGetNext && data.missed;
+  const showSandbox = data.upToDate && data.missed;
 
   return (
     <Card title={<DoExerciseTitle title="¡Bienvenido!" scheduleStats={data} getToken={getToken} />}>

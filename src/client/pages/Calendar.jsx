@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useUserStore, useDueListStore, useDueStatsStore, useBrandImageStore } from '../stores';
+import { useUserStore, useScheduleStore, useScheduleStatsStore, useBrandImageStore } from '../stores';
 import Schedule from '../components/Schedule';
 import { Card } from '../components/layout';
 import { LoadingIndicator } from '../components/ui';
@@ -7,10 +7,10 @@ import DoExerciseTitle from '../components/DoExerciseTitle';
 
 const Calendar = () => {
   const getToken = useUserStore(state => state.getToken);
-  const { data, fetch, loading, error } = useDueListStore();  
+  const { data, fetch, loading, error } = useScheduleStore();  
   const { data: stats, fetch: statsGet, loading: statsLoading, 
           error: statsError
-   } = useDueStatsStore();
+   } = useScheduleStatsStore();
   
   const { setImage } = useBrandImageStore();
 

@@ -6,7 +6,7 @@ import LoadingIndicator from '../../components/ui/LoadingIndicator';
 import IdiomDetail from '../../components/admin/IdiomDetail';
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('app:render');
+const debugRndr = debug('react:render');
 
 function IdiomListPage() {  
   debugRndr('IdiomListPage')

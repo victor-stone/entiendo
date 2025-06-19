@@ -56,6 +56,7 @@ export async function scheduleStats(routeContext) {
   }
 
   stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;
+  stats.upToDate      = (stats.numSeen > 0) && !stats.numPastDue;
 
   return stats;
 

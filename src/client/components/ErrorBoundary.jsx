@@ -1,6 +1,6 @@
 import React from 'react';
 import debug from 'debug';
-const debugRender = debug('app:render');
+const debugRender = debug('react:render');
 
 // Simple error boundary for catching render errors
 export class ErrorBoundary extends React.Component {
