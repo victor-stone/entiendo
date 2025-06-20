@@ -91,6 +91,10 @@ export const routeTable = {
   
   // GET routes
   GET: {
+    '/api/admin/resetcaches': { 
+      handler: (routeContext) => adminAPI.resetCaches(routeContext),
+      auth: true
+    },
     '/api/admin/prompts': { 
       handler: (routeContext) => adminAPI.getPrompts(routeContext),
       auth: true

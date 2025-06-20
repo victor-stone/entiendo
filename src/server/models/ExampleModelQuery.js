@@ -27,6 +27,8 @@ const ExampleModelQuery = {
         } else if( query ) {
             debugData('Clearing out the ExampleModel cache');
             query = null;
+        } else {
+            debugData('ExampleModel already cleared')
         }
     }
 

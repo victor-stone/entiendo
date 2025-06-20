@@ -6,3 +6,4 @@ export { default as NewExamplePage } from './NewExamplePage';
 export { default as NewIdiomPage } from './NewIdiomPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as PromptsPage } from './PromptsPage';
+export { default as ResetCache } from './ResetCache';

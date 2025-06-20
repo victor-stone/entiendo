@@ -41,11 +41,11 @@ function verifyStageFiles() {
     process.exit(1);
   }
   // Check CSV columns
-  const csvPath = path.join(baseDir, csvFile);
-  const csvContent = fs.readFileSync(csvPath, "utf8");
-  const [headerLine] = csvContent.split(/\r?\n/);
+  const csvPath         = path.join(baseDir, csvFile);
+  const csvContent      = fs.readFileSync(csvPath, "utf8");
+  const [headerLine]    = csvContent.split(/\r?\n/);
   const expectedColumns = [
-    'text', 'translation', 'transcript', 'snippet', 'voice', 'num', 'idiomId'
+    'text', 'translation', 'transcript', 'snippet', 'voice', 'num', 'idiomId', 'exampleId'
   ];
   const actualColumns = headerLine.split(',').map(s => s.trim());
   const missing = expectedColumns.filter(col => !actualColumns.includes(col));
@@ -77,8 +77,6 @@ function verifyStageFiles() {
   console.log('Stage verification passed: audio directory and CSV columns are valid.');
 }
 
-verifyStageFiles();
-
 function parseMap() {
   const csvPath   = path.join(baseDir, csvFile);
   try {
@@ -101,7 +99,7 @@ async function main() {
   const audioFiles     = fs.readdirSync(audioPath);
 
   try {
-    const exmaples = new ExampleModel();
+    const model = new ExampleModel();
 
     // csv-parse does not return the header:
     //   text,translation,transcript,snippet,voice,num,idiomId
@@ -111,6 +109,7 @@ async function main() {
       
       const { 
         idiomId, 
+        exampleId,
         snippet   : conjugatedSnippet, 
         text      : idiom,
         num       : row,
@@ -120,22 +119,22 @@ async function main() {
 
       const regex       = new RegExp(`^${row}(\\.| ).*\\.mp3$`);
       const audioFile   = audioFiles.find((f) => regex.test(f));
-      
-      if( !audioFile ) {
-        console.error(`Missing audio file: ${row}: ${idiom}`);
-        continue;
-      }
-
       const audio       = await uploadAudioToS3(path.join(audioPath, audioFile));
             audio.voice = source;
-      const exRec       = await exmaples.createExample(
-                                  idiomId,
-                                  text,
-                                  conjugatedSnippet,
-                                  source,
-                                  audio
-                                );
-      console.log(`Successfully created ${exRec.exampleId} for ${idiom}`);
+      
+      if( exampleId ) {
+        const exReg = await model.addAudio(exampleId, audio);
+        console.log(`Successfully added audio to ${exReg.exampleId} for ${idiom}`);
+      } else {
+        const exRec= await model.createExample(
+                            idiomId,
+                            text,
+                            conjugatedSnippet,
+                            source,
+                            audio
+                          );
+        console.log(`Successfully created ${exRec.exampleId} for ${idiom}`);
+      }
     }
   } catch (err) {
     console.log(err);
@@ -143,5 +142,6 @@ async function main() {
   return "done";
 }
 
+verifyStageFiles();
 const foo = await main();
 console.log(foo);

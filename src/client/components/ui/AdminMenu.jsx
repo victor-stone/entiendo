@@ -31,6 +31,9 @@ const AdminMenu = ({ isMobile, onClose }) => {
     {
       path: '/admin/prompts', label: 'Prompts'
     },
+    {
+      path: '/admin/resetcache', label: 'Reset Caches'
+    },
   ];
 
   if (isMobile) {

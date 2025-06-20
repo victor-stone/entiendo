@@ -22,6 +22,7 @@ export async function getNext(routeContext) {
 
     exercise = await _getExerciseForNewIdiom(routeContext);
     if( exercise ) {
+        exercise.isNew = true;
         return exercise;
     }
 

@@ -24,7 +24,7 @@ function _validateIdiom(idiom) {
 /**
  * Helper function to validate multiple idioms and check for duplicates
  */
-export async function _validateIdioms(records) {
+async function _validateIdioms(records) {
   const idioms     = [];
   const errors     = [];
   const duplicates = [];

@@ -2,12 +2,11 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
   Calendar, BugReport, Sandbox } from './index';
-import { IdiomListPage, IdiomImportPage, 
+import { IdiomListPage, IdiomImportPage, ResetCache,
   AudioUploadPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
 import AdminRoute from '../components/admin/AdminRoute';
 import UserRoute from '../components/UserRoute';
-import { ErrorBoundary } from '../components/ErrorBoundary.jsx';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +22,7 @@ const router = createBrowserRouter([
           { path: 'exercise',    element: <Exercise /> },
           { path: 'calendar',    element: <Calendar /> },
           { path: 'sandbox',     element: <Sandbox /> },
-          { path: 'bugreport',   element: <BugReport /> },
+          { path: 'bugreport',   element: <BugReport /> }
         ],
       },
       {
@@ -38,6 +37,7 @@ const router = createBrowserRouter([
           { path: 'audio',   element: <AudioUploadPage /> },
           { path: 'settings',element: <SettingsPage /> },
           { path: 'prompts', element: <PromptsPage /> },
+          { path: 'resetcache',  element: <ResetCache /> },
           { path: 'example/:idiomId', element: <NewExamplePage /> },
           { path: 'audio/:exampleId', element: <AudioUploadPage /> },
         ],

@@ -8,6 +8,10 @@ const debugAdmin = debug("client:admin");
  */
 const adminService = {
 
+  resetCaches: async (authToken) => {
+    return await get("/api/admin/resetcaches", authToken);
+  },
+  
   createIdiom: async (idiomData, authToken) => {
     return await post("/api/admin/idiom", idiomData, authToken);
   },
