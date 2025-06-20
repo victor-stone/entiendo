@@ -1,18 +1,9 @@
 import PromptModel from '../src/server/models/PromptModel.js'
+import dump from './dump.js';
 
-async function dumpPrompts() {
-  try {
+async function dumpPrompt() {
     const model = new PromptModel();
-    const idioms = await model.findAll();
-    console.log( 'export default { "prompts": ')
-    console.log(JSON.stringify(idioms, null, 2));
-    console.log( '};')
-    process.exit(0);
-  } catch (err) {
-    console.error('Error fetching prompts:', err);
-    process.exit(1);
-  }
+    await dump(model, 'prompts');
 }
 
-dumpPrompts();
-
+dumpPrompt();

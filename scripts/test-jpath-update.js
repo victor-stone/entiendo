@@ -6,7 +6,7 @@ import ExampleModeQuery  from '../src/server/models/ExampleModelQuery.js';
 //     { foo: 'baz', title: "foobaz"}
 // ];
 
-// const result = exampleQuery.q( '..{.foo == "baz"}', data, { foo: 'baz', title: "replacement" });
+// const result = exampleQuery.q( '..{.foo == "baz"}',{ foo: 'baz', title: "replacement" },  data);
 
 // console.log(JSON.stringify(result));
 // console.log('--------');

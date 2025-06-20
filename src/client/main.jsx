@@ -9,6 +9,7 @@ import router from './pages/router.jsx'
 import { useUserStore } from './stores'
 import { LoadingIndicator } from './components/ui'
 import debug from 'debug';
+import BetaGate from './components/BetaGate.jsx'
 
 const debugApp = debug('app');
 const debugLogin = debug('app:login');
@@ -34,17 +35,19 @@ const {
 } = import.meta.env
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Auth0Provider
-    domain={domain}
-    clientId={clientId}
-    authorizationParams={{
-      redirect_uri: window.location.origin,
-      audience,
-      scope: "openid profile email offline_access"
-    }}
-    cacheLocation="localstorage"
-    useRefreshTokens={true}
-  >
-    <EntiendoApp />
-  </Auth0Provider>
+  <BetaGate>
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience,
+        scope: "openid profile email offline_access"
+      }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
+    >
+      <EntiendoApp />
+    </Auth0Provider>
+  </BetaGate>
 )

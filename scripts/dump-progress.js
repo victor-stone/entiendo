@@ -1,15 +1,9 @@
 import { ProgressModel } from '../src/server/models/index.js';
+import dump from './dump.js';
 
 async function dumpProgress() {
-  const progressModel = new ProgressModel();
-  const allProgress   = await progressModel.findAll();
-
-  console.log( 'export default { "progress" : [')
-  console.log( JSON.stringify(allProgress, null, 2) );
-  console.log(']}');
+    const model = new ProgressModel();
+    await dump(model, 'progress');
 }
 
-dumpProgress().catch(err => {
-  console.error('Failed to dump progress:', err);
-  process.exit(1);
-})
+dumpProgress();

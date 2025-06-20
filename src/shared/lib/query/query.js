@@ -6,7 +6,7 @@ export default class query {
         this.data = data;
     }
 
-    q(q, data = null, subs = null) {
+    q(q, subs = null, data = null) {
         if( !data ) {
             data = this.data;
         }
@@ -20,7 +20,7 @@ export default class query {
     }
 
     queryOne(q, subs = null ) {
-        return this.q(q,null,subs)[0];
+        return this.q(q,subs)[0];
     }
 
 }
