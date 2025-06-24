@@ -19,7 +19,7 @@ Perfectly reasonable definitions for *turn* would mention bending or rotation. O
 - **take down** – write something (and others)
 - **turn down** – refuse (or make a bed)
 - **turn up** – arrive
-- **turn in** – go to sleep
+- **turn in** – go to sleep, submit
 - **turn out** – crowd size (or...)
 
 It **turns out** the words *take* and *turn* show up infinitely more idiomatically than their basic definitions imply. And all of us speak in idioms all day long, like "*show up*" in the sentence before this one. The really insidious idioms obscure the basic meaning of their individual words. "You look good," "my phone doesn't work," "it's up to you," "that makes sense," etc. We English speakers know what those idioms mean because we know what they mean — not because placing those words together actually, you know, makes sense.
