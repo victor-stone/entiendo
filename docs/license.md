@@ -4,4 +4,6 @@ The source code for this project is avaible at [GitHub](https://github.com/victo
 
 ## Content
 
-The content (idioms, examples, audio recording) are all licensed as:
+Muchisimas gracias Lucía Capurro, Patricia Chiappini, Karina y David Vazquez for supplying idioms, examples and audio recordings (and so much more!) to this app.
+
+The content (idioms, examples, prompts, audio recording) are all licensed as:

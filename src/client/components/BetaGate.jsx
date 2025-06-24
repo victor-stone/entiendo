@@ -44,7 +44,7 @@ export default function BetaGate({ children }) {
           <input
             name="betapassword"
             type="password"
-            placeholder="Enter beta password"
+            placeholder="la chacra de Víctor (sin espacios en minúscula)"
             value={password}
             onChange={e => setPassword(e.target.value)}
             disabled={submitting}

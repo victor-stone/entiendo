@@ -29,13 +29,12 @@ function EntiendoApp() {
 }
 
 const {
-  VITE_AUTH0_DOMAIN: domain,
+  VITE_AUTH0_DOMAIN   : domain,
   VITE_AUTH0_CLIENT_ID: clientId,
-  VITE_AUTH0_AUDIENCE: audience
+  VITE_AUTH0_AUDIENCE : audience
 } = import.meta.env
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BetaGate>
     <Auth0Provider
       domain={domain}
       clientId={clientId}
@@ -49,5 +48,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     >
       <EntiendoApp />
     </Auth0Provider>
-  </BetaGate>
 )

@@ -19,7 +19,7 @@ const genericItems = [
       path: '/about', label: 'About'
     },
     {
-      path: '/license', label: 'Licenses'
+      path: '/license', label: 'Licenses / Credit'
     },
     { 
       path: '/app/bugreport', label: 'Report Bugs'

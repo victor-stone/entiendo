@@ -14,6 +14,7 @@ Perfectly reasonable definitions for *turn* would mention bending or rotation. O
 - **take on** – confront
 - **take in** – harbor a guest (and more)
 - **take out** – vanquish an opponent
+- **take it out** - to unjustly accost ("don't take it out on me")
 - **take up** – pursue a goal or mission
 - **take down** – write something (and others)
 - **turn down** – refuse (or make a bed)
@@ -39,9 +40,9 @@ This is why *Entiendo* has collected hundreds of idioms, ranked them by (roughly
 
 If you're still reading this, then maybe you have learned something about Spanish... but you haven't learned any Spanish.
 
-People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that is what you think about when you speak. We're not suggesting learning rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not flexing the speech part of your brain. Despite the way it's taught to most of us, language is the opposite of a puzzle to be solved with hints and rules; it's about training the brain to *not think* about them.
+People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that is what you think about when you speak. We're not suggesting learning rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not flexing the part of your brain that's for speech. Despite the way it's taught to most of us, language is the opposite of a puzzle to be solved with hints and rules; it's about training the brain to *[not think](https://en.wikipedia.org/wiki/Automaticityhttps:/)* full stop.
 
-Unfortunately, learning methods employed by most language resources are aimed at the "average" memory abled person. Someone young-ish (25 years old or less) with a typically solid memory that needs some help at first but can be trained to remember lists of items using various well-researched techniques.
+Unfortunately, learning methods employed by most language resources are aimed at the "average" memory abled person. Someone young-ish (say, 25 years old) with a typically solid memory that needs some help at first but can be trained to remember lists of items using various well-researched techniques.
 
 All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
@@ -49,13 +50,13 @@ All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
 This assumes a lot and, honestly, it feels pretty crappy to keep hearing this when you've immigrated somewhere and have been struggling for years to grasp the basics.
 
-Some of us are atypical when it comes to being able to retain lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
+Some of us are atypical when it comes to retaining lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
 
-And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains actually shrink as we get older - there is less room for new information and it takes longer for it to get there.
+And by the way, some of us have been alive for way more decades than two. We call what happens then *neuro-not-so-plasticity*. Our brains actually shrink as we get older - there is less room for new information and it takes longer for it to get there.
 
 #### *Strategy for Inconsistent Recall Pattern* (*SIRP*)
 
-Most learning apps use some version of *Spaced Repetition*. This is where the algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
+Most learning apps use some version of *Spaced Repetition*. The algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
 
 *Entiendo* assumes the opposite. We designed our own method of memorizing we call *Strategy for Inconsistent Recall Pattern* (*SIRP*), which assumes that even if you can recall something instantly now, you will not be able to in the near future — and that your recall of any given item will go to zero (or near zero) with some regularity.
 
