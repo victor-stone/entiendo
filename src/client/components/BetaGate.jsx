@@ -42,14 +42,14 @@ export default function BetaGate({ children }) {
           }}
         >
           <input
-            name="betapassword  "
+            name="betapassword"
             type="password"
             placeholder="Enter beta password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             disabled={submitting}
             autoComplete="beta-password"
-            className="rounded border-2 p-2 mb-3 border-primary-200"
+            className="rounded border-2 p-2 mb-3 border-primary-200 bg-white text-primary-900 dark:bg-primary-900 dark:text-primary-50"
             style={{ width: '100%' }}
           />
           <br />

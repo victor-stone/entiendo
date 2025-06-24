@@ -1,17 +1,11 @@
 import { Navigate } from 'react-router-dom';
-import { useUserStore, useBetaSettingStore } from '../stores';
+import { useUserStore } from '../stores';
 import { APP_CATCHPHRASE } from '../../shared/constants/appText.js'
 import LoginButton from '../components/ui/LoginButton.jsx';
-import BetaLogin from '../components/ui/BetaLogin.jsx';
 
 const Landing = () => {
 
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
-  const {
-    verifiedBeta,
-    inBeta,
-    verifyBetaPassword,
-  } = useBetaSettingStore();
 
   if (isAuthenticated) {
     return <Navigate to="/app/dashboard" replace />;
@@ -28,11 +22,8 @@ const Landing = () => {
             fontVariant: 'small-caps',
             fontSize: '80%'
           }}>{APP_CATCHPHRASE}</p>
-        {!verifiedBeta && inBeta ? (
-          <BetaLogin verifyBetaPassword={verifyBetaPassword} />
-        ) : (
+
           <div><LoginButton /></div>
-        )}
       </div>
     </div>
   );

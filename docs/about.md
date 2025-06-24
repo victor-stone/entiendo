@@ -4,7 +4,7 @@
 
 ## Idioms
 
-An idiom can be an expression, a phrase, or any combination of words that carries a meaning uniquely different as a group, as opposed to when used as individual words. In many cases, the idiomatic phrase or expression is metaphorical or references some aspect of culture, like "raining cats and dogs" or "it's a home run." In these cases, the meaning of the phrase can be deduced from the individual words, even if you have never heard the combination used in that way.
+An idiom can be an expression, a phrase, or any combination of words that carries a meaning uniquely different as a group, as opposed to when used as individual words. In many cases, the idiomatic phrase or expression is metaphorical or a cultural reference, like "not fully baked" or "it's a home run." In these cases, the meaning of the phrase can be deduced from the individual words, even if you have never heard the combination used in that way.
 
 However, many idiomatic expressions have zero connection to their individual words. There is no possible way to determine the meaning of the phrase unless you happen to know the intent behind it.
 
@@ -31,15 +31,17 @@ Someone says: "*Sí o sí, ya no queda tiempo.*"
 
 Words as fundamental as *sí* or *ya* suddenly mean something randomly different than *yes* and *already*.
 
+> Modern AI systems, like the ones this app relies on, understands regional idiomatic usage extraordinarily well which makes an app like this possible. As of this writing (June 2025) Google Translate still thinks *sí o sí* means *yes or yes*. In Uruguay this is how people would say *Like it or not, we're out of time*.
+
 This is why *Entiendo* has collected hundreds of idioms, ranked them by (roughly) how often they are used, and (roughly) categorized them by the contexts in which they tend to come up — and focuses entirely on those.
 
 ## Memorizing
 
 If you're still reading this, then maybe you have learned something about Spanish... but you haven't learned any Spanish.
 
-People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that — not one bit of it — is what you think about when you speak. We're not suggesting rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not using the correct of your brain. Despite the way it's mainly taught, language is the opposite of a puzzle to be solved with hints and rules; it's about training to brain to *not think* about it.
+People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that is what you think about when you speak. We're not suggesting learning rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not flexing the speech part of your brain. Despite the way it's taught to most of us, language is the opposite of a puzzle to be solved with hints and rules; it's about training the brain to *not think* about them.
 
-Unfortunately, learning methods employed by most language resources are aimed at the "average" memory abled person. Someone typically young (25 years old or younger) with a basically solid memory that needs some help at first but can be trained to remember lists of items using various well-researched techniques.
+Unfortunately, learning methods employed by most language resources are aimed at the "average" memory abled person. Someone young-ish (25 years old or less) with a typically solid memory that needs some help at first but can be trained to remember lists of items using various well-researched techniques.
 
 All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
@@ -47,13 +49,15 @@ All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
 This assumes a lot and, honestly, it feels pretty crappy to keep hearing this when you've immigrated somewhere and have been struggling for years to grasp the basics.
 
-Some of us are below average when it comes to being able to retain lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
+Some of us are atypical when it comes to being able to retain lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
 
-And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains literally shrink as we get older.
+And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains actually shrink as we get older - there is less room for new information and it takes longer for it to get there.
+
+##### *Strategy for Inconsistent Recall Pattern* (*SIRP*)
 
 Most learning apps use some version of *Spaced Repetition*. This is where the algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
 
-*Entiendo* assumes the opposite. We designed our own method of memorizing called *Strategy for Inconsistent Recall Pattern* (*SIRP*), which assumes that even if you can recall something instantly now, you will not be able to in the near future — and that your recall of any given item will go to zero (or near zero) with some regularity.
+*Entiendo* assumes the opposite. We designed our own method of memorizing we call *Strategy for Inconsistent Recall Pattern* (*SIRP*), which assumes that even if you can recall something instantly now, you will not be able to in the near future — and that your recall of any given item will go to zero (or near zero) with some regularity.
 
 Most recall systems (including *SM-2/Anki*) anchor on your most recent performance. *SIRP* looks deeper at overall performance when deciding the next time to test your memory skills — and then assumes the worst.
 
@@ -65,12 +69,10 @@ You will never learn a language if you don't know *what it sounds like*.
 
 Millions of people all around the world are learning English. The advantage many of them have is that (for better or worse), culture that comes from the USA, UK, and Australia — like films, TV, music, gaming, technology, et al. — is all based in English, and the sounds of the language get embedded into folks' minds from a very early age.
 
-But none of that will help you if you want to live in Scotland (or for that matter Baltimore, MD). No English app or school will prepare you for that uniquely regional accent, pronunciation, and resyllabification. Even immersion slow down if you haven't been singing along with the Scottish equivalent of Taylor Swift songs for 10 years.
+But none of that will help you if you want to live in Scotland (or for that matter Baltimore, MD). No English app or school will prepare you for that uniquely regional accent, pronunciation, and resyllabification. Yes, even immersion slows down if you haven't been singing along with the Scottish equivalent of Taylor Swift songs for 10 years.
 
-*Entiendo* is an audio-only application. In other words, every example is audio and you are asked to transcribe the audio as you hear it. Of course, you need to practice your speech, and there are many, many resources out there for you to practice your pronunciation and even to converse with someone across the globe who you pay to listen to you speak.
+*Entiendo* is an audio-only application. In other words, every example is audio and you are asked to transcribe the audio as you hear it. Of course, you need to practice speaking, and there are many, many resources out there for you to practice your pronunciation and to converse with someone across the globe who you pay to listen to you speak.
 
-But in addition to that, what some of us need is the ability not only to learn how the language sounds, but to "freeze" the moment, to play it over and over and over again so we can *learn what the language sounds like* step by step — one idiom at a time.
-
-And then to re-test us at an interval that doesn't assume because we scored well the last time that we have it locked in.
+But in addition to that, because real-time deep-end immersion is not *necessarily* the best and only method for everyone, *Entiendo* offers the ability to learn how the language sounds by "freezing" the moment. You can play a phrase over and over and over again so you can *learn what the language sounds like* step by step — one idiom at a time - as many times as you need, phasing out the audio repition at the best pace for you.
 
 The audio samples (especially the ones recorded by live, actual humans) are designed to be difficult to understand. They require work to tease apart *what the language sounds like* when spoken in *Rio Platense* style.

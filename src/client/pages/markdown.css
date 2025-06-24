@@ -9,16 +9,23 @@
 #deTailWind li,
 #deTailWind a,
 #deTailWind img,
-#deTailWind ::marker,
-#deTailWind p {
+#deTailWind p,
+#deTailWind ::marker {
   all: revert;
 }
 
 #deTailWind blockquote p, #cc-info {
-  background-color:  var(--color-accent-200);
-  padding: 15px;
-  font-family:'Franklin Gothic Medium';
-  font-size: 90%;
-  border-radius: 5px;
+  background-color: var(--color-accent-200);
+  color           : var(--color-secondary-500);
+  padding         : 15px;
+  font-family     : 'Franklin Gothic Medium';
+  font-size       : 90%;
+  border-radius   : 5px;
+}
+
+.theme-dark #deTailWind blockquote p,
+.theme-dark #cc-info {
+  background-color: #000;
+  color: #fff;
 }
 
