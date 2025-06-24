@@ -3,6 +3,7 @@ import candle from '../../assets/images/candle.png';
 import blocks from '../../assets/images/blocks.png';
 import clock from '../../assets/images/clock.png';
 import icecream from '../../assets/images/icecream.png';
+import brain from '../../assets/images/brain.png';
 import { useBrandImageStore } from '../../stores';
 
 const imgs = {
@@ -10,7 +11,8 @@ const imgs = {
   candle,
   blocks,
   clock,
-  icecream
+  icecream,
+  brain
 }
 const _default = {
     position: 'absolute',
@@ -46,6 +48,13 @@ const styles = {
   icecream: {
     ..._default,
     backgroundImage: `url(${icecream})`
+  },
+  brain: {
+    ..._default,
+    width: 200, // matches aspect ratio
+    height: 408, // matches aspect ratio
+
+    backgroundImage: `url(${brain})`
   }
 }
 export default function BrandPanel({ children }) {
