@@ -6,7 +6,7 @@
 
 An idiom can be an expression, a phrase, or any combination of words that carries a meaning uniquely different as a group, as opposed to when used as individual words. In many cases, the idiomatic phrase or expression is metaphorical or a cultural reference, like "not fully baked" or "it's a home run." In these cases, the meaning of the phrase can be deduced from the individual words, even if you have never heard the combination used in that way.
 
-However, many idiomatic expressions have zero connection to their individual words. There is no possible way to determine the meaning of the phrase unless you happen to know the intent behind it.
+However, many idiomatic expressions have zero connection to their individual words. There is no possible way to determine the meaning of the phrase, regardless of context, unless you happen to know the intent behind it.
 
 Perfectly reasonable definitions for *turn* would mention bending or rotation. Or for *take*, it would say something about obtaining and possession. But add any preposition to those words and suddenly they mean something randomly different:
 
@@ -21,7 +21,7 @@ Perfectly reasonable definitions for *turn* would mention bending or rotation. O
 - **turn in** – go to sleep
 - **turn out** – crowd size (or...)
 
-It **turns out** the words *take* and *turn* show up infinitely more idiomatically than their basic definitions imply. And all of us speak in idioms all day long, like "*show up*" in the sentence before this one. And the really insidious idioms obscure the basic meaning of their individual words. "You look good," "my phone doesn't work," "it's up to you," "that makes sense," etc. We English speakers know what those idioms mean because we know what they mean — not because placing those words together actually, you know, makes sense.
+It **turns out** the words *take* and *turn* show up infinitely more idiomatically than their basic definitions imply. And all of us speak in idioms all day long, like "*show up*" in the sentence before this one. The really insidious idioms obscure the basic meaning of their individual words. "You look good," "my phone doesn't work," "it's up to you," "that makes sense," etc. We English speakers know what those idioms mean because we know what they mean — not because placing those words together actually, you know, makes sense.
 
 So for all the vocabulary drilling you've been doing, you still don't know what people are saying, and that's because, for whatever reason, no language school, app, website, or resource focuses on the way people actually speak: idiomatically.
 
@@ -53,7 +53,7 @@ Some of us are atypical when it comes to being able to retain lists of informati
 
 And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains actually shrink as we get older - there is less room for new information and it takes longer for it to get there.
 
-##### *Strategy for Inconsistent Recall Pattern* (*SIRP*)
+#### *Strategy for Inconsistent Recall Pattern* (*SIRP*)
 
 Most learning apps use some version of *Spaced Repetition*. This is where the algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
 

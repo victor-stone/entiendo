@@ -16,7 +16,7 @@
 
 #deTailWind blockquote p, #cc-info {
   background-color: var(--color-accent-200);
-  color           : var(--color-secondary-500);
+  color           : var(--color-secondary-800);
   padding         : 15px;
   font-family     : 'Franklin Gothic Medium';
   font-size       : 90%;
