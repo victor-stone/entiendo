@@ -43,11 +43,11 @@ Unfortunately, learning methods employed by most language resources are aimed at
 
 All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
-> All you need to learn a language is immerse yourself for 30 days where they only speak it.
+> All you need to learn a language is immerse yourself for 30 days where they only speak that language.
 
 This assumes a lot and, honestly, it feels pretty crappy to keep hearing this when you've been struggling for years to grasp the basics.
 
-Some of us are below average when it comes to being able to retain lists of information. By way of example: some of us cannot retain lyrics to songs we've been listening to for decades.
+Some of us are below average when it comes to being able to retain lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
 
 And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains literally shrink as we get older.
 

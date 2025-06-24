@@ -1,7 +1,8 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
-  Calendar, BugReport, Sandbox, About, License } from './index';
+  Calendar, BugReport, Sandbox, About, License,
+  Chat } from './index';
 import { IdiomListPage, IdiomImportPage, ResetCache,
   AudioUploadPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Landing /> },
       { path: '/about', element: <About /> },
       { path: '/license', element: <License /> },
+      { path: '/chat', element: <Chat /> },
       {
         path: '/app/*',
         element: <UserRoute><Outlet /></UserRoute>,

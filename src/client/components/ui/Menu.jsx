@@ -7,7 +7,7 @@ const loggedInItems = [
       path: '/app/dashboard', label: 'Dashboard'
     },
     {
-      path: '/app/chatbot', label: 'Chat Bot'
+      path: '/chat', label: 'Chat Bot'
     },
     {
       logout: true, label: 'Logout'
