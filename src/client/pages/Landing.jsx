@@ -18,7 +18,7 @@ const Landing = () => {
   }
 
   return (
-    <div className="flex items-start justify-end h-1/2 w-1/2 ml-auto pt-12">
+    <div className="flex items-start justify-end h-1/2 w-1/2 ml-auto mr-2 pt-12">
       <div className="w-full text-right">
         <h1 className="text-5xl">entiendo</h1>
         <p

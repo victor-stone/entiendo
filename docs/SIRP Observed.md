@@ -14,8 +14,11 @@ The numbers above are not real - they were chosen to make it easier to understan
 example highlights a key difference between SIRP and classic SM-2/Anki:
 
 In SM-2/Anki: If you get a low score, then a high score, the next interval is still based on the previous (short) interval, so you don’t immediately jump to a long interval. But after a few “good” or “easy” ratings, you can quickly get long intervals, and “easy” can sometimes push cards out too far, too fast.
+
 In SIRP: Your system intentionally slows down the interval growth after a lapse or “not perfect” response—even if you get “perfect” next time. This means you’ll see the card again sooner, and it takes multiple “perfect” recalls to reach long intervals. This is much more forgiving for inconsistent recall and prevents cards from escaping review too quickly.
+
 Your doc’s example (x0.75, then x5 = 3.75 days, not 5+) makes this clear:
+
 SIRP’s interval growth is “anchored” to recent performance, not just the latest answer. This is a subtle but important distinction that helps learners who need more reinforcement, and it’s not how SM-2/Anki typically behaves.
 
 What you can’t do in Anki’s stock settings that built into SIRP:

@@ -46,6 +46,7 @@
     "openai": "^4.96.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.6.1",
     "timeago.js": "^4.0.2",
     "uuid": "^11.1.0",
