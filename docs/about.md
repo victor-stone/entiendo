@@ -10,15 +10,15 @@ However, many idiomatic expressions have zero connection to their individual wor
 
 Perfectly reasonable definitions for *turn* would mention bending or rotation. Or for *take*, it would say something about obtaining and possession. But add any preposition to those words and suddenly they mean something randomly different:
 
-- **take off** – leave  
-- **take on** – confront  
-- **take in** – harbor a guest (and more)  
-- **take out** – vanquish an opponent  
-- **take up** – pursue a goal or mission  
-- **take down** – write something (and others)  
-- **turn down** – refuse (or make a bed)  
-- **turn up** – arrive  
-- **turn in** – go to sleep  
+- **take off** – leave
+- **take on** – confront
+- **take in** – harbor a guest (and more)
+- **take out** – vanquish an opponent
+- **take up** – pursue a goal or mission
+- **take down** – write something (and others)
+- **turn down** – refuse (or make a bed)
+- **turn up** – arrive
+- **turn in** – go to sleep
 - **turn out** – crowd size (or...)
 
 It **turns out** the words *take* and *turn* show up infinitely more idiomatically than their basic definitions imply. And all of us speak in idioms all day long, like "*show up*" in the sentence before this one. And the really insidious idioms obscure the basic meaning of their individual words. "You look good," "my phone doesn't work," "it's up to you," "that makes sense," etc. We English speakers know what those idioms mean because we know what they mean — not because placing those words together actually, you know, makes sense.
@@ -37,15 +37,15 @@ This is why *Entiendo* has collected hundreds of idioms, ranked them by (roughly
 
 If you're still reading this, then maybe you have learned something about Spanish... but you haven't learned any Spanish.
 
-People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that — not one bit of it — is what you think about when you speak. We're not suggesting rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not exercising the part of your brain you use when you converse.
+People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that — not one bit of it — is what you think about when you speak. We're not suggesting rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not using the correct of your brain. Despite the way it's mainly taught, language is the opposite of a puzzle to be solved with hints and rules; it's about training to brain to *not think* about it.
 
-Unfortunately, learning methods employed by most language resources are aimed at the "average" abled person. Someone typically young (25 years old or younger) with a basically solid memory that needs some help at first but can be trained to remember lists of items using various well-known techniques.
+Unfortunately, learning methods employed by most language resources are aimed at the "average" memory abled person. Someone typically young (25 years old or younger) with a basically solid memory that needs some help at first but can be trained to remember lists of items using various well-researched techniques.
 
 All of this is (to be blunt) ableist. Stop me if you've heard this one:
 
-> All you need to learn a language is immerse yourself for 30 days where they only speak that language.
+> All you need to do to learn a language is to immerse yourself for 30 days where they only speak that language.
 
-This assumes a lot and, honestly, it feels pretty crappy to keep hearing this when you've been struggling for years to grasp the basics.
+This assumes a lot and, honestly, it feels pretty crappy to keep hearing this when you've immigrated somewhere and have been struggling for years to grasp the basics.
 
 Some of us are below average when it comes to being able to retain lists of information. Some of us cannot, for the life of us, remember lyrics to songs we've been listening to for decades.
 
@@ -53,7 +53,7 @@ And by the way, some of us have been alive for way more decades than two. We cal
 
 Most learning apps use some version of *Spaced Repetition*. This is where the algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
 
-*Entiendo* assumes the opposite. We designed our own method of memorizing called *Strategy for Inconsistent Recall Pattern* (*SIRP*), which assumes that even if you can recall something instantly now, you will not be able to in the future — and that your recall of any given item will go to zero (or near zero) with some regularity.
+*Entiendo* assumes the opposite. We designed our own method of memorizing called *Strategy for Inconsistent Recall Pattern* (*SIRP*), which assumes that even if you can recall something instantly now, you will not be able to in the near future — and that your recall of any given item will go to zero (or near zero) with some regularity.
 
 Most recall systems (including *SM-2/Anki*) anchor on your most recent performance. *SIRP* looks deeper at overall performance when deciding the next time to test your memory skills — and then assumes the worst.
 
@@ -65,9 +65,9 @@ You will never learn a language if you don't know *what it sounds like*.
 
 Millions of people all around the world are learning English. The advantage many of them have is that (for better or worse), culture that comes from the USA, UK, and Australia — like films, TV, music, gaming, technology, et al. — is all based in English, and the sounds of the language get embedded into folks' minds from a very early age.
 
-But none of that will help you if you want to live in Scotland (or even Baltimore, MD). No English app or school will prepare you for that uniquely regional accent, pronunciation, and resyllabification. Even immersion is stalled if you haven't been singing along with the Scottish equivalent of Taylor Swift songs for 10 years.
+But none of that will help you if you want to live in Scotland (or for that matter Baltimore, MD). No English app or school will prepare you for that uniquely regional accent, pronunciation, and resyllabification. Even immersion slow down if you haven't been singing along with the Scottish equivalent of Taylor Swift songs for 10 years.
 
-*Entiendo* is an audio-only application. In other words, every example is audio — and audio only — and you are asked to transcribe the audio as you hear it. Of course, you need to practice your speech, and there are many, many resources out there for you to practice your pronunciation and even to converse with someone across the globe who you pay to listen to you speak.
+*Entiendo* is an audio-only application. In other words, every example is audio and you are asked to transcribe the audio as you hear it. Of course, you need to practice your speech, and there are many, many resources out there for you to practice your pronunciation and even to converse with someone across the globe who you pay to listen to you speak.
 
 But in addition to that, what some of us need is the ability not only to learn how the language sounds, but to "freeze" the moment, to play it over and over and over again so we can *learn what the language sounds like* step by step — one idiom at a time.
 
