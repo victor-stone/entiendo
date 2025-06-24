@@ -1,26 +1,24 @@
-# Stuff to Know About *Entiendo*
-
 *Entiendo* is a gap-filler project. It emphasizes several things missing from other forms of language learning utilities and institutions. You still need to drill conjugations, memorize vocabulary, understand basic sentence structure, pronouns, direct object bladdity-blahs, and there are awesome resources available all over the place to help you do those things. *Entiendo* does what none of those seem to want to cover and yet is essential to being fluent in a language.
 
 > This application focuses on speech common in the Rio de la Plata region — that is, Buenos Aires and Uruguay. The project source code is freely available for anybody to adapt to other languages or dialects of Spanish.
 
 ## Idioms
 
-An idiom can be an expression, a phrase, or any combination of words that carries a meaning uniquely different as a group as opposed to when used as individual words. In many cases, the idiomatic phrase or expression is metaphorical or references some aspect of culture, like "raining cats and dogs" or "it's a home run." In these cases, the meaning of the phrase can be deduced from the individual words, even if you have never heard the combination used in that way.
+An idiom can be an expression, a phrase, or any combination of words that carries a meaning uniquely different as a group, as opposed to when used as individual words. In many cases, the idiomatic phrase or expression is metaphorical or references some aspect of culture, like "raining cats and dogs" or "it's a home run." In these cases, the meaning of the phrase can be deduced from the individual words, even if you have never heard the combination used in that way.
 
 However, many idiomatic expressions have zero connection to their individual words. There is no possible way to determine the meaning of the phrase unless you happen to know the intent behind it.
 
 Perfectly reasonable definitions for *turn* would mention bending or rotation. Or for *take*, it would say something about obtaining and possession. But add any preposition to those words and suddenly they mean something randomly different:
 
-- **take off** – leave
-- **take on** – confront
-- **take in** – harbor a guest (and more)
-- **take out** – vanquish an opponent
-- **take up** – pursue a goal or mission
-- **take down** – write something (and others)
-- **turn down** – refuse (or make a bed)
-- **turn up** – arrive
-- **turn in** – go to sleep
+- **take off** – leave  
+- **take on** – confront  
+- **take in** – harbor a guest (and more)  
+- **take out** – vanquish an opponent  
+- **take up** – pursue a goal or mission  
+- **take down** – write something (and others)  
+- **turn down** – refuse (or make a bed)  
+- **turn up** – arrive  
+- **turn in** – go to sleep  
 - **turn out** – crowd size (or...)
 
 It **turns out** the words *take* and *turn* show up infinitely more idiomatically than their basic definitions imply. And all of us speak in idioms all day long, like "*show up*" in the sentence before this one. And the really insidious idioms obscure the basic meaning of their individual words. "You look good," "my phone doesn't work," "it's up to you," "that makes sense," etc. We English speakers know what those idioms mean because we know what they mean — not because placing those words together actually, you know, makes sense.
@@ -33,13 +31,13 @@ Someone says: "*Sí o sí, ya no queda tiempo.*"
 
 Words as fundamental as *sí* or *ya* suddenly mean something randomly different than *yes* and *already*.
 
-This is why *Entiendo* has collected hundreds of idioms, ranked them by (roughly) how often they are used, and (roughly) categorized them by the contexts in which they tend to come up and focuses entirely on those.
+This is why *Entiendo* has collected hundreds of idioms, ranked them by (roughly) how often they are used, and (roughly) categorized them by the contexts in which they tend to come up — and focuses entirely on those.
 
 ## Memorizing
 
 If you're still reading this, then maybe you have learned something about Spanish... but you haven't learned any Spanish.
 
-People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that — not one bit of it — is what you think about when you speak. We're not suggesting rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not learning the thing.
+People don't speak in rules of grammar or etymological logistics. At best, rules explain how words function; they point to why certain phrases work the way they do. None of that — not one bit of it — is what you think about when you speak. We're not suggesting rules, patterns, and other mnemonic hints are not useful — but in the end, you still have to memorize words and phrases and meanings and thought patterns. In languages especially, if you're not memorizing something, you're not learning it — you may be learning *about* it, but you're not exercising the part of your brain you use when you converse.
 
 Unfortunately, learning methods employed by most language resources are aimed at the "average" abled person. Someone typically young (25 years old or younger) with a basically solid memory that needs some help at first but can be trained to remember lists of items using various well-known techniques.
 
@@ -51,7 +49,7 @@ This assumes a lot and, honestly, it feels pretty crappy to keep hearing this wh
 
 Some of us are below average when it comes to being able to retain lists of information. By way of example: some of us cannot retain lyrics to songs we've been listening to for decades.
 
-And by the way, some of us have been alive for way more decades than two. We call what happens then  neuro-not-so-plasticity. Our brains literally shrink as we get older.
+And by the way, some of us have been alive for way more decades than two. We call what happens then neuro-not-so-plasticity. Our brains literally shrink as we get older.
 
 Most learning apps use some version of *Spaced Repetition*. This is where the algorithm decides, based on your performance in exercises, how much space (time) you will need between repetitions in order to maximize your chances of learning something. What they all share in common is they all assume once you've learned something, you pretty much got it.
 
@@ -65,14 +63,14 @@ Sticking to the SIRP calendar may not be a panacea, but at least, for some of us
 
 You will never learn a language if you don't know *what it sounds like*.
 
-Millions of people all around the world are learning English. The advantage many of them have is that (for better or worse) culture that comes from the USA, UK and Australia like films, tv, music, gaming, technology, et. al. are all based in English and the sounds of the language gets embedded into folks' minds from a very early age.
+Millions of people all around the world are learning English. The advantage many of them have is that (for better or worse), culture that comes from the USA, UK, and Australia — like films, TV, music, gaming, technology, et al. — is all based in English, and the sounds of the language get embedded into folks' minds from a very early age.
 
-But none of that will help you if you want to live in Scotland (or even Baltimore, MD.) No English app or school will prepare you for that uniquely regional accent, pronounciation and resyllabisation. Even immersion is stalled if you haven't been singing along with the Scotish equivalent of Taylor Swift songs for 10 years.
+But none of that will help you if you want to live in Scotland (or even Baltimore, MD). No English app or school will prepare you for that uniquely regional accent, pronunciation, and resyllabification. Even immersion is stalled if you haven't been singing along with the Scottish equivalent of Taylor Swift songs for 10 years.
 
-*Entiendo* is an audio-only application. In other words every example is audio and audio only and you are asked to transcribe the audio as you hear it. Of course you need to practice your speech and there are many, many resources out there for you to practice your pronunciation and even to converse from someone across the globe who you pay to listen to you speak.
+*Entiendo* is an audio-only application. In other words, every example is audio — and audio only — and you are asked to transcribe the audio as you hear it. Of course, you need to practice your speech, and there are many, many resources out there for you to practice your pronunciation and even to converse with someone across the globe who you pay to listen to you speak.
 
-But in addition to that, what some of us need is the ability to not only learn how the language sounds, but to "freeze" the moment, to play it over and over and over again so we can *learn what the language sounds like* step by step - one idiom at a time.
+But in addition to that, what some of us need is the ability not only to learn how the language sounds, but to "freeze" the moment, to play it over and over and over again so we can *learn what the language sounds like* step by step — one idiom at a time.
 
 And then to re-test us at an interval that doesn't assume because we scored well the last time that we have it locked in.
 
-The audio samples (especially the one recorded by live actual humans) are designed to be difficult to understand. They require work to tease apart *what the language sounds like* when spoken in *Rio Platense* style.
+The audio samples (especially the ones recorded by live, actual humans) are designed to be difficult to understand. They require work to tease apart *what the language sounds like* when spoken in *Rio Platense* style.

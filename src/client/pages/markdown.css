@@ -1,0 +1,24 @@
+#deTailWind h1,
+#deTailWind h2,
+#deTailWind h3,
+#deTailWind h4,
+#deTailWind h5,
+#deTailWind h6,
+#deTailWind blockquote,
+#deTailWind ul,
+#deTailWind li,
+#deTailWind a,
+#deTailWind img,
+#deTailWind ::marker,
+#deTailWind p {
+  all: revert;
+}
+
+#deTailWind blockquote p, #cc-info {
+  background-color:  var(--color-accent-200);
+  padding: 15px;
+  font-family:'Franklin Gothic Medium';
+  font-size: 80%;
+  border-radius: 5px;
+}
+

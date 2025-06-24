@@ -16,10 +16,10 @@ const loggedInItems = [
 
 const genericItems = [
     {
-      path: '/app/about', label: 'About'
+      path: '/about', label: 'About'
     },
     {
-      path: '/app/license', label: 'Licenses'
+      path: '/license', label: 'Licenses'
     },
     { 
       path: '/app/bugreport', label: 'Report Bugs'

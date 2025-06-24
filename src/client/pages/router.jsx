@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
-  Calendar, BugReport, Sandbox } from './index';
+  Calendar, BugReport, Sandbox, About, License } from './index';
 import { IdiomListPage, IdiomImportPage, ResetCache,
   AudioUploadPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
@@ -13,6 +13,8 @@ const router = createBrowserRouter([
     element: <Page><Main><Outlet /></Main></Page>,
     children: [
       { path: '/', element: <Landing /> },
+      { path: '/about', element: <About /> },
+      { path: '/license', element: <License /> },
       {
         path: '/app/*',
         element: <UserRoute><Outlet /></UserRoute>,
