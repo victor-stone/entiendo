@@ -32,28 +32,30 @@ export async function finalizeExample(example, {force = true, idiom = null, mode
 }
 
 function _ensureAudioAccess(example, debug, force) {
-    const publicUrl = example.audio?.publicUrl;
+    // Ensure example.audio exists
+    const audio = example.audio || {};
+    const { publicUrl, expires } = audio;
+
     if (publicUrl) {
-        if (example.audio.expires < Date.now()) {
+        // Only check expires if it's a valid number
+        if (typeof expires !== 'number' || expires < Date.now()) {
             return async () => {
                 if (debug) debug('existing audio is found, generating a new public url');
                 const generatedUrl = await generatePresignedUrl(publicUrl);
                 example.audio = {
-                    ...example.audio,
+                    ...audio,
                     ...generatedUrl
                 };
                 return example;
             }
         }
         if (debug) debug('existing audio found and public url is current');
-    } else {
-        if( force) {
-            return async () => {
-                const { id, name } = _getRandomVoiceOption();
-                example.audio = await generateSpeech(example.text, id);
-                if (debug) debug('generating audio for example with ' + name);
-                return example;
-            }
+    } else if (force) {
+        return async () => {
+            const { id, name } = _getRandomVoiceOption();
+            example.audio = await generateSpeech(example.text, id);
+            if (debug) debug('generating audio for example with ' + name);
+            return example;
         }
     }
     return null;

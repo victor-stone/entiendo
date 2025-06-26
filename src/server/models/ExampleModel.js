@@ -32,13 +32,13 @@ export default class ExampleModel extends BaseModel {
   async create(obj) {
     const createdAt = Date.now();
     const spec = { createdAt, ...obj };
-    const record = super.create(spec);
+    const record = await super.create(spec);
     notifyUpdates();
     return record;
   }
 
   async update(key, updates) {
-    const record = super.update(key, updates);
+    const record = await super.update(key, updates);
     notifyUpdates(key, updates);
     return record;
   }
