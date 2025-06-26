@@ -45,7 +45,7 @@ export async function getNext(routeContext) {
         return example;
     }
 
-    return _generateNewSandboxExamples(basedOnX);
+    return _generateNewSandboxExamples(basedOn);
 }
 
 /*

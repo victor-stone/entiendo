@@ -182,10 +182,16 @@ const azureTTS = {
   
   /**
    * Alternative voice options for Rioplatense Spanish
+   * 
+   * es-UY-ValentinaNeural
+   * es-UY-MateoNeural
+   * 
    */
   voiceOptions: [
     { id: 'es-AR-ElenaNeural', name: 'Elena (female)', gender: 'Female' }
     ,{ id: 'es-AR-TomasNeural', name: 'Matias (male)', gender: 'Male' }
+    ,{ id: 'es-UY-MateoNeural', name: 'Mateo (male)', gender: 'Male' }
+    ,{ id: 'es-UY-ValentinaNeural', name: 'Valentina (female)', gender: 'Female' }
   ]
 };
 
