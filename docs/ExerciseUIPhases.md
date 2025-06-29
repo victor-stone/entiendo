@@ -1,13 +1,47 @@
-## Entiendo EXERCISE PHASES
+# Entiendo Exercise Phases
 
-There are four phases of an ExerciseCard - each has it’s own ‘phase’ value in the ExerciseState and a component to match:
-ExerciseCard - Parent Component, manages the phases between children, it retrieves /api/exercises/next?tone={session.tone} to get the exercise information
+There are four phases of an `ExerciseCard`. Each phase has its own `phase` value in the `ExerciseState` and a corresponding component:
 
-1. ExercisePrompt - phase “prompt” - Displays the Exercise challenge to the user. This is an audio player which the user can hear the exercise sentence. (For development purposes we simply display the text in a `<div />` - this component stays on the screen for this phase and next (‘input’) phase. Transition to next phase: automatic.
-2. ExerciseInput - phase “input” - While the ExercisePrompt is also on the screen it displays two edit fields - one for transcription of the audio and one for translation of the audio (again, in development there is no audio, it’s just a text display) - Transition to next phase: use pushes “submit” button
-3. ExcerciseEval - phase “evaluation” User interface is “loading…” while the client calls /api/exercise/evaluate?exampleId=exId&transcription=user-transcription&translation=user-translation - Transition to next phase: results return from server
-4. ExerciseResults - phase “results” - Show feedback, types of mistakes, the idiom being tested, the exact transcription of the audio with the conjugated idiom highlighted
+- **ExerciseCard**: Parent component that manages the phases between children. It retrieves exercise information from `/api/exercises/next?tone={session.tone}`.
 
-At this point the user can request the ’next’ exercise
+---
 
-#entiendo/5
+### 1. ExercisePrompt (`phase: "prompt"`)
+
+- **Purpose**: Displays the exercise challenge to the user.
+- **UI**: Audio player for the exercise sentence. (For development, displays the text in a `<div />`.)
+- **Visibility**: This component remains visible during both the "prompt" and "input" phases.
+- **Transition**: Advances automatically to the next phase.
+
+---
+
+### 2. ExerciseInput (`phase: "input"`)
+
+- **Purpose**: Allows the user to respond to the exercise.
+- **UI**: Two edit fields—one for transcription and one for translation of the audio. (In development, text is displayed instead of audio.)
+- **Transition**: User clicks the "submit" button to proceed.
+
+---
+
+### 3. ExerciseEval (`phase: "evaluation"`)
+
+- **Purpose**: Evaluates the user's input.
+- **UI**: Displays a "loading…" indicator while the client calls  
+  `/api/exercise/evaluate?exampleId=exId&transcription=user-transcription&translation=user-translation`.
+- **Transition**: Proceeds when results return from the server.
+
+---
+
+### 4. ExerciseResults (`phase: "results"`)
+
+- **Purpose**: Shows feedback and results.
+- **UI**: Displays feedback, types of mistakes, the idiom being tested, and the exact transcription of the audio with the conjugated idiom highlighted.
+- **Transition**: User can request the next exercise.
+
+---
+
+At this point, the user can request the **next** exercise.
+
+---
+
+<!-- #entiendo/5 --

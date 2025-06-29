@@ -23,7 +23,7 @@ export default class ExampleQuery extends query {
     }
 
     forIdiom(idiomId) {
-        return this.q(`..{.idiomId == "${idiomId}"}`);
+        return this.q(`..{.idiomId == $idiomId}`, { idiomId });
     }
 
     example(exampleId) {

@@ -1,10 +1,28 @@
+const ONE_DAY = 24 * 60 * 60 * 1000;
+
 const SirpTweaks = {
-  // Soft ceiling for interval length (e.g., 21 days unless 10+ consecutive good/easy)
+  // Don't allow for any interval over 21 days unless
+  // the has been 5 successes in a row 
   SIRP_SOFT_CEILING: 21,
-  SIRP_MIN_REVIEWS_FOR_LONG_INTERVALS: 10,
+  SIRP_SUCCESS_FOR_LONG_INTERVALS: 5,
+
   // Interval growth cap (previous 1.7 too sharp an elbow)
   SIRP_MAX_GROWTH: 1.3,
 };
+
+const FEEDBACK = {
+  FAIL: 0,
+  HARD: 1,
+  GOOD: 2,
+  EASY: 3
+}
+
+const max   = (a,b) => Math.max(a,b);
+const min   = (a,b) => Math.min(a,b);
+const ceil  = n => Math.ceil(n);
+const floor = n => Math.floor(n);
+const round = n => Math.round(n);
+
 
 /**
  * Updates idiom state using SIRP algorithm
@@ -15,120 +33,112 @@ const SirpTweaks = {
  */
 export default function updateSirpState(
   state,
-  settings = {},
+  settings,
   tweaks = SirpTweaks
 ) {
+
   const {
-    feedback         = 0,
-    adjustEaseFactor = 1.0,
-    adjustInterval   = 1.0,
+    feedback,
+    adjustEaseFactor,
+    adjustInterval
   } = settings;
+
   const {
     SIRP_SOFT_CEILING,
-    SIRP_MIN_REVIEWS_FOR_LONG_INTERVALS,
+    SIRP_SUCCESS_FOR_LONG_INTERVALS,
     SIRP_MAX_GROWTH,
   } = tweaks;
 
   // Clone state to avoid mutation
   const newState = {
-    interval   : 1,
-    difficulty : 2.5,
-    dueDate    : Date.now(),
-    successRate: 0.9,
-    lapseCount : 0,
-    isLeech    : false,
+    interval     : 1,
+    difficulty   : 2.5,
+    dueDate      : Date.now(),
+    successRate  : 0.9,
+    lapseCount   : 0,
+    isLeech      : false,
+    successStreak: 0,
     ...state,
   };
 
-  // Update success rate based on feedback
+  /**********************************************
+   ** Update success rate                      **
+   **********************************************/
   // Scale feedback from 0-3 to 0-1 for success rate calculation
-  const normalizedFeedback = Math.min(feedback / 3, 1);
+  const normalizedFeedback = min(feedback / 3, 1);
   newState.successRate = 0.9 * newState.successRate + 0.1 * normalizedFeedback;
 
-  // Process based on feedback
-  if (feedback === 0) {
-    // Fail
-    // Increment lapse count for tracking problem items
+  /*******************************************************
+   ** Update interval based on feedback/difficulty      **
+   *******************************************************/
+  if (feedback === FEEDBACK.FAIL) {
     newState.lapseCount += 1;
 
-    // Decrease difficulty (ease factor) more significantly
-    newState.difficulty = Math.max(
-      1.3,
-      newState.difficulty - 0.2 * adjustEaseFactor
-    );
+    newState.difficulty = max(1.3, newState.difficulty - 0.2 * adjustEaseFactor);
+    newState.interval   = max(1, floor(newState.interval * 0.5 * adjustInterval));
 
-    // Reset interval for re-drilling
-    newState.interval = Math.max(
-      1,
-      Math.floor(newState.interval * 0.5 * adjustInterval)
-    );
-  } else if (feedback === 1) {
-    // Hard
-    // Slightly decrease difficulty for items that were challenging
-    newState.difficulty = Math.max(
-      1.3,
-      newState.difficulty - 0.05 * adjustEaseFactor
-    );
+  } else if (feedback === FEEDBACK.HARD) {
 
-    // Shorter interval than normal but not as short as a fail
-    newState.interval = Math.max(1, Math.ceil(newState.interval * 0.7 * adjustInterval) );
+    newState.difficulty = max(1.3, newState.difficulty - 0.05 * adjustEaseFactor);
+    newState.interval   = max(1, ceil(newState.interval * 0.7 * adjustInterval) );
 
-  } else if (feedback === 2) {
-    // Good
-    // Slight adjustment based on success rate trend
+  } else if (feedback === FEEDBACK.GOOD) {
+
     if (newState.successRate < 0.85) {
-      newState.difficulty = Math.max(1.3, newState.difficulty - 0.02 * adjustEaseFactor);
+      newState.difficulty = max(1.3, newState.difficulty - 0.02 * adjustEaseFactor);
     } else if (newState.successRate > 0.95) {
-      newState.difficulty = Math.min(3.0, newState.difficulty + 0.02 * adjustEaseFactor);
+      newState.difficulty = min(3.0, newState.difficulty + 0.02 * adjustEaseFactor);
     }
 
-    // Normal interval growth
-    newState.interval = Math.ceil(
-      newState.interval * newState.difficulty * adjustInterval
-    );
-  } else if (feedback === 3) {
-    // Easy
-    // Increase difficulty for easier growth
-    newState.difficulty = Math.min(3.0, newState.difficulty + 0.05 * adjustEaseFactor);
+    newState.interval = ceil(newState.interval * newState.difficulty * adjustInterval);
 
-    // Longer interval with a boost
-    newState.interval = Math.ceil(newState.interval * newState.difficulty * 1.3 * adjustInterval);
+  } else if (feedback === FEEDBACK.EASY) {
+
+    newState.difficulty = min(3.0, newState.difficulty + 0.05 * adjustEaseFactor);
+    newState.interval = ceil(newState.interval * newState.difficulty * 1.3 * adjustInterval);
   }
 
-  // --- Add randomness to interval ---
+  /**********************************************
+   ** Add random factor to interval            **
+   **********************************************/
   // For example, random factor between 0.85 and 1.15 (±15%)
   const intervalRandomFactor = 0.85 + Math.random() * 0.3;
-  newState.interval = Math.round(newState.interval * intervalRandomFactor);
+  newState.interval = round(newState.interval * intervalRandomFactor);
 
-  // Cap interval growth to keep it forgiving
+  /**********************************************
+   ** Cap interval to prevent sharp elbows.    **
+   **********************************************/
   const prevInterval = state.interval || 1;
 
-  if (newState.interval > Math.ceil(prevInterval * SIRP_MAX_GROWTH)) {
-    newState.interval = Math.ceil(prevInterval * SIRP_MAX_GROWTH);
+  const maxGrowth = ceil(prevInterval * SIRP_MAX_GROWTH);
+  if (newState.interval > maxGrowth) {
+    newState.interval = maxGrowth;
   }
 
   if (
     newState.interval > SIRP_SOFT_CEILING &&
-    (state.successStreak || 0) < SIRP_MIN_REVIEWS_FOR_LONG_INTERVALS
+    newState.successStreak < SIRP_SUCCESS_FOR_LONG_INTERVALS
   ) {
     newState.interval = SIRP_SOFT_CEILING;
   }
 
-  // Track streak of good/easy reviews
+  /**********************************************
+   ** Note successes/failures                  **
+   **********************************************/
   if (feedback >= 2) {
-    newState.successStreak = (state.successStreak || 0) + 1;
+    newState.successStreak += 1;
   } else {
     newState.successStreak = 0;
   }
-
-  // --- the actual next date happens here ---
-  const now = Date.now();
-  newState.dueDate = now + newState.interval * 24 * 60 * 60 * 1000;
-
-  // Flag cards with repeated lapses (3 or more) for special attention (TBD)
   if (newState.lapseCount >= 3) {
     newState.isLeech = true;
   }
+
+  /**********************************************
+   ** Apply interval to dueDate                **
+   **********************************************/
+  const now = Date.now();
+  newState.dueDate = now + newState.interval * ONE_DAY;
 
   return newState;
 }

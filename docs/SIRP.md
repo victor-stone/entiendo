@@ -1,189 +1,145 @@
-# SIRP - Strategy for Inconsistent Recall Pattern
+# 📘 SIRP: Strategy for Inconsistent Recall Patterns
+
+*A forgiving and adaptive scheduling algorithm for language learners*
 
 ## Overview
 
-SIRP (Strategy for Inconsistent Recall Pattern) is a memory scheduling algorithm designed for real-world learners—especially those who do not have perfect recall due to any number of reasons include "executive functioning" issues which manifest as atypical memorization needs and therefore have gaps or inconsistencies in their learning.
+SIRP is a memory scheduling algorithm tailored for learners who experience **fluctuating recall**. Unlike rigid systems like SM-2 (used by Anki), SIRP tracks not only success/failure but also the *quality* of recall and the learner’s *recent performance pattern*. The goal is to **keep useful material in rotation without punishing inconsistent performance**, and to space reviews in a way that grows with confidence—but cautiously.
 
-Unlike traditional spaced repetition systems (like SM-2/Anki), which assume consistent, typical to high-performing users, SIRP is built for the realities of atypical users.
+SIRP is especially effective for users who:
 
-**Why SIRP?**
-
-- Learning and memorizing is not a linear process where often we struggle even with supposedly familiar material.
-- Traditional algorithms can quickly push items to long intervals after a few good reviews, making it easy to "lose" material. They assume once you have performed well with an item you have mastered it.
-- SIRP is designed to be forgiving, adaptive, and to keep material in rotation until it is truly stable in memory. It assumes the worst.
-- The algorithm is intentionally conservative, ensuring that even after a streak of good performance, items are not scheduled so far in the future that they are forgotten.
-
-SIRP is for learners who want or need to keep seeing material until they are *really* ready to let it go, and who want a system that adapts to their actual recall patterns—not just their best days.
+- Forget even “easy” cards after a few days
+- Need multiple consistent successes before trusting a card is “known”
+- Miss review sessions or have irregular study patterns
 
 ---
 
-**Update June 2025:**
-After some field testing, SIRP now enforces even more conservative interval growth, with strong anchoring to performance runs, randomness, and a soft ceiling on intervals. Even after a streak of good or perfect reviews, intervals grow slowly and never escape to weeks/months without many consecutive successes. Lapses or mediocre performance always pull intervals back to frequent review.
+## 🧾 Core State Fields
+
+Each idiom progress record maintains the following key fields:
+
+
+| Field           | Description                                                   |
+| ----------------- | --------------------------------------------------------------- |
+| `interval`      | Days until the next review                                    |
+| `difficulty`    | Dynamic ease factor (1.3–3.0); controls interval growth rate |
+| `successRate`   | Rolling average of performance (0 to 1)                       |
+| `lapseCount`    | Number of failures for the card                               |
+| `successStreak` | Number of consecutive “Good” or “Easy” responses          |
+| `isLeech`       | Flagged true if`lapseCount` ≥ 3                              |
+| `dueDate`       | Timestamp when the card is next due                           |
 
 ---
 
-## Key SIRP Principles
+## 🔄 Algorithm Flow
 
-1. **Anchored Interval Growth:**
-   Intervals grow slowly, always anchored to all performance. Even after several "good" or "easy" reviews, intervals can only increase by a small factor (e.g. 1.3× per review). This prevents items from escaping to long intervals too quickly.
-2. **Soft Ceiling on Intervals:**
-   Intervals cannot exceed a soft ceiling (default: 21 days) unless the item has had many consecutive good/easy reviews (default: 10). This ensures that even "mastered" items are still reviewed regularly.
-3. **Randomization:**
-   Each interval is randomized by ±15% to prevent predictability and simulate real-world memory variability.
-4. **Aggressive Demotion and Re-Drill:**
-   Any lapse (fail) or "hard" response sharply reduces the interval, often back to 1 day, ensuring immediate re-drill and preventing cards from lingering at long intervals after a mistake.
-5. **Adaptive Difficulty (a.k.a. Ease Factor):**
-   Difficulty (ease) is adjusted up or down in small increments based on recent success rate and feedback, but is always clamped to a safe range (1.3–3.0).
-6. **Nuanced Calibration:**
-   The mapping from evaluation to SIRP feedback and interval/ease adjustments is more conservative than SM-2, and further takes into account mistake type.
+### 1. Evaluation → Feedback + Adjustments
 
----
+The evaluation (from user transcription/translation) is calibrated into:
 
-## Example: How SIRP Now Behaves
+- `feedback` (0 to 3):
+  - 0 = Fail
+  - 1 = Hard
+  - 2 = Good
+  - 3 = Easy
+- `adjustEaseFactor` (how strongly to change difficulty)
+- `adjustInterval` (how aggressively to scale intervals)
 
-After a "perfect" score several times in a row:
+These values are tuned based on:
 
-- **Old SM-2/Anki:**
-  1 → 3 → 8 → 20 → 50+ days (intervals explode after a few successes)
-- **SIRP:**
-  1 → 1.3 → 1.7 → 2.2 → 2.9 → 3.8 → 5.0 → 6.5 → 8.5 → 11 → 14 → 18 → 21 (soft ceiling)
-  Only after 10+ consecutive good/easy reviews can the interval exceed 21 days.
-
-If you get a "hard" or "fail" at any point, the interval is sharply reduced (often to 1 day), and you must rebuild with several more successes before intervals grow again.
+- Transcription accuracy
+- Translation accuracy
+- Mistake type (typo, audio misunderstanding, full misunderstanding)
 
 ---
 
-## Updated SIRP Algorithm (Code Snippet)
+### 2. Interval and Difficulty Logic
 
-```javascript
-// update.js (core SIRP logic)
-const SirpTweaks = {
-  SIRP_SOFT_CEILING: 21, // max interval in days unless many consecutive successes
-  SIRP_MIN_REVIEWS_FOR_LONG_INTERVALS: 10,
-  SIRP_MAX_GROWTH: 1.3, // max interval growth per review
-};
 
-export default function updateSirpState(
-  state,
-  settings = {},
-  tweaks = SirpTweaks
-) {
-  // ...existing code...
+SIRP replaces the rigid “ease factor” of SM-2 with a more responsive `difficulty` value:
 
-  // Process based on feedback
-  if (feedback === 0) {
-    // Fail: reset interval for re-drilling
-    newState.lapseCount += 1;
-    newState.difficulty = Math.max(1.3, newState.difficulty - 0.2 * adjustEaseFactor);
-    newState.interval = 1; // Always reset to 1 day for a fail
-  } else if (feedback === 1) {
-    // Hard: clamp interval to max 7 days
-    newState.difficulty = Math.max(1.3, newState.difficulty - 0.05 * adjustEaseFactor);
-    newState.interval = Math.min(7, Math.max(1, Math.ceil(newState.interval * 0.7 * adjustInterval)));
-  } else if (feedback === 2) {
-    // Good: slow, anchored growth
-    // ...difficulty adjustment...
-    newState.interval = Math.ceil(newState.interval * newState.difficulty * adjustInterval);
-  } else if (feedback === 3) {
-    // Easy: slightly faster, but still capped
-    newState.difficulty = Math.min(3.0, newState.difficulty + 0.05 * adjustEaseFactor);
-    newState.interval = Math.ceil(newState.interval * newState.difficulty * 1.3 * adjustInterval);
-  }
+- Increases with consistent success
+- Decreases with hesitation or failure
+- Anchors future interval growth to actual long-term behavior
+- Prevents one “Easy” answer from pushing a card out too far, too fast
 
-  // Add randomness to interval (±15%)
-  const intervalRandomFactor = 0.85 + Math.random() * 0.3;
-  newState.interval = Math.round(newState.interval * intervalRandomFactor);
+#### ❌ Fail (0)
 
-  // Cap interval growth per review
-  const prevInterval = state.interval || 1;
-  if (newState.interval > Math.ceil(prevInterval * SIRP_MAX_GROWTH)) {
-    newState.interval = Math.ceil(prevInterval * SIRP_MAX_GROWTH);
-  }
+- Difficulty drops: `–0.2 × adjustEaseFactor`
+- Interval shrinks: `interval × 0.5 × adjustInterval` (min 1)
+- Lapse count increases
 
-  // Soft ceiling: can't exceed 21 days unless 10+ consecutive good/easy
-  if (
-    newState.interval > SIRP_SOFT_CEILING &&
-    (state.successStreak || 0) < SIRP_MIN_REVIEWS_FOR_LONG_INTERVALS
-  ) {
-    newState.interval = SIRP_SOFT_CEILING;
-  }
+#### 😓 Hard (1)
 
-  // Track streak of good/easy reviews
-  if (feedback >= 2) {
-    newState.successStreak = (state.successStreak || 0) + 1;
-  } else {
-    newState.successStreak = 0;
-  }
+- Difficulty drops slightly: `–0.05 × adjustEaseFactor`
+- Interval grows slowly: `interval × 0.7 × adjustInterval`
 
-  // Set next due date
-  const now = Date.now();
-  newState.dueDate = now + newState.interval * 24 * 60 * 60 * 1000;
+#### 🙂 Good (2)
 
-  // Flag leeches
-  if (newState.lapseCount >= 3) {
-    newState.isLeech = true;
-  }
+- If `successRate < 0.85`: slight difficulty decrease
+- If `successRate > 0.95`: slight difficulty increase
+- Interval grows: `interval × difficulty × adjustInterval`
 
-  return newState;
-}
-```
+#### ✅ Easy (3)
+
+- Difficulty increases: `+0.05 × adjustEaseFactor` (max 3.0)
+- Interval boosted: `interval × difficulty × 1.3 × adjustInterval`
+
+Note that `difficulty` is only used in `interval` calculation only for GOOD and EASY feedback:
+
+For FAIL and HARD, `interval` is multiplied by a fixed factor (0.5 or 0.7), and `difficulty` is not used in the interval calculation — only adjusted separately for future use.
+
+This is because when the user fails or finds the item hard, the algorithm wants to reduce the new due date quickly, regardless of the current difficulty/ease. This ensures the item is shown sooner, focusing on immediate review rather than gradual spacing.
+
+When the user succeeds (GOOD or EASY), the interval grows, and the growth is scaled by the current `difficulty`, allowing easier items to be spaced further apart.
+
+**Summary**
+
+On failure/hard: `interval` shrinks quickly, not influenced by `difficulty`.
+
+On success: Interval grows, and the growth is scaled by `difficulty` (ease).
+
+### 3. Safety Caps and Constraints
+
+- **Max interval growth per review**: 1.3× previous interval
+- **Soft ceiling**: Max 21 days *unless* success streak ≥ 5
+- **Min difficulty**: 1.3; **Max difficulty**: 3.0
+- **Randomness**: A ±15% random factor is added to every interval
 
 ---
 
-## Calibration: Mapping Evaluation to SIRP Feedback
+### 4. Leech Handling
 
-```javascript
-// calibrate.js (mapping evaluation to SIRP settings)
-export default function calibrateSirpState(evaluation) {
-    // ...map transcription/translation to feedback 0-3...
-    // ...apply mistake type tweaks...
+If `lapseCount` reaches 3:
 
-    // Conservative adjustments:
-    if (feedback === 0) { // Fail
-        adjustEaseFactor = 0.8;
-        adjustInterval = 0.7;
-    } else if (feedback === 1) { // Hard
-        adjustEaseFactor = 0.9;
-        adjustInterval = 0.8;
-    } else if (feedback === 2) { // Good
-        adjustEaseFactor = 0.95;
-        adjustInterval = 0.9;
-    } else { // Easy
-        adjustEaseFactor = 1.0;
-        adjustInterval = 1.0;
-    }
-    // ...mistake type tweaks...
-    // ...clamp to [0.5, 1.2]...
-    return { adjustEaseFactor, adjustInterval, feedback };
-}
-```
+- Card is marked as a **leech** (`isLeech = true`)
+- Can be paused or flagged for user review or mnemonic editing
 
 ---
 
-## Commentary: Why SIRP is Different
+## 🔍 Real-World Example
 
-- **No more "elbow" to months:** Even after a streak of good scores, intervals grow slowly and are capped.
-- **Lapses always pull back:** Any lapse or "hard" resets interval to 1 day or clamps it to a week, forcing re-drill.
-- **Randomness and soft ceiling:** Prevents predictability and ensures even "mastered" cards are reviewed regularly.
-- **Anchored to recent performance:** You must prove stability over many reviews before intervals get long.
+
+| Review | Feedback            | Interval Calculation | Next Interval |
+| -------- | --------------------- | ---------------------- | --------------- |
+| 1      | Easy (3)            | `1 × 2.5 × 1.3`    | ~3 days       |
+| 2      | Good (2)            | `3 × 2.5`           | ~8 days       |
+| 2      | Hard (1)            | `3 × 0.7`           | ~2 days       |
+| 2      | Fail (0)            | `3 × 0.5`           | ~1 day        |
+| 3      | Easy (3) after Fail | `1 × 2.5 × 1.3`    | ~3 days       |
+
+Note: Even after an Easy, SIRP doesn’t allow a runaway jump in interval if the last interval was recently reduced. Growth is **anchored to recent performance**.
+
+## ✅ Summary
+
+SIRP is:
+
+- ✅ **Responsive** to subtle performance patterns
+- ✅ **Gentle** on inconsistent learners
+- ✅ **Adaptive** based on mistake type
+- ✅ **Stable** via growth caps and leech handling
+- ✅ **Forgiving** without giving up efficiency
+
+It’s an ideal choice for learners who want meaningful reinforcement **without rigidity**.
 
 ---
-
-## Example Table (Updated)
-
-
-| Review | Feedback | Interval Calculation  | Next Interval (approx)  |
-| -------- | ---------- | ----------------------- | ------------------------- |
-| 1      | Easy (3) | 1 * 2.5 * 1.3 * rand  | ~3 days                 |
-| 2      | Good (2) | 3 * 2.5 * 0.9 * rand  | ~7 days                 |
-| 3      | Good (2) | 7 * 2.5 * 0.9 * rand  | ~16 days                |
-| 4      | Easy (3) | 16 * 2.5 * 1.3 * rand | ~21 days (soft ceiling) |
-| ...    | ...      | ...                   | ...                     |
-
-If you get a "hard" or "fail" at any point, interval drops to 1–7 days and you must rebuild.
-
----
-
-## Summary
-
-SIRP is now highly conservative, adaptive, and forgiving—intervals grow slowly, are capped, and always reflect your most recent performance. Even after a streak of good reviews, you will not escape to long intervals until you have proven stability over many sessions. Lapses or mediocre performance always bring cards back to frequent review.

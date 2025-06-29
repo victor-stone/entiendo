@@ -36,7 +36,8 @@ top to bottom - layer only calls one layer down and never up
 
 - API functions interact with data models
 - Models abstract database operations
-- DynamoDB stores application data
+- DynamoDB stores application datas
+- Some tables offer a `query` mode (via jpath) for read only, in memory access
 
 ### 5. External Services (/src/server/lib)
 

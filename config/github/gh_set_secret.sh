@@ -2,7 +2,7 @@
 
 #
 # SEE ALSO:
-# ../aws/push_secret.sh
+# ../aws/update_remote_env.sh
 #
 
 # List of all environment variables to set as secrets
@@ -10,18 +10,7 @@ VARIABLES=(
   "AWS_ACCESS_KEY_ID"
   "AWS_REGION"
   "AWS_SECRET_ACCESS_KEY"
-  "AZURE_DEFAULT_VOICE"
-  "AZURE_ENDPOINT"
-  "AZURE_SPEECH_KEY"
-  "AZURE_SPEECH_REGION"
-  "GOOGLE_API_KEY"
-  "GOOGLE_CLIENT_ID"
-  "GOOGLE_CLIENT_SECRET"
-  "OPENAI_API_KEY"
-  "OPENAI_MODEL"
   "SESSION_SECRET"
-  "SPEECH_KEY"
-  "SPEECH_REGION"
 )
 
 # Loop through each variable

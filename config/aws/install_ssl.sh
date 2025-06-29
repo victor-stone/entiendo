@@ -14,7 +14,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Variables - Set these before running or pass as environment variables
-DOMAIN=${DOMAIN:-"entiendo.app"}
+DOMAIN=${DOMAIN:-"****YOUR DOMAIN HERE****"}
 
 # Function to install SSL with Let's Encrypt
 install_ssl() {

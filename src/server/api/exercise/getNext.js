@@ -115,7 +115,8 @@ async function _getExerciseForNewIdiom(routeContext) {
         return null;
     }
 
-    const model = new ExampleModel();
+    const query = new ExampleModelQuery.create();
+    
     let  idiom = await _getNewIdiom(routeContext);
     if( !idiom ) {
         debugGetNext('New idioms are allowed but the user has seen all of this tone/usage');
@@ -124,16 +125,16 @@ async function _getExerciseForNewIdiom(routeContext) {
     }
     debugGetNext('Nothing is due for user, fetched: %s', idiom.text);
 
-    const exercises = await model.findByIdiomId(idiom.idiomId);
+    const exercises = query.forIdiom(idiom.idiomId);
     let exercise;
     if (exercises && exercises.length > 0) {
         debugGetNext('found an existing exercise');
         exercise = exercises[0];
     } else {
-        exercise = await createExample(idiom, model);
+        exercise = await createExample(idiom);
         debugGetNext('created a new exercise');
     }
-    return await finalizeExample(exercise, {idiom, model, debug: debugGetNext});
+    return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }
 
 async function _getNextDueIdiom(routeContext) {

@@ -31,29 +31,6 @@ fi
 
 VAR_VALUE="${!VAR_NAME}"
 
-# Function to update SSM Parameter Store
-update_ssm() {
-  echo -e "${BLUE}Updating AWS SSM Parameter Store...${NC}"
-  
-  # Set AWS region if not already configured
-  if [ -z "$AWS_REGION" ]; then
-    AWS_REGION=$(aws configure get region)
-    if [ -z "$AWS_REGION" ]; then
-      echo -e "${YELLOW}AWS region not found. Skipping SSM update.${NC}"
-      return
-    fi
-  fi
-  
-  # Update parameter in SSM
-  aws ssm put-parameter \
-    --name "/entiendo/production/$VAR_NAME" \
-    --value "$VAR_VALUE" \
-    --type "SecureString" \
-    --overwrite
-
-  echo -e "${GREEN}Updated SSM parameter: /entiendo/production/$VAR_NAME${NC}"
-}
-
 # Function to update the .env file on EC2
 update_ec2_env() {
   echo -e "${BLUE}Updating .env file on EC2 instance...${NC}"
@@ -117,52 +94,10 @@ update_ec2_env() {
   " || echo -e "${YELLOW}Could not restart application. Manual restart may be required.${NC}"
 }
 
-# Function to update GitHub secrets
-update_github_secret() {
-  echo -e "${BLUE}Updating GitHub secret...${NC}"
-  
-  # Check if gh CLI is installed
-  if ! command -v gh &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI (gh) is not installed.${NC}"
-    echo "Please install it from https://cli.github.com/"
-    return
-  fi
-  
-  # Check if user is authenticated with GitHub
-  if ! gh auth status &> /dev/null; then
-    echo -e "${YELLOW}You need to authenticate with GitHub first.${NC}"
-    echo "Run: gh auth login"
-    return
-  fi
-  
-  # Get repository information
-  REPO=$(git config --get remote.origin.url | sed 's/.*github.com[:/]\(.*\).git/\1/')
-  
-  if [ -z "$REPO" ]; then
-    echo -e "${YELLOW}Not in a git repository or GitHub repository not configured.${NC}"
-    echo "Please provide the repository in format owner/repo:"
-    read -p "> " REPO
-  fi
-  
-  # Set the secret
-  echo -e "${BLUE}Setting secret $VAR_NAME for repository $REPO...${NC}"
-  if gh secret set "$VAR_NAME" --body "$VAR_VALUE" --repo "$REPO"; then
-    echo -e "${GREEN}Successfully set GitHub secret: $VAR_NAME${NC}"
-  else
-    echo -e "${RED}Failed to set GitHub secret.${NC}"
-  fi
-}
-
 # Main execution
-echo -e "${BLUE}Pushing secret $VAR_NAME to multiple platforms...${NC}"
-
-# Update SSM Parameter Store
-update_ssm
+echo -e "${BLUE}Pushing secret $VAR_NAME to remote .env file...${NC}"
 
 # Update EC2 .env file
 update_ec2_env
 
-# Update GitHub secret
-update_github_secret
-
-echo -e "${GREEN}All operations completed!${NC}" 
+echo -e "${GREEN}Operation
