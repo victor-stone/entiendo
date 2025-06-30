@@ -115,7 +115,7 @@ async function _getExerciseForNewIdiom(routeContext) {
         return null;
     }
 
-    const query = new ExampleModelQuery.create();
+    const query = ExampleModelQuery.create();
     
     let  idiom = await _getNewIdiom(routeContext);
     if( !idiom ) {
