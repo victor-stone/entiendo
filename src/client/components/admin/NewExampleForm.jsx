@@ -64,7 +64,7 @@ const NewExampleForm = () => {
           <textarea
             value={exampleText}
             onChange={(e) => setExampleText(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="mt-1 block w-full dark:text-primary-900 border border-gray-300 rounded-md shadow-sm p-2"
             rows={3}
             required
           />
@@ -78,7 +78,7 @@ const NewExampleForm = () => {
             type="text"
             value={exampleSnippet}
             onChange={(e) => setExampleSnippet(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="mt-1 block w-full dark:text-primary-900 border border-gray-300 rounded-md shadow-sm p-2"
             required
           />
         </label>
@@ -89,14 +89,14 @@ const NewExampleForm = () => {
           type="button"
           onClick={handleSaveExample}
           disabled={loading || !selectedIdiomId}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-4"
+          className="btn btn-primary"
         >
           {loading ? 'Saving...' : 'Save Example'}
         </button>
         <button
           type="button"
           onClick={resetForm}
-          className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded"
+          className="ml-3 border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded"
         >
           Reset
         </button>

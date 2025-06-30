@@ -50,7 +50,7 @@ const Preferences = () => {
                     <CardField hint={hints.admin} title="Next Example">
                         <input
                             type="text"
-                            className="border rounded px-2 py-1 w-full"
+                            className="border rounded px-2 py-1 w-full dark:text-primary-900 "
                             value={preferences?.getNextExample || ""}
                             onChange={e => setPreference('getNextExample', e.target.value)}
                             placeholder="Enter exampleId"

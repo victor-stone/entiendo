@@ -10,7 +10,8 @@ top to bottom - layer only calls one layer down and never up
 - apClient.js --> server.js
 - /src/server/http
 - /src/server/api
-- /src/server/models OR /src/server/lib
+- /src/server/models (data) OR
+- /src/server/lib (3rd party services)
 
 ### 1. Frontend (React)
 

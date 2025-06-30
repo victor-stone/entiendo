@@ -37,7 +37,7 @@ const ExampleSelector = ({ idiomId, value, onChange, required = false }) => {
       <select
           value={value}
           onChange={onChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 dark:text-primary-900 block w-full border border-gray-300 rounded-md shadow-sm p-2"
           required={required}
           disabled={loading || !idiomId || examples.length === 0}
         >

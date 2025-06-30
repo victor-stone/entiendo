@@ -1,5 +1,5 @@
 import chatMD from '../../../docs/chat.md?raw';
-import Markdown from 'react-markdown';
+import { MD } from '../components/ui';
 import { Card } from '../components/layout';
 import './markdown.css';
 
@@ -8,7 +8,7 @@ function Chat() {
         <Card title={<span><i>Entiendo</i> Chatbot </span>}>
             <Card.Body>
                 <div id="deTailWind">
-                    <Markdown>{chatMD}</Markdown>
+                    <MD>{chatMD}</MD>
                 </div>
             </Card.Body>
         </Card>

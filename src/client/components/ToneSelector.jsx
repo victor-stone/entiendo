@@ -35,7 +35,7 @@ const ToneSelector = ({ getToken, value, onChange, required = false, allowSystem
         <select
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="mt-1 block border border-gray-300 rounded-md shadow-sm p-2"
+          className="mt-1 block border border-gray-300 dark:text-primary-900 rounded-md shadow-sm p-2"
           required={required}
           disabled={loading}
         >

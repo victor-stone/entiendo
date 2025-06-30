@@ -1,5 +1,5 @@
 import { useUserStore, useUpdateExampleStore } from '../../stores';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card } from '../layout';
 
 import debug from 'debug';
@@ -32,7 +32,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
       <form onSubmit={onSubmit} className="space-y-4 w-full">
         <Card.Field title="Text">
           <input
-            className="input w-full"
+            className="input w-full dark:text-primary-900"
             value={text}
             onChange={e => setText(e.target.value)}
             disabled={loading}
@@ -41,7 +41,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
         </Card.Field>
         <Card.Field title="Conjugated Snippet">
           <input
-            className="input w-full"
+            className="input w-full  dark:text-primary-900"
             value={conjugatedSnippet}
             onChange={e => setConjugatedSnippet(e.target.value)}
             disabled={loading}

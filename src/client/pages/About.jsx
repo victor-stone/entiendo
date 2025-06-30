@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import aboutMD from '../../../docs/about.md?raw';
-import Markdown from 'react-markdown';
 import { Card } from '../components/layout';
 import { useBrandImageStore } from '../stores';
+import { MD } from '../components/ui';
 import './markdown.css';
 
 function About() {
@@ -12,11 +12,11 @@ function About() {
         setImage('brain');
     }, [setImage])
 
-    return(
+    return (
         <Card title={<span>Stuff to Know About <i>Entiendo</i></span>}>
             <Card.Body>
                 <div id="deTailWind">
-                    <Markdown>{aboutMD}</Markdown>
+                    <MD>{aboutMD}</MD>
                 </div>
             </Card.Body>
         </Card>

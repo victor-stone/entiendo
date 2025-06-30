@@ -21,7 +21,7 @@ const IdiomInfo = ({ idiom }) => {
 
   return (
     <div className=" justify-center items-center flex">
-      <Card.Grid className="bg-secondary-100 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+      <Card.Grid className="bg-secondary-100 dark:bg-primary-900 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
         <Card.GridLabel title="Text" /> <Card.GridField>{idiom.text}</Card.GridField> 
         <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
         <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 

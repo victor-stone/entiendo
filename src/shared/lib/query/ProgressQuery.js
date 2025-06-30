@@ -8,6 +8,10 @@ export default class ProgressQuery extends query {
         super(data,'progressId');
     }
 
+    _limitToUser(userId) {
+        this._data = this.q('..{.userId == $userId}', { userId } );
+    }
+    
     missedWords(unique) {        
         return unique  
                 ? [... new Set(this.q('..missedWords'))].sort()

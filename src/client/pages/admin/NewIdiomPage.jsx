@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import IdiomForm from '../../components/admin/IdiomForm';
+import { Card } from '../../components/layout';
 
 const NewIdiomPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const NewIdiomPage = () => {
     }
   };
 
-  return (<IdiomForm onSaveSuccess={handleSaveSuccess} />);
+  return (<Card title="New Idiom"><Card.Body><IdiomForm onSaveSuccess={handleSaveSuccess} /></Card.Body></Card>);
   
 };
 

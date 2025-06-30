@@ -1,6 +1,6 @@
 import licenseMD from '../../../docs/license.md?raw';
-import Markdown from 'react-markdown';
 import { Card } from '../components/layout';
+import { MD } from '../components/ui';
 import './markdown.css';
 
 const CC = () => (
@@ -29,16 +29,16 @@ const CC = () => (
 );
 
 function License() {
-    return(
-        <Card title={<span>License Stuff</span>}>
-            <Card.Body>
-                <div id="deTailWind">
-                    <Markdown>{licenseMD}</Markdown>
-                    <CC />
-                </div>
-            </Card.Body>
-        </Card>
-    )
+  return (
+    <Card title={<span>License Stuff</span>}>
+      <Card.Body>
+        <div id="deTailWind">
+          <MD>{licenseMD}</MD>
+          <CC />
+        </div>
+      </Card.Body>
+    </Card>
+  );
 }
 
 export default License;

@@ -47,14 +47,14 @@ export function ServerObjectForm({ title, numCols = 1, useFetchStore, usePutStor
                                 <Card.GridField>
                                     {typeof value === 'string' && (value.length > 60 || value.includes('\n')) ? (
                                         <textarea
-                                            className="border rounded px-2 py-1 w-full"
+                                            className="border rounded px-2 py-1 w-full dark:text-primary-900"
                                             value={value ?? ''}
                                             onChange={e => handleChange(key, e.target.value)}
                                             rows={Math.min(8, Math.max(2, (value.match(/\n/g)?.length || 0) + 2))}
                                         />
                                     ) : (
                                         <input
-                                            className="border rounded px-2 py-1 w-full"
+                                            className="border rounded px-2 py-1 w-full dark:text-primary-900"
                                             type="text"
                                             value={value ?? ''}
                                             onChange={e => handleChange(key, e.target.value)}

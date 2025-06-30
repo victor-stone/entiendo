@@ -54,7 +54,7 @@ const BugReport = () => {
               value={problemType}
               onChange={e => setProblemType(e.target.value)}
               required
-              className='border rounded px-2 py-1 w-full'
+              className='border rounded px-2 py-1 w-full dark:text-primary-900'
             >
               <option value="" disabled>Select a problem...</option>
               {problemOptions.map(opt => (
@@ -68,7 +68,7 @@ const BugReport = () => {
               value={title}
               onChange={e => setTitle(e.target.value)}
               required
-              className='border rounded px-2 py-1 w-full'
+              className='border rounded px-2 py-1 w-full dark:text-primary-900'
             />
           </CardField>
           <CardField title='Description' hint={`Do not put your email address or any private information here`}>
@@ -77,7 +77,7 @@ const BugReport = () => {
               onChange={e => setBody(e.target.value)}
               rows={6}
               required
-              className='border rounded px-2 py-1 w-full'
+              className='border rounded px-2 py-1 w-full dark:text-primary-900'
             />
           </CardField>
           <CardField isFull={false}>
