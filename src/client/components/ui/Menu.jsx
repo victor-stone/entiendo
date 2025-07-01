@@ -7,9 +7,6 @@ const loggedInItems = [
       path: '/app/dashboard', label: 'Dashboard'
     },
     {
-      path: '/chat', label: 'Chat Bot'
-    },
-    {
       logout: true, label: 'Logout'
     }
 ];
@@ -20,6 +17,9 @@ const genericItems = [
     },
     {
       path: '/license', label: 'Licenses / Credit'
+    },
+    {
+      path: '/chat', label: 'Help / Support (Chat)'
     },
     { 
       path: '/app/bugreport', label: 'Report Bugs'
