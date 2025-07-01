@@ -20,10 +20,14 @@ const Landing = () => {
           style={{
             textTransform: 'lowercase',
             fontVariant: 'small-caps',
-            fontSize: '80%'
+            fontSize: '90%'
           }}>{APP_CATCHPHRASE}</p>
 
           <div><LoginButton /></div>
+          <div><p className="mt-10 italic">
+            DIG: this software is under development and not as stable as is will most assuredly  be, you know, later. 
+             Please don't be discouraged if something breaks. Gracias por tu paciencia. 
+            </p></div>
       </div>
     </div>
   );
