@@ -16,6 +16,10 @@ const adminService = {
     return await post("/api/admin/idiom", idiomData, authToken);
   },
 
+  assignIdiom: async (idiomId, source, authToken) => {
+    return await post("/api/admin/assignidiom", {idiomId, source}, authToken);
+  },
+
   updateIdiom: async (idiomId, idiomData, authToken) => {
     const data = { idiomId, ...idiomData };
     return await post("/api/admin/idiom/update", data, authToken);

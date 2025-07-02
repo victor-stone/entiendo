@@ -24,16 +24,20 @@ export async function reasignVoiceForExample( {exampleId, source} ) {
     return await model.update( exampleId, { source });
 }
 
-export async function assignVoiceToIdiom({idiomId, source}) {
+export async function assignVoiceToIdiom(routeContext) {
+    return _assignVoiceToIdiom(routeContext.payload);
+}
+
+async function _assignVoiceToIdiom({idiomId, source}) {
     const assigned = { source, date: source ? Date.now() : null };
     const model = new IdiomModel();
-    model.update(idiomId, { assigned })
+    return await model.update(idiomId, { assigned })
 }
 
 export async function attachExampleAndAudioToIdiom(record) {
     const model = new ExampleModel();
     await model.createExample(record);
-    await assignVoiceToIdiom({idiomId, source: null});
+    return await _assignVoiceToIdiom({idiomId, source: null});
 }
 
 export async function assignVoiceToExample({exampleId, source}) {
@@ -89,8 +93,11 @@ export async function getIdiomsWithoutExamples( { context, usage }) {
 
     const idioms = idiomQuery.byCriteria( context, usage )
 
-    return idioms.filter( ({idiomId}) => {
+    return idioms.filter( ({idiomId, assigned}) => {
         const examples = exampleQuery.forIdiom(idiomId);
+        if( assigned && assigned.source ) {
+            return false;
+        }
         return !examples || !examples.length;
     });
 }    

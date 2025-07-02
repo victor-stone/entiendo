@@ -15,13 +15,18 @@ const SortableHeaderCell = ({ label, sortKey, handleSort, renderSortIndicator })
 );
 
 // IdiomTableHeader component for table header
-const IdiomTableHeader = ({ handleSort, renderSortIndicator }) => (
+const IdiomTableHeader = ({ handleSort, renderSortIndicator, extraColumns = [] }) => (
   <thead className="bg-primary-50 dark:bg-primary-800">
     <tr>
       <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Idiom"       sortKey="text"        />
       <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Translation" sortKey="translation" />
       <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Tone"        sortKey="tone"        />
       <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Usage"       sortKey="usage"       />
+      {extraColumns.map(col => (
+        <th key={col.columnName} className="px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider">
+          {col.columnName}
+        </th>
+      ))}
     </tr>
   </thead>
 );
@@ -60,7 +65,7 @@ const TableCell = ({ children, clamp = false, className = '', ...props }) => {
 };
 
 // Accept new props for state persistence
-const IdiomTable = ({ idioms, onSelectIdiom, getToken }) => {
+const IdiomTable = ({ idioms, onSelectIdiom, getToken, extraColumns = [] }) => {
   // Use idiomStore for all UI state
   const {
     idiomTableSort, setIdiomTableSort,
@@ -149,7 +154,7 @@ const IdiomTable = ({ idioms, onSelectIdiom, getToken }) => {
       </Card.Section>
       <Card.Section style={{ maxHeight: 500, overflowY: 'scroll' }}>
         <table className="min-w-full divide-y divide-primary-200 dark:divide-primary-700">
-          <IdiomTableHeader handleSort={handleSort} renderSortIndicator={renderSortIndicator} />
+          <IdiomTableHeader handleSort={handleSort} renderSortIndicator={renderSortIndicator} extraColumns={extraColumns} />
           <tbody className="bg-white dark:bg-primary-900 divide-y divide-primary-200 dark:divide-primary-700">
             {filteredIdioms.length > 0 ? (
               filteredIdioms.map((idiom, index) => (
@@ -162,11 +167,16 @@ const IdiomTable = ({ idioms, onSelectIdiom, getToken }) => {
                   <TableCell clamp>{idiom.translation}</TableCell>
                   <TableCell>{idiom.tone}</TableCell>
                   <TableCell>{idiom.usage}</TableCell>
+                  {extraColumns.map((col, i) => (
+                    <TableCell key={col.columnName + i}>
+                      <col.component idiom={idiom} {...col.props} />
+                    </TableCell>
+                  ))}
                 </tr>
               ))
             ) : (
               <tr>
-                <TableCell colSpan={5} style={{ textAlign: 'center', color: 'var(--color-primary-500)', background: 'none' }}>
+                <TableCell colSpan={5 + extraColumns.length} style={{ textAlign: 'center', color: 'var(--color-primary-500)', background: 'none' }}>
                   No idioms found matching the current filters
                 </TableCell>
               </tr>

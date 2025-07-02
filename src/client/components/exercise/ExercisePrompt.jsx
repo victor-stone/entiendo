@@ -15,7 +15,7 @@ const ExercisePrompt = ({ exercise, onContinue }) => {
         {exercise.isNew && <span className="inline-flex items-center bg-secondary-100 text-accent-600 rounded-full ml-2 text-sm p-1"><Glyph name="StarIcon" />New </span>}</h2>
 
       <div className="mb-6">
-        <div class="flex justify-between items-center">
+        <div className="flex justify-between items-center">
           <h3 className="font-medium mb-2">Listen to the sentence:</h3>
           
         </div>

@@ -27,6 +27,10 @@ import * as exampleAPI  from  '../api/exampleAPI.js';
 export const routeTable = {
   // POST routes
   POST: {
+    '/api/admin/assignidiom': { 
+      handler: (routeContext) => adminAPI.assignVoiceToIdiom(routeContext),
+      auth: true
+    },
     '/api/admin/audioreports': { 
       handler: (routeContext) => adminAPI.audioReports(routeContext),
       auth: true

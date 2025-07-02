@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import adminService from '../services/adminService';
 import { storeFetch } from '../lib/storeUtils';
 const { createExample, uploadExampleAudio, 
-  createIdiom, updateIdiom, resetCaches,
+  createIdiom, updateIdiom, resetCaches, assignIdiom,
     prompts, putPrompts, audioReports } = adminService;
 
 export const useResetCachesStore = create((set, get) => ({
@@ -11,6 +11,14 @@ export const useResetCachesStore = create((set, get) => ({
   error: null,
   data: null,
   action: storeFetch(resetCaches, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const useAssignIdiomStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  assign: storeFetch(assignIdiom, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
@@ -32,6 +40,8 @@ export const useUpdateIdiomStore = create((set, get) => ({
 
 
 export const useAudioReportsStore = create((set, get) => ({
+  reportName: '',
+  setReportName: reportName => set({reportName}),
   loading: false,
   error: null,
   data: null,
