@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ListSearch from '../ui/ListSearch';
 import { useIdiomTableStore } from '../../stores';
 import { Card } from '../layout/Card';
+import ToneSelector from '../ToneSelector'; // Adjust path if needed
 
 // Table header cell component
 const SortableHeaderCell = ({ label, sortKey, handleSort, renderSortIndicator }) => (
@@ -23,27 +24,6 @@ const IdiomTableHeader = ({ handleSort, renderSortIndicator }) => (
       <SortableHeaderCell handleSort={handleSort} renderSortIndicator={renderSortIndicator} label="Usage"       sortKey="usage"       />
     </tr>
   </thead>
-);
-
-// IdiomTableToneSelect component for tone selection
-const IdiomTableToneSelect = ({ selectedTone, setSelectedTone, tones }) => (
-  <div className="md:w-1/3">
-    <label className="block text-sm font-medium text-primary-700 dark:text-primary-300 mb-1">
-      Tone
-    </label>
-    <select
-      value={selectedTone}
-      onChange={e => setSelectedTone(e.target.value)}
-      className="w-full px-3 py-2 border border-primary-300 dark:border-primary-700 rounded-md 
-        text-primary-900 dark:text-primary-100 bg-white dark:bg-primary-800
-        focus:outline-none focus:ring-1 focus:ring-primary-500">
-      {tones.map(tone => (
-        <option key={tone} value={tone}>
-          {tone === 'all' ? 'All Tones' : tone}
-        </option>
-      ))}
-    </select>
-  </div>
 );
 
 // Utility function to sort idioms
@@ -80,7 +60,7 @@ const TableCell = ({ children, clamp = false, className = '', ...props }) => {
 };
 
 // Accept new props for state persistence
-const IdiomTable = ({ idioms, onSelectIdiom }) => {
+const IdiomTable = ({ idioms, onSelectIdiom, getToken }) => {
   // Use idiomStore for all UI state
   const {
     idiomTableSort, setIdiomTableSort,
@@ -90,12 +70,15 @@ const IdiomTable = ({ idioms, onSelectIdiom }) => {
   } = useIdiomTableStore();
 
   const [filteredIdioms, setFilteredIdioms] = useState([]);
+  const [usageFilter, setUsageFilter] = useState('all');
 
   // Filtering and sorting
   useEffect(() => {
     let result = idioms;
     if (idiomTableTone !== 'all') 
       result = result.filter(i => i.tone === idiomTableTone);
+    if (usageFilter !== 'all') 
+      result = result.filter(i => String(i.usage) === usageFilter);
     if (idiomTableFilter) {
       const t = idiomTableFilter.toLowerCase();
       result = result.filter(i => i.text?.toLowerCase().includes(t) || i.translation?.toLowerCase().includes(t));
@@ -103,7 +86,7 @@ const IdiomTable = ({ idioms, onSelectIdiom }) => {
     if (idiomTableSort.key) 
       result = sortIdioms(result, idiomTableSort.key, idiomTableSort.direction);
     setFilteredIdioms(result);
-  }, [idioms, idiomTableTone, idiomTableFilter, idiomTableSort]);
+  }, [idioms, idiomTableTone, idiomTableFilter, idiomTableSort, usageFilter]);
 
   // Handle sorting when column header is clicked
   const handleSort = (key) => {
@@ -133,8 +116,36 @@ const IdiomTable = ({ idioms, onSelectIdiom }) => {
   return (
     <Card>
       <Card.Section>
-        <ListSearch searchTerm={idiomTableFilter} setSearchTerm={setIdiomTableFilter} placeholder="Search idioms..." />
-        <IdiomTableToneSelect selectedTone={idiomTableTone} setSelectedTone={setIdiomTableTone} tones={tones} />
+        <div className="flex flex-col md:flex-row md:items-end md:space-x-4">
+            <ListSearch
+              searchTerm={idiomTableFilter}
+              setSearchTerm={setIdiomTableFilter}
+              placeholder="Search idioms..."
+            />
+          <div className="w-full md:w-1/4 mb-2 md:mb-0">
+            <ToneSelector
+              getToken={getToken}
+              value={idiomTableTone === 'all' ? '' : idiomTableTone}
+              onChange={val => setIdiomTableTone(val === '' ? 'all' : val)}
+              required={false}
+            />
+          </div>
+          <div className="w-full md:w-1/4 mb-2 md:mb-0">
+            <label className="block text-sm font-medium">
+              Usage
+              <select
+                value={usageFilter}
+                onChange={e => setUsageFilter(e.target.value)}
+                className="mt-1 block border border-gray-300 dark:text-primary-900 rounded-md shadow-sm p-2"
+              >
+                <option value="all">All</option>
+                {[...Array(10)].map((_, i) => (
+                  <option key={i+1} value={String(i+1)}>{i+1}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
       </Card.Section>
       <Card.Section style={{ maxHeight: 500, overflowY: 'scroll' }}>
         <table className="min-w-full divide-y divide-primary-200 dark:divide-primary-700">
