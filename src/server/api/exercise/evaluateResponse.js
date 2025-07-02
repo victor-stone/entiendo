@@ -79,6 +79,6 @@ async function _evaluateResponse(correctSentence, userTranscription, userTransla
     } catch (error) {
         console.error('Error evaluating response:', error);
         // TODO: investigate what should/could be returned here
-        return {};
+        throw error;
     }
 }
