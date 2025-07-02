@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
   Calendar, BugReport, Sandbox, About, License,
@@ -9,17 +9,57 @@ import { IdiomListPage, IdiomImportPage, ResetCache,
 import AdminRoute from '../components/admin/AdminRoute';
 import UserRoute from '../components/UserRoute';
 
+// Layout wrappers
+function DefaultLayout() {
+  return (
+    <Page>
+      <Main>
+        <Outlet />
+      </Main>
+    </Page>
+  );
+}
+
+function AppLayout() {
+  return (
+    <Page>
+      <Main>
+        <UserRoute>
+          <Outlet />
+        </UserRoute>
+      </Main>
+    </Page>
+  );
+}
+
+function AdminLayout() {
+  return (
+    <Page>
+      <Main wide>
+        <AdminRoute>
+          <Outlet />
+        </AdminRoute>
+      </Main>
+    </Page>
+  );
+}
+
 const router = createBrowserRouter([
   {
-    element: <Page><Main><Outlet /></Main></Page>,
+    element: <><Outlet /></>,
     children: [
-      { path: '/', element: <Landing /> },
-      { path: '/about', element: <About /> },
-      { path: '/license', element: <License /> },
-      { path: '/chat', element: <Chat /> },
+      {
+        element: <DefaultLayout />,
+        children: [
+          { path: '/', element: <Landing /> },
+          { path: '/about', element: <About /> },
+          { path: '/license', element: <License /> },
+          { path: '/chat', element: <Chat /> },
+        ],
+      },
       {
         path: '/app/*',
-        element: <UserRoute><Outlet /></UserRoute>,
+        element: <AppLayout />,
         children: [
           { path: 'dashboard',   element: <Dashboard /> },
           { path: 'preferences', element: <Preferences /> },
@@ -31,9 +71,8 @@ const router = createBrowserRouter([
       },
       {
         path: '/admin/*',
-        element: <AdminRoute><Outlet /></AdminRoute>,
+        element: <AdminLayout />,
         children: [
-          { path: '',        element: <div>Admin Dashboard</div> },
           { path: 'idioms',  element: <IdiomListPage /> },
           { path: 'idiom',   element: <NewIdiomPage /> },
           { path: 'import',  element: <IdiomImportPage /> },
@@ -51,11 +90,11 @@ const router = createBrowserRouter([
 ], {
   future: {
     v7_startTransition: true,
-    v7_relativeSplatPath: true, // Enables relative paths in nested routes
-    v7_fetcherPersist: true,   // Retains fetcher state during navigation
-    v7_normalizeFormMethod: true, // Normalizes form methods (e.g., POST or GET)
-    v7_partialHydration: true, // Supports partial hydration for server-side rendering
-    v7_skipActionErrorRevalidation: true, // Prevents revalidation when action errors occur
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_skipActionErrorRevalidation: true,
   }
 });
 

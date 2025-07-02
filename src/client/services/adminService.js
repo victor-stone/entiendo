@@ -21,7 +21,6 @@ const adminService = {
     return await post("/api/admin/idiom/update", data, authToken);
   },
 
-
   createExample: async (exampleData, authToken) => {
     return await post("/api/admin/idiom-examples", exampleData, authToken);
   },
@@ -34,13 +33,10 @@ const adminService = {
     return await post("/api/admin/prompts", { prompts }, authToken);
   },
 
-  /**
-   * Upload audio for an example
-   * @param {String} exampleId - ID of the example
-   * @param {File} audioFile - Audio file to upload
-   * @param {string} authToken - Authentication token
-   * @returns {Promise<Object>} - Upload result
-   */
+  audioReports: async ( specs, authToken ) => {
+    return await post('/api/admin/audioreports', specs, authToken)
+  },
+
   uploadExampleAudio: async (exampleId, audioFile, authToken) => {
     return await postFile(
       "/api/admin/example-audio",

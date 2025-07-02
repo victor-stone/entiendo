@@ -27,6 +27,10 @@ import * as exampleAPI  from  '../api/exampleAPI.js';
 export const routeTable = {
   // POST routes
   POST: {
+    '/api/admin/audioreports': { 
+      handler: (routeContext) => adminAPI.audioReports(routeContext),
+      auth: true
+    },
     '/api/admin/example-audio': {
       handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
       auth: true

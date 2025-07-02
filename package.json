@@ -43,6 +43,7 @@
     "jspath": "^0.4.0",
     "jwt-decode": "^4.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.43.1",
+    "node-fetch": "^3.3.2",
     "openai": "^4.96.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

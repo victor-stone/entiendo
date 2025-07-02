@@ -4,7 +4,7 @@ import adminService from '../services/adminService';
 import { storeFetch } from '../lib/storeUtils';
 const { createExample, uploadExampleAudio, 
   createIdiom, updateIdiom, resetCaches,
-    prompts, putPrompts } = adminService;
+    prompts, putPrompts, audioReports } = adminService;
 
 export const useResetCachesStore = create((set, get) => ({
   loading: false,
@@ -27,6 +27,15 @@ export const useUpdateIdiomStore = create((set, get) => ({
   error: null,
   data: null,
   update: storeFetch(updateIdiom, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+
+export const useAudioReportsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(audioReports, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 

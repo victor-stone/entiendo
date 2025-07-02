@@ -28,7 +28,7 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
     }
     
     // Create the S3 key with 'tts/' prefix
-    const s3Key = `tts/${filename}`;
+    const s3Key = getS3Key(`tts/${filename}`);
     
     // Handle input as either a file path or buffer
     if (typeof audioContent === 'string') {
@@ -139,23 +139,7 @@ const azureTTS = {
    */
   generatePresignedUrl: async (url, expiresIn = 3600) => {
     try {
-      // Extract the S3 key from the URL or use the provided key
-      let s3Key;
-      
-      if (url.startsWith('https://') || url.startsWith('http://')) {
-        // It's a URL, extract the key
-        const urlObj = new URL(url);
-        // Remove the hostname and leading slash to get the key
-        s3Key = urlObj.pathname.slice(1); // Remove leading slash
-      } else {
-        // Assume it's already a key
-        s3Key = url;
-      }
-      
-      // Add 'tts/' prefix if not already present
-      if (!s3Key.startsWith('tts/')) {
-        s3Key = s3Key.startsWith('/') ? `tts${s3Key}` : `tts/${s3Key}`;
-      }
+      const s3Key = getS3Key(url);
       
       debugTTS(`[TTS] Generating presigned URL for S3 key: ${s3Key}`);
       
@@ -258,4 +242,40 @@ async function _synthesizeSpeechToFile(subscriptionKey, region, text, voice, out
       }
     );
   });
+}
+
+/**
+ * Utility to extract the S3 key from a URL or key and ensure 'tts/' prefix
+ * @param {string} urlOrKey - The S3 URL or S3 key
+ * @returns {string} - The normalized S3 key with 'tts/' prefix
+ */
+function getS3Key(urlOrKey) {
+  let s3Key;
+  if (urlOrKey.startsWith('https://') || urlOrKey.startsWith('http://')) {
+    const urlObj = new URL(urlOrKey);
+    s3Key = urlObj.pathname.slice(1); // Remove leading slash
+  } else {
+    s3Key = urlOrKey;
+  }
+  if (!s3Key.startsWith('tts/')) {
+    s3Key = s3Key.startsWith('/') ? `tts${s3Key}` : `tts/${s3Key}`;
+  }
+  return s3Key;
+}
+
+/**
+ * Deletes an audio file from S3 given its URL or S3 key
+ * @param {string} url - The S3 URL or S3 key of the audio file
+ * @returns {Promise<void>}
+ */
+export async function deleteAudioFromS3(url) {
+  try {
+    const s3Key = getS3Key(url);
+    await s3.deleteObject({
+      Bucket: process.env.AUDIO_BUCKET,
+      Key: s3Key
+    });
+  } catch (error) {
+    throw new Error(`Failed to delete audio from S3: ${error.message}`);
+  }
 }

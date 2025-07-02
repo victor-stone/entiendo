@@ -34,18 +34,6 @@ const Preferences = () => {
                     <UsageRangeSelector value={preferences?.filter?.usage} onChange={setUsage} />
                 </CardField>
                 <ToneSelectorField getToken={getToken} value={preferences?.filter?.tone || ""} onChange={setTone} />
-                {/* Theme selector doesn't work */ '' &&
-                    <CardField title="Theme">
-                        <select
-                            className="border rounded px-2 py-1"
-                            value={preferences?.theme || ''}
-                            onChange={e => setPreference('theme', e.target.value)}
-                        >
-                            <option value="">System Default</option>
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                        </select>
-                    </CardField>}
                 {isAdmin &&
                     <CardField hint={hints.admin} title="Next Example">
                         <input

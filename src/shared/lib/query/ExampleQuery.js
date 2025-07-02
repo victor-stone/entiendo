@@ -30,6 +30,12 @@ export default class ExampleQuery extends query {
         return this.queryOne(`..{.exampleId == $exampleId}`, { exampleId });
     }
 
+    assigned(source = null) {
+    return source 
+        ? this.q('..{.assigned.source == $source}', { source })
+        : this.q('..{.assigned.source > ""} ');
+    }
+
     basedOnWithAudio(list) {
         const wAudio = this.q('..{.audio.publicUrl}');
         const wAudioBOn = wAudio.filter( s => {
