@@ -45,6 +45,16 @@ export const useAudioReportsStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
+  patchData: idiom => {
+    const data = get().data;
+    for( let i = 0; i < data.length; i++ ) {
+      if( data[i].idiomId == idiom.idiomId ) {
+        data[i].assigned = { ...idiom.assigned };
+        break;
+      }
+    }
+    set({ data })
+  },
   fetch: storeFetch(audioReports, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));

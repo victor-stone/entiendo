@@ -2,59 +2,73 @@ import {
     IdiomModel,
     ExampleModel,
     IdiomModelQuery,
-    ExampleModelQuery
+    ExampleModelQuery,
+    SettingsModel
 } from '../../models/index.js'
 import ttl, { deleteAudioFromS3 } from '../../lib/audio.js';
 const { generatePresignedUrl } = ttl;
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
 
+async function incSyncCounter() {
+    const counter = SettingsModel.get('SYNC_COUNTER')
+    const model = new SettingsModel();
+    await model.put('SYNC_COUNTER', counter + 1);
+    return counter; 
+}
 
 /*
-    Manage audio for examples
-
-**get idioms without examples (by usage)**
-**get examples without audio**
-**get pending idiom uploads**
-**get pending example uploads**    
+  ((((((((((()))))))))))
+    MANAGE ASSIGNMENTS
+  ((((((((((()))))))))))
 */
 
-export async function reasignVoiceForExample( {exampleId, source} ) {
-    const model = new ExampleModel();
-    return await model.update( exampleId, { source });
-}
-
 export async function assignVoiceToIdiom(routeContext) {
-    return _assignVoiceToIdiom(routeContext.payload);
+    const {idiomId, source} = routeContext.payload;
+    const model = new IdiomModel();
+    return _assignVoice(model, idiomId, source);
 }
 
-async function _assignVoiceToIdiom({idiomId, source}) {
-    const assigned = { source, date: source ? Date.now() : null };
-    const model = new IdiomModel();
-    return await model.update(idiomId, { assigned })
+export async function assignVoiceToExample(routeContext) {
+    const {exampleId, source} = routeContext.payload;
+    const model = new ExampleModel();
+    return _assignVoice(model, exampleId, source);
+}
+
+async function _assignVoice(model, id, source) {
+    const sync     = source ? await incSyncCounter() : null;
+    const date     = source ? Date.now() : null;
+    const assigned = { source, sync, date };
+    return model.update(id, { assigned })
 }
 
 export async function attachExampleAndAudioToIdiom(record) {
     const model = new ExampleModel();
     await model.createExample(record);
-    return await _assignVoiceToIdiom({idiomId, source: null});
-}
-
-export async function assignVoiceToExample({exampleId, source}) {
-    const assigned = { source, date: source ? Date.now() : null };
-    const model = new ExampleModel();
-    model.update(exampleId, { assigned })
+    const imodel = new IdiomModel();
+    // this below is assuming a lot:
+    // there is only one assignment per idiom
+    // that assignment is for this example
+    // it is perfectly fine to delete whatever
+    //.    assignment info is in the idiom
+    return _assignVoice(imodel, idiomId, null);
 }
 
 export async function attachAudioToExample({exampleId, audio}) {
     const model = new ExampleModel();
     await model.addAudio(exampleId,audio);
-    await assignVoiceToExample({exampId, source: null });
+    await assignVoiceToExample({exampleId, source: null });
 }
 
+/*
+  ((((((((((()))))))))))
+      MANAGE FILES
+  ((((((((((()))))))))))
+*/
+
 export async function downloadAudio({exampleId, fileDestination}) {
-    const query = ExampleModelQuery.create();
-    const example = query.example(exampleId);
+    const query        = ExampleModelQuery.create();
+    const example      = query.example(exampleId);
     const generatedUrl = await generatePresignedUrl(example.audio.publicUrl);
 
     const response = await fetch(generatedUrl);
@@ -64,7 +78,7 @@ export async function downloadAudio({exampleId, fileDestination}) {
 }
 
 export async function deleteAudio(exampleId, source) {
-    const query = ExampleModelQuery.create();
+    const query   = ExampleModelQuery.create();
     const example = query.example(exampleId);
     await deleteAudioFromS3(example.audio.publicUrl);
     const model = new ExampleModel();
@@ -76,33 +90,39 @@ export async function replaceAudio({ exampleId, audio}) {
     await attachAudioToExample({exampleId, audio})
 }
 
+/*
+  ((((((((((()))))))))))
+    GENERATE REPORTS
+  ((((((((((()))))))))))
+*/
+
+/*
+    The report you want is 'Idioms' with no audio
+    with a [x] for assigned
+*/
 export async function audioReports(routeContext) {
     const { reportName } = routeContext.payload;
     const AUDIO_REPORTS = {
-        IDIOMS_NO_EXAMPLES: getIdiomsWithoutExamples,
-        EXAMPLES_NO_AUDIO: getExamplesWithoutAudio,
-        IDIOMS_PENDING: getIdiomsWithPendingAudio,
-        EXAMPLES_PENDING: getExamplesWithPendingAudio
+        ASSIGNABLE_IDIOMS  : _getAssignableIdioms,
+        UNASSIGNED_EXAMPLES: _getUnassignedExamples,
+        PENDING_EXAMPLES   : _getPendingExamples
     };
     return await AUDIO_REPORTS[reportName](routeContext.payload);
 }
 
-export async function getIdiomsWithoutExamples( { context, usage }) {
-    const idiomQuery = await IdiomModelQuery.create();
+async function _getAssignableIdioms( { context, usage }) {
+    const idiomQuery   = await IdiomModelQuery.create();
     const exampleQuery = await ExampleModelQuery.create();
 
     const idioms = idiomQuery.byCriteria( context, usage )
 
     return idioms.filter( ({idiomId, assigned}) => {
         const examples = exampleQuery.forIdiom(idiomId);
-        if( assigned && assigned.source ) {
-            return false;
-        }
         return !examples || !examples.length;
     });
 }    
     
-export async function getExamplesWithoutAudio( { context, usage } ) {
+async function _getUnassignedExamples( { context, usage } ) {
     const idiomQuery = await IdiomModelQuery.create();
     const exampleQuery = await ExampleModelQuery.create();
 
@@ -123,13 +143,8 @@ export async function getExamplesWithoutAudio( { context, usage } ) {
     return noAudio;
 }
 
-export async function getIdiomsWithPendingAudio({source}) {
-    const query = await IdiomModelQuery.create();
-    return query.assigned(source);
 
-}
-
-export async function getExamplesWithPendingAudio( {source} ) {
+async function _getPendingExamples( {source} ) {
     const query = await ExampleModelQuery.create();
     return query.assigned(source);
 }

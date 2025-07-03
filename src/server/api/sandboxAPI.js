@@ -8,6 +8,29 @@ import debug from 'debug';
 
 const debugSB = debug('api:sandbox');
 
+const ONE_DAY = 24 * 60 * 60 * 1000;
+
+
+export async function getNext(routeContext) {
+    let { user: { userId } } = routeContext;
+
+    const query  = await ProgressModelQuery.create(userId);
+    const basedOn = query.missedWords(true);
+
+    let example = await _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYet(userId, basedOn);
+    if( example ) {
+        debugSB("Found unseen example based on %o", example.basedOn)
+        return example;
+    }
+
+    example = await _reuseAnExampleUserHasNotSeenInAWhile(basedOn,userId);
+    if( example ) {
+        return example;
+    }
+
+    return _generateNewSandboxExamples(basedOn);
+}
+
 async function _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYet(userId,words) {
     const query   = await ProgressModelQuery.create(userId)
     const queryEx = await ExampleModelQuery.create();
@@ -23,46 +46,24 @@ async function _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYe
     return unseenExampleId && finalizeExample(queryEx.example(unseenExampleId), { debug: debugSB });
 }
 
-export async function getNext(routeContext) {
-    let { user: { userId } } = routeContext;
-
-    const query  = await ProgressModelQuery.create(userId);
-    const basedOn = query.missedWords(true);
-
-    let example = await _findAnExistingExampleWithAudioForAMissedWordThatUserHasNotSeenYet(userId, basedOn);
-    if( example ) {
-        debugSB("Found unseen example based on %o", example.basedOn)
-        return example;
-    }
-
-    example = await _getExistingUnseenExample(basedOn, userId);
-    if( example ) {
-        return example;
-    }
-
-    example = await _reuseSeenExample(basedOn,userId);
-    if( example ) {
-        return example;
-    }
-
-    return _generateNewSandboxExamples(basedOn);
-}
-
 /*
-
 This system ensure (and counts on) a pile up of 
 olders ones and using them instead more and more
 instead of generating new ones.
 */
-async function _reuseSeenExample(basedOn, userId) {
+async function _reuseAnExampleUserHasNotSeenInAWhile(basedOn, userId) {
     const { SANDBOX_CUTOFF_DAYS } = SettingsModel.all();
     const query  = await ProgressModelQuery.create(userId);
-    const cutoff = Date.now() - (24 * 60 * 60 * 1000 * SANDBOX_CUTOFF_DAYS);
+    const cutoff = Date.now() - (ONE_DAY * SANDBOX_CUTOFF_DAYS);
+
+    let model = null; 
 
     for( let i = 0; i < basedOn.length; i++ ) {
         const record = query.oldestSandboxExample([basedOn[i]]);
         if( record && record.date < cutoff ) {
-            const model   = new ExampleModel();
+            if( !model ) {
+                model = new ExampleModel();
+            }
             const example = await model.getById(record.exampleId);
             debugSB('Using example from %s - %s', format(record.date), example.text.slice(0,20));
             return finalizeExample(example, { debug: debugSB });

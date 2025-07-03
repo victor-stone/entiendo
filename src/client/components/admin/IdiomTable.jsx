@@ -65,7 +65,7 @@ const TableCell = ({ children, clamp = false, className = '', ...props }) => {
 };
 
 // Accept new props for state persistence
-const IdiomTable = ({ idioms, onSelectIdiom, getToken, extraColumns = [] }) => {
+const IdiomTable = ({ idioms, onSelectIdiom, getToken, extraColumns = [], extraTools = [] }) => {
   // Use idiomStore for all UI state
   const {
     idiomTableSort, setIdiomTableSort,
@@ -150,6 +150,12 @@ const IdiomTable = ({ idioms, onSelectIdiom, getToken, extraColumns = [] }) => {
               </select>
             </label>
           </div>
+          {/* Render extraTools here */}
+          {extraTools.map((Tool, idx) =>
+            <div key={idx} className="w-full md:w-auto mb-2 md:mb-0">
+              <Tool filter={setFilteredIdioms} idioms={idioms} />
+            </div>
+          )}
         </div>
       </Card.Section>
       <Card.Section style={{ maxHeight: 500, overflowY: 'scroll' }}>

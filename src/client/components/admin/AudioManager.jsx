@@ -4,7 +4,7 @@ import IdiomSelector from './IdiomSelector';
 import ExampleSelector from './ExampleSelector';
 import { CardField } from '../layout';
 
-const AudioUploader = ({ exampleId, onSuccess, onError }) => {
+const AudioManager = ({ exampleId, onSuccess, onError }) => {
   const [audioFile, setAudioFile]                 = useState(null);
   const [success, setSuccess]                     = useState('');
   const [selectedIdiomId, setSelectedIdiomId]     = useState('');
@@ -98,4 +98,4 @@ const AudioUploader = ({ exampleId, onSuccess, onError }) => {
   );
 };
 
-export default AudioUploader; 
+export default AudioManager; 

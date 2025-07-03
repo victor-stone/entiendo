@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import AudioUploader from '../../components/admin/AudioUploader';
+import AudioManager from '../../components/admin/AudioManager';
 import { Card } from '../../components/layout';
 import { LoadingSpinner } from '../../components/ui';
 import IdiomTable from '../../components/admin/IdiomTable'; // <-- Import IdiomTable
@@ -7,11 +7,11 @@ import React, { useEffect, useState } from 'react';
 
 import { useAudioReportsStore, useAssignIdiomStore, useUserStore } from '../../stores';
 
-function Assignment({idiom, voices, onSelect, getToken}) {
-    function onChange(value) {
-        onSelect(idiom.idiomId, value, getToken);
+function Assignment({idiom, voices, onSelect}) {
+    async function onChange(value) {
+        onSelect(idiom.idiomId, value);
         // 😬
-        idiom.assigned = { source: value }
+        // idiom.assigned = { source: value }
     }
     return <span><select value={idiom.assigned?.source || ''} onChange={e => onChange(e.target.value)}>
         <option></option>
@@ -19,16 +19,40 @@ function Assignment({idiom, voices, onSelect, getToken}) {
         </select></span>
 }
 
-function AssignmentId({idiom}) {
-    return <span>{idiom.idiomId.slice(-4)}</span>
+function AssignmentSync({idiom}) {
+    return <span>{idiom.assigned?.sync}</span>
 }
 
-function IdiomsPending() { return <IdiomsAudioReport reportName="IDIOMS_PENDING" />}
-function IdiomsNoAudio() { return <IdiomsAudioReport reportName="IDIOMS_NO_EXAMPLES" />}
+// function IdiomsPending() { return <IdiomsAudioReport reportName="PENDING_IDIOMS" />}
 
-function IdiomsAudioReport({reportName: reportNameProp}) {
+function PendingFilter({idioms, filter}) {
+    const [pending, setPending] = useState(false);
+
+    const onCheck = () => {
+        setPending(!pending);
+        if( !pending ) { // we want the opposite of what it was
+            const filtered = idioms.filter(idiom => {
+                return idiom.assigned?.source;
+            });
+            filter(filtered);
+        } else {
+            filter(idioms);
+        }
+    }
+
+    return (
+        <label>
+            Pending <input type="checkbox" checked={pending} onChange={onCheck} />
+        </label>
+    );
+}
+
+function AssignableIdioms() { return <IdiomsAudioReport reportName="ASSIGNABLE_IDIOMS" />}
+
+function IdiomsAudioReport({reportName: reportNameProp, resetOnChange}) {
     const { getToken } = useUserStore();
-    const { fetch, loading, data, error, reset, reportName, setReportName } = useAudioReportsStore();
+    const { fetch, loading, data, error, reset, reportName, 
+        setReportName, patchData } = useAudioReportsStore();
     const { error: assignError, assign } = useAssignIdiomStore();
 
     useEffect(() => {
@@ -41,15 +65,13 @@ function IdiomsAudioReport({reportName: reportNameProp}) {
         }
     }, [data, getToken, fetch, loading, reportName]);
 
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
-    }
-    if (assignError) {
-        return <p className="text-red-500">{assignError}</p>;
-    }
+    if (error) { return <p className="text-red-500">{error}</p>; }
+    if (assignError) { return <p className="text-red-500">{assignError}</p>; }
+    if (loading || !data) { return <LoadingSpinner />; }
 
-    if (loading || !data) {
-        return <LoadingSpinner />;
+    async function assignIdiom(idiomId, value) { 
+        const idiom = await assign(idiomId,value,getToken); 
+        patchData(idiom);
     }
 
     const columns = [
@@ -57,18 +79,22 @@ function IdiomsAudioReport({reportName: reportNameProp}) {
         component: Assignment, 
         props: { 
             voices: [ 'pato', 'lucia', 'karina' ],
-            onSelect: assign,
+            onSelect: assignIdiom,
             getToken
         } 
     },
     {   columnName: '#', 
-        component: AssignmentId, 
+        component: AssignmentSync, 
         props: { 
         } 
-    },
+    }
     ];
 
-    return <IdiomTable idioms={data} extraColumns={columns}/>;
+    const tools = [
+        PendingFilter
+    ];
+
+    return <IdiomTable idioms={data} extraColumns={columns} extraTools={tools}/>;
 }
 
 function TabButtons({ activeTab, setActiveTab, tabs }) {
@@ -87,14 +113,13 @@ function TabButtons({ activeTab, setActiveTab, tabs }) {
     );
 }
 
-export default function AudioUploadPage() {
+export default function AudioManagerPage() {
     const { exampleId } = useParams();
     const [activeTab, setActiveTab] = useState('upload');
 
     const tabs = [
         { key: 'upload', label: 'Audio Uploader' },
-        { key: 'idioms', label: 'Unassigned' },
-        { key: 'pending', label: 'Pending' }
+        { key: 'idioms', label: 'Assignable' }
     ];
 
     return (
@@ -102,11 +127,9 @@ export default function AudioUploadPage() {
             <TabButtons activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
             <Card.Body>
               {activeTab === 'upload' ? (
-                <AudioUploader exampleId={exampleId} />
-              ) : activeTab === 'pending' ? (
-                <IdiomsPending />
+                <AudioManager exampleId={exampleId} />
               ) : (
-                <IdiomsNoAudio />
+                <AssignableIdioms />
               )}
             </Card.Body>
         </Card>

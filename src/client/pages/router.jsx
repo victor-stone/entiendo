@@ -4,7 +4,7 @@ import { Landing, Dashboard, Preferences, Exercise,
   Calendar, BugReport, Sandbox, About, License,
   Chat } from './index';
 import { IdiomListPage, IdiomImportPage, ResetCache,
-  AudioUploadPage, NewExamplePage, NewIdiomPage,
+  AudioManagerPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
 import AdminRoute from '../components/admin/AdminRoute';
 import UserRoute from '../components/UserRoute';
@@ -77,12 +77,12 @@ const router = createBrowserRouter([
           { path: 'idiom',   element: <NewIdiomPage /> },
           { path: 'import',  element: <IdiomImportPage /> },
           { path: 'example', element: <NewExamplePage /> },
-          { path: 'audio',   element: <AudioUploadPage /> },
+          { path: 'audio',   element: <AudioManagerPage /> },
           { path: 'settings',element: <SettingsPage /> },
           { path: 'prompts', element: <PromptsPage /> },
           { path: 'resetcache',  element: <ResetCache /> },
           { path: 'example/:idiomId', element: <NewExamplePage /> },
-          { path: 'audio/:exampleId', element: <AudioUploadPage /> },
+          { path: 'audio/:exampleId', element: <AudioManagerPage /> },
         ],
       },
     ],
