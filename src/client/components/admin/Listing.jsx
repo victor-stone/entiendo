@@ -138,7 +138,7 @@ const Listing = ({
 
   const [filteredItems, setFilteredItems] = useState([]);
 
-  const voices = ['pato', 'karina', 'lucia'];
+  const voices = ['pato', 'karina', 'lucia', 'victor'];
 
   // Filtering and sorting
   useEffect(() => {

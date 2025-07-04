@@ -32,16 +32,23 @@ export async function assignEditorToIdiom(routeContext) {
 async function _doAssign({model, idiomId, ...remains}, erase = false) {
   const rec = await model.getById(idiomId);
   debugAss('doing %s %s %s', erase ? 'erase' : 'assign', remains.source || '', rec.text);
-  let assigned = rec.assigned || {};
+  let assigned;
   if( erase ) {
     assigned = {};
   } else {
-    const sync = assigned.sync || await _incSyncCounter();
-    assigned = {
-      ...(rec.assigned || {}),
-      sync,
-      date: Date.now(),
-      ...remains
+    if( Object.hasOwn(rec,'assigned') ) {
+      assigned = rec.assigned;
+      Object.keys(remains).forEach( k => {
+        if(remains[k]) {
+          assigned[k] = remains[k];
+        }
+      })
+    } else {
+      assigned = {
+        sync: await _incSyncCounter(),
+        date: Date.now(),
+        ...remains
+      }
     }
   }
   return model.update(idiomId, { assigned });
@@ -125,8 +132,8 @@ export async function assignmentFulfill(routeContext) {
     // This will overwrite any previous file
     const filename     = `assigned_${idiomId}.mp3`; 
     const audioContent = payload.file !== '' && (payload.file || payload.files.file).data;
-    const contentType  = audioContent && ((payload.file || payload.files.file).mimetype || 'audio/mpeg');
-    const audio        = audioContent && await uploadAudioToS3(audioContent, filename, contentType);
+    const contentType  = audioContent ? ((payload.file || payload.files.file).mimetype || 'audio/mpeg') : undefined;
+    const audio        = audioContent ? await uploadAudioToS3(audioContent, filename, contentType) : undefined;
 
 
     const assignment = {
