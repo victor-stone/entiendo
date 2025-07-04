@@ -5,10 +5,11 @@ import {
   ExampleModelQuery,
   SettingsModel,
 } from "../../models/index.js";
-import debug from 'debug';
+import debug from "debug";
 import { deleteAudioFromS3, uploadAudioToS3 } from "../../lib/audio.js";
+import { checkUrlExpiration } from "../lib/finalizeExample.js";
 
-const debugAss = debug('api:assign');
+const debugAss = debug("api:assign");
 
 async function _incSyncCounter() {
   const counter = SettingsModel.get("SYNC_COUNTER");
@@ -26,36 +27,40 @@ async function _incSyncCounter() {
 export async function assignEditorToIdiom(routeContext) {
   const { idiomId, source } = routeContext.payload;
   const model = new IdiomModel();
-  return _doAssign({model, idiomId, source});
+  return _doAssign({ model, idiomId, source });
 }
 
-async function _doAssign({model, idiomId, ...remains}, erase = false) {
+async function _doAssign({ model, idiomId, ...remains }, erase = false) {
   const rec = await model.getById(idiomId);
-  debugAss('doing %s %s %s', erase ? 'erase' : 'assign', remains.source || '', rec.text);
+  debugAss(
+    "doing %s %s %s",
+    erase ? "erase" : "assign",
+    remains.source || "",
+    rec.text
+  );
   let assigned;
-  if( erase ) {
+  if (erase) {
     assigned = {};
   } else {
-    if( Object.hasOwn(rec,'assigned') ) {
+    if (Object.hasOwn(rec, "assigned")) {
       assigned = rec.assigned;
-      Object.keys(remains).forEach( k => {
-        if(remains[k]) {
+      Object.keys(remains).forEach((k) => {
+        if (remains[k]) {
           assigned[k] = remains[k];
         }
-      })
+      });
     } else {
       assigned = {
         sync: await _incSyncCounter(),
         date: Date.now(),
-        ...remains
-      }
+        ...remains,
+      };
     }
   }
   return model.update(idiomId, { assigned });
 }
 
 export async function graduateAssignmentToExample(record) {
-
   return _doAssign({ model, idiomId: record.idiomId }, true);
 }
 
@@ -110,6 +115,17 @@ export async function replaceAudioInExample({ exampleId, audio }) {
   await attachAudioToExample({ exampleId, audio });
 }
 
+function _extractSnippet({ transcription, conjugatedSnippet }) {
+  if (!conjugatedSnippet) {
+    const match = transcription.match(/\*(.*?)\*/);
+    if (match) {
+      conjugatedSnippet = match[1];
+      transcription = transcription.replace(/\*(.*?)\*/, conjugatedSnippet);
+    }
+  }
+  return { conjugatedSnippet, transcription };
+}
+
 /**
  * Editor upload audio file for review
  *
@@ -129,22 +145,28 @@ export async function assignmentFulfill(routeContext) {
   const { idiomId, transcription, conjugatedSnippet } = payload;
 
   try {
-    // This will overwrite any previous file
-    const filename     = `assigned_${idiomId}.mp3`; 
-    const audioContent = payload.file !== '' && (payload.file || payload.files.file).data;
-    const contentType  = audioContent ? ((payload.file || payload.files.file).mimetype || 'audio/mpeg') : undefined;
-    const audio        = audioContent ? await uploadAudioToS3(audioContent, filename, contentType) : undefined;
-
+    // This WILL overwrite any previous file (by design)
+    const filename = `assigned_${idiomId}.mp3`;
+    const audioContent =
+      payload.file !== "" && (payload.file || payload.files.file).data;
+    const contentType = audioContent
+      ? (payload.file || payload.files.file).mimetype || "audio/mpeg"
+      : undefined;
+    const audio = audioContent
+      ? await uploadAudioToS3(audioContent, filename, contentType)
+      : undefined;
 
     const assignment = {
       model: new IdiomModel(),
       idiomId,
       audio,
-      transcription,
-      conjugatedSnippet
-    }
-    return await _doAssign(assignment);
+      ..._extractSnippet({ transcription, conjugatedSnippet }),
+    };
+    const rec = await _doAssign(assignment);
 
+    rec.assigned.audio = await checkUrlExpiration(rec.assigned.audio || {});
+
+    return rec;
   } catch (error) {
     console.error("Error uploading assignment audio file:", error);
     throw new Error(`Failed to upload audio: ${error.message}`);

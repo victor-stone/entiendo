@@ -31,6 +31,20 @@ export async function finalizeExample(example, {force = true, idiom = null, mode
     return example;
 }
 
+export async function checkUrlExpiration(audio) {
+    const { publicUrl, expires } = audio;
+    if( publicUrl ) {
+        if (typeof expires !== 'number' || expires < Date.now()) {
+            const generatedUrl = await generatePresignedUrl(publicUrl);
+            return {
+                ...audio,
+                ...generatedUrl
+            }
+        }
+    }
+    return audio;
+}
+
 function _ensureAudioAccess(example, debug, force) {
     // Ensure example.audio exists
     const audio = example.audio || {};
