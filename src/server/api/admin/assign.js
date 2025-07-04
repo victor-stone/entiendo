@@ -72,11 +72,11 @@ async function _getAssignedIdioms({ editor }) {
   return idiomQuery.assigned(editor);
 }
 
-async function _getAssignableIdioms({ context, usage }) {
+async function _getAssignableIdioms() {
   const idiomQuery = await IdiomModelQuery.create();
   const exampleQuery = await ExampleModelQuery.create();
 
-  const idioms = idiomQuery.byCriteria(context, usage);
+  const idioms = idiomQuery.idioms();
 
   return idioms.filter(({ idiomId }) => {
     const examples = exampleQuery.forIdiom(idiomId);

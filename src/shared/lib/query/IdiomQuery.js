@@ -49,7 +49,7 @@ export default class IdiomQuery extends query {
     }
 
     containsText(text) {
-        return this.q(`..{.text *= $text`, { text })
+        return this.q(`..{.text *= $text}`, { text })
     }
 
     matchText(text) {

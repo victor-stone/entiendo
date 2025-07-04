@@ -46,7 +46,7 @@ const adminItems = [
       path: '/admin/example', label: 'Create Example'
     },
     {
-      path: '/admin/audio', label: 'Manage Audio'
+      path: '/admin/audio', label: 'Manage Assignments'
     },
     {
       path: '/admin/settings', label: 'Settings'

@@ -16,15 +16,15 @@ const columns = {
 
 export default function AssignmentManagerPage() {
     const { exampleId } = useParams();
-    const [activeTab, setActiveTab] = useState('upload');
+    const [activeTab, setActiveTab] = useState('assignments');
 
     const tabs = [
-        { key: 'upload', label: 'Audio Uploader' },
-        { key: 'idioms', label: 'Assignable' }
+        { key: 'assignments', label: 'Assignable' },
+        { key: 'upload', label: 'Audio Uploader' }
     ];
 
     return (
-        <Card title="Upload Audio">
+        <Card title="Manage Assignments">
             <TabButtons activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
             <Card.Body>
               {activeTab === 'upload' ? (
