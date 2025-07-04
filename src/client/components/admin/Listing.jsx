@@ -3,180 +3,20 @@ import ListSearch from "../ui/ListSearch";
 import { useListingStore } from "../../stores";
 import { Card } from "../layout/Card";
 import ToneSelector from "../ToneSelector"; // Adjust path if needed
-import UsageSelector from "./UsageSelector"; // Add this import
+import UsageSelector from "./UsageSelector";
 import CSVtoClipboard from "./CSVtoClipboard";
 import { AssignmentAudio } from "../editor/AssignmentForm";
-import { HighlightedText } from "../ui"
+import ListingHeader from "./ListingHeader";
+import sortItems from "../../../shared/lib/sortItems";
+import EditorPicker from "../editor/EditorPicker";
+import { TableCell } from '../ui';
+import {
+  Assign,
+  AssignmentSync,
+  AssignmentSource,
+  AssignTranscription,
+} from "../editor/Assignments";
 
-const headerCSS =
-  "px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider";
-
-// Table header cell component
-const SortableHeaderCell = ({
-  label,
-  sortKey,
-  handleSort,
-  renderSortIndicator,
-}) => (
-  <th
-    onClick={() => handleSort(sortKey)}
-    className={`${headerCSS} cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700`}
-  >
-    {label} {renderSortIndicator(sortKey)}
-  </th>
-);
-
-const EmptyHeader = ({ text }) => <th className={headerCSS}>{text}</th>;
-
-// ListingHeader component for table header
-const ListingHeader = ({ handleSort, renderSortIndicator, columns }) => (
-  <thead className="bg-primary-50 dark:bg-primary-800">
-    <tr>
-      {columns.sync && <EmptyHeader text="num" />}
-      <SortableHeaderCell
-        handleSort={handleSort}
-        renderSortIndicator={renderSortIndicator}
-        label="Idiom"
-        sortKey="text"
-      />
-      <SortableHeaderCell
-        handleSort={handleSort}
-        renderSortIndicator={renderSortIndicator}
-        label="Translation"
-        sortKey="translation"
-      />
-      {columns.tone && (
-        <SortableHeaderCell
-          handleSort={handleSort}
-          renderSortIndicator={renderSortIndicator}
-          label="Tone"
-          sortKey="tone"
-        />
-      )}
-      {columns.usage && (
-        <SortableHeaderCell
-          handleSort={handleSort}
-          renderSortIndicator={renderSortIndicator}
-          label="Usage"
-          sortKey="usage"
-        />
-      )}
-      {columns.transcription && <EmptyHeader text="audio transcription" />}
-      {columns.source && <EmptyHeader />}
-      {columns.assign && <EmptyHeader />}
-      {columns.audio && <EmptyHeader />}
-    </tr>
-  </thead>
-);
-
-// Utility function to sort
-function sortItems(items, key, direction) {
-  return [...items].sort((a, b) => {
-    const aValue = a[key] || "";
-    const bValue = b[key] || "";
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "ascending"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    } else {
-      return direction === "ascending"
-        ? aValue > bValue
-          ? 1
-          : -1
-        : bValue > aValue
-          ? 1
-          : -1;
-    }
-  });
-}
-
-const TableCell = ({
-  children,
-  clamp = false,
-  className = "",
-  width,
-  ...props
-}) => {
-  let style = {
-    color: "var(--color-primary-600)",
-    background: "none",
-    ...props.style,
-  };
-  if (clamp) {
-    style = {
-      ...style,
-      maxWidth: "350px",
-      width: "350px",
-    };
-  }
-  if (width) {
-    style = {
-      ...style,
-      width: width,
-      maxWidth: width,
-    };
-  }
-  return (
-    <td style={style} {...props}>
-      {children}
-    </td>
-  );
-};
-
-function PendingController({ voice, onChange, voices }) {
-  const ecss = "border rounded px-2 py-1 dark:text-primary-900";
-
-  return (
-    <label>
-      <span className="font-bold">Voice</span>{" "}
-      <select
-        value={voice}
-        onChange={(e) => onChange(e.target.value)}
-        className={ecss}
-      >
-        <option value="-all">all</option>
-        <option value="-pending">all pending</option>
-        {voices.map((v) => (
-          <option key={v} value={v}>
-            {v}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function Assign({ obj, voices, onAssign }) {
-  async function onChange(value) {
-    onAssign(obj.idiomId, value, null);
-  }
-  return (
-    <span>
-      <select
-        value={obj.assigned?.source || ""}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option></option>
-        {voices.map((voice, i) => (
-          <option key={i}>{voice}</option>
-        ))}
-      </select>
-    </span>
-  );
-}
-
-function AssignmentSync({ assigned }) {
-  return <span>{assigned?.sync}</span>;
-}
-
-function AssignmentSource({ assigned }) {
-  return <span>{assigned?.source}</span>;
-}
-
-function AssignTranscription({ assigned }) {
-  const { transcription, conjugatedSnippet } = assigned;
-  return <HighlightedText text={transcription} highlightedSnippet={conjugatedSnippet} />  
-}
 
 const Listing = ({
   data,
@@ -308,7 +148,7 @@ const Listing = ({
           )}
           {(features.assign || features.filterVoice) && (
             <div className="w-full md:w-1/4 mb-2 md:mb-0">
-              <PendingController
+              <EditorPicker
                 voices={voices}
                 voice={listingVoice}
                 onChange={setListingVoice}

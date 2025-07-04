@@ -19,3 +19,4 @@ export { default as MD } from './MD';
 export { default as CopyToClipboardButton } from './CopyToClipboardButton';
 export { default as ListSearch } from './ListSearch';
 export { default as TabButtons } from './TabButtons';
+export { default as TableCell } from "./TableCell";
