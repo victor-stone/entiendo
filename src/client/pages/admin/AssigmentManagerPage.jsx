@@ -11,7 +11,8 @@ const columns = {
     source: false,
     assign: true,
     sync: true,
-    audio: false
+    audio: false,
+    search: true
   }
 
 export default function AssignmentManagerPage() {

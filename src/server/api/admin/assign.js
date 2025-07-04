@@ -122,8 +122,8 @@ export async function assignmentFulfill(routeContext) {
   const { idiomId, transcription, conjugatedSnippet } = payload;
 
   try {
-    const timestamp    = Date.now();
-    const filename     = `assigned_${idiomId.slice(-5)}_${timestamp}.mp3`;
+    // This will overwrite any previous file
+    const filename     = `assigned_${idiomId}.mp3`; 
     const audioContent = payload.file !== '' && (payload.file || payload.files.file).data;
     const contentType  = audioContent && ((payload.file || payload.files.file).mimetype || 'audio/mpeg');
     const audio        = audioContent && await uploadAudioToS3(audioContent, filename, contentType);
