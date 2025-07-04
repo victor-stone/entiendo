@@ -66,7 +66,7 @@ const Dashboard = () => {
                 <div className='text-left'><SandboxPanel scheduleStats={data} /></div>
                 <PageLink page="/app/sandbox" text="Practice" />
               </>
-              : data.enableGetNext 
+              : data.numSandboxes && data.enableGetNext 
                   ? <div>🔒 Unlock the Playroom by clearing your calendar</div>
                   : <div>Your playroom is empty.</div>
             }

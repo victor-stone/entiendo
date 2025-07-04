@@ -4,9 +4,11 @@ import { Landing, Dashboard, Preferences, Exercise,
   Calendar, BugReport, Sandbox, About, License,
   Chat } from './index';
 import { IdiomListPage, IdiomImportPage, ResetCache,
-  AudioManagerPage, NewExamplePage, NewIdiomPage,
+  AssignmentManagerPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
+import { Editor } from './editor/Editor';
 import AdminRoute from '../components/admin/AdminRoute';
+import EditorRoute from '../components/admin/EditorRoute';
 import UserRoute from '../components/UserRoute';
 
 // Layout wrappers
@@ -18,6 +20,18 @@ function DefaultLayout() {
       </Main>
     </Page>
   );
+}
+
+function EditorLayout() {
+  return (
+    <Page>
+      <Main wide>
+        <EditorRoute>
+          <Outlet />
+        </EditorRoute>
+      </Main>
+    </Page>
+  )
 }
 
 function AppLayout() {
@@ -58,6 +72,14 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: '/editor/*',
+        element: <EditorLayout />,
+        children: [
+          { path: 'manage',   element: <Editor /> },
+        ],
+      },
+
+      {
         path: '/app/*',
         element: <AppLayout />,
         children: [
@@ -77,12 +99,10 @@ const router = createBrowserRouter([
           { path: 'idiom',   element: <NewIdiomPage /> },
           { path: 'import',  element: <IdiomImportPage /> },
           { path: 'example', element: <NewExamplePage /> },
-          { path: 'audio',   element: <AudioManagerPage /> },
+          { path: 'audio',   element: <AssignmentManagerPage /> },
           { path: 'settings',element: <SettingsPage /> },
           { path: 'prompts', element: <PromptsPage /> },
           { path: 'resetcache',  element: <ResetCache /> },
-          { path: 'example/:idiomId', element: <NewExamplePage /> },
-          { path: 'audio/:exampleId', element: <AudioManagerPage /> },
         ],
       },
     ],

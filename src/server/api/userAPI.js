@@ -22,7 +22,7 @@ export async function syncUserFromAuth0(routeContext) {
       userId,
       role: 'user',
       createdAt: Date.now(),
-      name: authUser.name
+      name: authUser.name,
     });
   }
 
@@ -37,7 +37,17 @@ export async function syncUserFromAuth0(routeContext) {
     user.name = authUser.name;
     needUpdate = true;
   }
-  if (needUpdate) user = await userModel.update(userId, user);
+  if( !user.email && authUser.email) {
+    // there's no reason to save full emails 
+    // addresses (in fact, using it would break
+    // the license of this code)
+    user.email = authUser.email.split('@')[0];
+    needUpdate = true;
+  }
+
+  if (needUpdate) 
+    user = await userModel.update(userId, user);
+
   return user;
 }
 

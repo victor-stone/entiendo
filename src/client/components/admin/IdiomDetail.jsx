@@ -7,41 +7,25 @@ import IdiomForm from './IdiomForm';
 import ExampleList from './ExampleList';
 import debug from 'debug';
 import { Glyph } from '../ui';
+import CopyToClipboardButton from '../ui/CopyToClipboardButton';
 const debugId = debug('app:idiom');
 const debugRndr = debug('react:render');
 
-const IdiomInfo = ({ idiom }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(idiom.idiomId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
+export const IdiomInfo = ({ idiom, tight = false }) => {
   return (
     <div className=" justify-center items-center flex">
-      <Card.Grid className="bg-secondary-100 dark:bg-primary-900 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+      <Card.Grid className={` ${tight ? 'w-full' : 'w-2/3 p-4'}`} style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+        {idiom.assigned?.sync && (<><Card.GridLabel title="Num" /> <Card.GridField>{idiom.assigned.sync}</Card.GridField></>) }
         <Card.GridLabel title="Text" /> <Card.GridField>{idiom.text}</Card.GridField> 
         <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
         <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
         <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
+        {idiom.assigned?.source && (<><Card.GridLabel title="Voice" /> <Card.GridField>{idiom.assigned.source}</Card.GridField></>) }
+        {idiom.assigned?.transcription && (<><Card.GridLabel title="Transcription" /> <Card.GridField>{idiom.assigned.transcription}</Card.GridField></>) }
         <Card.GridLabel title="Id" /> 
         <Card.GridField>
           {'...' + idiom.idiomId?.slice(-10)}
-          <button
-            className="ml-2 px-2 py-1 text-xs rounded hover:bg-gray-300"
-            title="Copy idiom ID"
-            onClick={handleCopy}
-            type="button"
-          >
-            <Glyph name="ClipboardIcon" />
-            {copied && (
-              <span className="ml-1 text-green-600">
-                <Glyph name="CheckIcon" />
-              </span>
-            )}
-          </button>
+          <CopyToClipboardButton value={idiom.idiomId} title="" />
         </Card.GridField> 
       </Card.Grid>
     </div>

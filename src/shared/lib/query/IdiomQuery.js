@@ -26,7 +26,7 @@ export default class IdiomQuery extends query {
     assigned(source = null) {
         return source 
             ? this.q('..{.assigned.source == $source}', { source })
-            : this.q('..{.assigned.source > ""} ');
+            : this.q('..{.assigned.source} ');
     }
 
     idiom(idiomId) {

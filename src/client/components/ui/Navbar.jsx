@@ -13,15 +13,13 @@ const UserInfo = ({ user, greeting = "Hola", className = "", onLogout }) => (
   </div>
 );
 
-// Desktop menu section
-const DesktopMenu = ({ isLoggedIn, user, isAdmin }) => (
+const DesktopMenu = ({ isLoggedIn, user, isAdmin, role }) => (
   <div className="hidden md:flex items-center space-x-4">
     {isLoggedIn && <UserInfo user={user} />}
-    <Menu isMobile={false} isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
+    <Menu isMobile={false} isLoggedIn={isLoggedIn} isAdmin={isAdmin} role={role} />
   </div>
 );
 
-// Mobile menu button
 const MobileMenuButton = ({ isOpen, onClick }) => (
   <button
     onClick={onClick}
@@ -38,8 +36,8 @@ const MobileMenuButton = ({ isOpen, onClick }) => (
   </button>
 );
 
-// Mobile menu dropdown
-const MobileMenu = ({ isOpen, isLoggedIn, user, isAdmin, onClose }) => (
+// Mobile menu dropdown (no admin/editor stuff)
+const MobileMenu = ({ isOpen, isLoggedIn, user, onClose }) => (
   <div className={`${isOpen ? 'block' : 'hidden'} md:hidden mt-3 pt-3 border-t border-gray-200 dark:border-gray-700`}>
     <div className="flex flex-col space-y-4 px-2 pb-3">
       <div className="pt-2">
@@ -48,15 +46,14 @@ const MobileMenu = ({ isOpen, isLoggedIn, user, isAdmin, onClose }) => (
         ) : (
           <LoginButton />
         )}
-        <Menu isMobile={true} isLoggedIn={isLoggedIn} isAdmin={isAdmin} onClose={onClose} />
+        <Menu isMobile={true} isLoggedIn={isLoggedIn} onClose={onClose} />
       </div>
     </div>
   </div>
 );
 
 const Navbar = () => {
-  const user       = useUserStore(state => state.user);
-  const isAdmin    = useUserStore(state => state.isAdmin);
+  const { user, isAdmin, profile } = useUserStore();
   const isLoggedIn = !!user;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -75,16 +72,14 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center">
-            <DesktopMenu isLoggedIn={isLoggedIn} user={user} isAdmin={isAdmin} />
+            <DesktopMenu isLoggedIn={isLoggedIn} user={user} isAdmin={isAdmin} role={profile?.role} />
             <MobileMenuButton isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
           </div>
         </div>
 
         <MobileMenu
           isOpen={isMobileMenuOpen}
-          isLoggedIn={isLoggedIn}
           user={user}
-          isAdmin={isAdmin}
           onClose={() => setIsMobileMenuOpen(false)}
         />
       </div>

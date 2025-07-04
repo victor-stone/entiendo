@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import IdiomTable from '../../components/admin/IdiomTable';
+import Listing from '../../components/admin/Listing';
 import { useIdiomListStore, useUserStore } from '../../stores';
 import { Card } from '../../components/layout/Card';
 import LoadingIndicator from '../../components/ui/LoadingIndicator';
@@ -38,7 +38,7 @@ function IdiomListPage() {
       <Card.Body className="pb-0">
         {selectedIdiomId             
             ? <IdiomDetail idiomId={selectedIdiomId} onBack={onBack} onChange={reset} />            
-            : <IdiomTable idioms={data} onSelectIdiom={setSelectedIdiomId} />
+            : <Listing data={data} onSelectItem={setSelectedIdiomId} />
         }
       </Card.Body>
     </Card>

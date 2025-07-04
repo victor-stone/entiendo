@@ -37,22 +37,24 @@ export async function scheduleStats(routeContext) {
     }
   }
 
-  const earliest = progress[0];
-  const pastDue  = query.due();
-  const next     = query.upcoming()[0];
-  const missed   = query.missedWords(false);
-  const unique   = [...new Set(missed)];
-  const canNew   = await isNewAllowed(userId);
+  const earliest  = progress[0];
+  const pastDue   = query.due();
+  const next      = query.upcoming()[0];
+  const missed    = query.missedWords(false);
+  const unique    = [...new Set(missed)];
+  const canNew    = await isNewAllowed(userId);
+  const sandboxes = query.sandboxes();
 
   const stats = {
-    pastDueDate : earliest?.dueDate || 0,
-    numPastDue  : pastDue.length,
-    numSeen     : progress.length,
-    score       : __getAccPercentage(progress),
-    nextDueDate : next?.dueDate || 0,
-    isNewAllowed: canNew,
-    missed      : missed.length,
-    unique      : unique.length
+    pastDueDate  : earliest?.dueDate || 0,
+    numPastDue   : pastDue.length,
+    numSeen      : progress.length,
+    score        : __getAccPercentage(progress),
+    nextDueDate  : next?.dueDate || 0,
+    isNewAllowed : canNew,
+    numSandboxes : sandboxes?.length || 0,
+    missed       : missed.length,
+    unique       : unique.length
   }
 
   stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;

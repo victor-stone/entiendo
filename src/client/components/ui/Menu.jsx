@@ -26,6 +26,12 @@ const genericItems = [
     }
   ];
 
+const editorItems = [
+  {
+    path: '/editor/manage', label: 'Upload Audio'
+  },
+];
+
 const adminItems = [
     { 
       path: '/admin/idioms', label: 'Idioms'
@@ -40,7 +46,7 @@ const adminItems = [
       path: '/admin/example', label: 'Create Example'
     },
     {
-      path: '/admin/audio', label: 'Upload Audio'
+      path: '/admin/audio', label: 'Manage Audio'
     },
     {
       path: '/admin/settings', label: 'Settings'
@@ -53,7 +59,7 @@ const adminItems = [
     },
   ];
 
-const Menu = ({ isMobile, isLoggedIn, isAdmin, onClose }) => {
+const Menu = ({ isMobile, isLoggedIn, isAdmin, role, onClose }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [];
@@ -64,6 +70,11 @@ const Menu = ({ isMobile, isLoggedIn, isAdmin, onClose }) => {
   }
   
   menuItems.push(...genericItems);
+
+  if( isAdmin || role == 'editor' ) {
+    menuItems.push({ separator: true }); // Add separator before admin items
+    menuItems.push(...editorItems);
+  }
 
   if (isAdmin) {
     menuItems.push({ separator: true }); // Add separator before admin items

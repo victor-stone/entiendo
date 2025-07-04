@@ -26,14 +26,19 @@ export const useIdiomTonesStore = create((set, get) => ({
   fetch: storeFetch(getTones, set)
 }));
 
-export const useIdiomTableStore = create((set, get) => ({
-  // UI State for IdiomTable
-  idiomTableSort: { key: 'text', direction: 'ascending' },
-  idiomTableFilter: '',
-  idiomTableScroll: 0,
-  idiomTableTone: 'all',
-  setIdiomTableSort: (sort) => set({ idiomTableSort: sort }),
-  setIdiomTableFilter: (filter) => set({ idiomTableFilter: filter }),
-  setIdiomTableScroll: (scroll) => set({ idiomTableScroll: scroll }),
-  setIdiomTableTone: (tone) => set({ idiomTableTone: tone }),
+export const useListingStore = create((set, get) => ({
+  // UI State for Listing
+  listingSort         : { key: 'text', direction: 'ascending' },
+  listingTextFilter   : '',
+  listingTone         : 'all',
+  listingUsage        : 'all',
+  listingPending      : false,
+  listingVoice        : '',
+
+  setListingSort      : (sort)   => set({ listingSort: sort }),
+  setListingUsage     : (usage)  => set({ listingUsage: usage }),
+  setListingTextFilter: (filter) => set({ listingTextFilter: filter }),
+  setListingTone      : (tone)   => set({ listingTone: tone }),
+  setListingPending   : (pending)=> set({ listingPending: pending }),
+  setListingVoice     : (voice)  => set({ listingVoice: voice })
 }));

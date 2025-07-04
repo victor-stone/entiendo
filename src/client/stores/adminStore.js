@@ -3,22 +3,14 @@ import { create } from 'zustand';
 import adminService from '../services/adminService';
 import { storeFetch } from '../lib/storeUtils';
 const { createExample, uploadExampleAudio, 
-  createIdiom, updateIdiom, resetCaches, assignIdiom,
-    prompts, putPrompts, audioReports } = adminService;
+  createIdiom, updateIdiom, resetCaches,
+    prompts, putPrompts } = adminService;
 
 export const useResetCachesStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
   action: storeFetch(resetCaches, set),
-  reset: () => set({ data: null, error: null, loading: false })
-}));
-
-export const useAssignIdiomStore = create((set, get) => ({
-  loading: false,
-  error: null,
-  data: null,
-  assign: storeFetch(assignIdiom, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
@@ -38,26 +30,6 @@ export const useUpdateIdiomStore = create((set, get) => ({
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
-
-export const useAudioReportsStore = create((set, get) => ({
-  reportName: '',
-  setReportName: reportName => set({reportName}),
-  loading: false,
-  error: null,
-  data: null,
-  patchData: idiom => {
-    const data = get().data;
-    for( let i = 0; i < data.length; i++ ) {
-      if( data[i].idiomId == idiom.idiomId ) {
-        data[i].assigned = { ...idiom.assigned };
-        break;
-      }
-    }
-    set({ data })
-  },
-  fetch: storeFetch(audioReports, set),
-  reset: () => set({ data: null, error: null, loading: false })
-}));
 
 export const useCreateExampleStore = create((set, get) => ({
   loading: false,

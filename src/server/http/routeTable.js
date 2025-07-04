@@ -17,7 +17,6 @@ import * as settingsAPI from  '../api/settingsAPI.js';
 import * as sandboxAPI  from  '../api/sandboxAPI.js';
 import * as exampleAPI  from  '../api/exampleAPI.js';
 
-
 /**
  * The route table maps HTTP methods and paths to handler functions
  * Each entry specifies:
@@ -27,14 +26,20 @@ import * as exampleAPI  from  '../api/exampleAPI.js';
 export const routeTable = {
   // POST routes
   POST: {
-    '/api/admin/assignidiom': { 
-      handler: (routeContext) => adminAPI.assignVoiceToIdiom(routeContext),
+    '/api/editor/assignidiom': { 
+      handler: (routeContext) => adminAPI.assignEditorToIdiom(routeContext),
       auth: true
     },
-    '/api/admin/audioreports': { 
-      handler: (routeContext) => adminAPI.audioReports(routeContext),
+    '/api/editor/fulfill': {
+      handler: (routeContext) => adminAPI.assignmentFulfill(routeContext),
       auth: true
     },
+    '/api/editor/assignmentreports': { 
+      handler: (routeContext) => adminAPI.assignmentReports(routeContext),
+      auth: true
+    },
+
+
     '/api/admin/example-audio': {
       handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
       auth: true
@@ -51,6 +56,8 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.updateIdiom(routeContext),
       auth: true
     },
+
+
     '/api/admin/idioms': {
       handler: (routeContext) => adminAPI.importIdioms(routeContext),
       auth: true
@@ -59,6 +66,7 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.importValidateCSV(routeContext),
       auth: true
     },
+
     '/api/admin/prompts': { 
       handler: (routeContext) => adminAPI.putPrompts(routeContext),
       auth: true
@@ -67,6 +75,7 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
       auth: true
     },
+
     '/api/example/:exampleId': {
       handler: (routeContext) => exampleAPI.updateExample(routeContext),
       auth: false
@@ -83,6 +92,7 @@ export const routeTable = {
       handler: (routeContext) => sandboxAPI.getNext(routeContext),
       auth: true
     },
+    
     '/api/settings': {
       handler: (routeContext) => settingsAPI.putSettings(routeContext),
       auth: true
