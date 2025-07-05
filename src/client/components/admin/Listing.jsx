@@ -108,13 +108,6 @@ const Listing = ({
     });
   };
 
-  // Render sort indicator
-  const renderSortIndicator = (key) => {
-    if (!listingSort || !listingSort.key || listingSort.key !== key)
-      return null;
-    return listingSort.direction === "ascending" ? " ↑" : " ↓";
-  };
-
   const thisColSpan = Object.keys(features).reduce(
     (sum, key) => (features[key] ? sum + 1 : sum),
     0
@@ -167,7 +160,7 @@ const Listing = ({
           <ListingHeader
             columns={features}
             handleSort={handleSort}
-            renderSortIndicator={renderSortIndicator}
+            listingSort={listingSort}
           />
           <tbody className="bg-white dark:bg-primary-900 divide-y divide-primary-200 dark:divide-primary-700">
             {filteredItems.length > 0 ? (

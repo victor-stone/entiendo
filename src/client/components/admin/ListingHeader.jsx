@@ -1,64 +1,69 @@
-import React from "react";
+
 
 const headerCSS =
   "px-6 py-3 text-left text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wider";
+const headerSortCSS =
+  "cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700";
 
 // Table header cell component
 export const SortableHeaderCell = ({
   label,
   sortKey,
   handleSort,
-  renderSortIndicator,
+  indicator
 }) => (
-  <th
-    onClick={() => handleSort(sortKey)}
-    className={`${headerCSS} cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-700`}
-  >
-    {label} {renderSortIndicator(sortKey)}
+  <th onClick={() => handleSort(sortKey)} className={`${headerCSS} ${headerSortCSS}`}>
+    {label} {indicator}
   </th>
 );
 
 export const EmptyHeader = ({ text }) => <th className={headerCSS}>{text}</th>;
 
 // ListingHeader component for table header
-const ListingHeader = ({ handleSort, renderSortIndicator, columns }) => (
-  <thead className="bg-primary-50 dark:bg-primary-800">
+const ListingHeader = ({ handleSort, columns, listingSort }) => {
+
+  const indicator = (key) => {
+    if (!listingSort || !listingSort.key || listingSort.key !== key)
+      return null;
+    return listingSort.direction === "ascending" ? " ↑" : " ↓";
+  }
+
+  return <thead className="bg-primary-50 dark:bg-primary-800">
     <tr>
       {columns.sync && <EmptyHeader text="num" />}
       <SortableHeaderCell
         handleSort={handleSort}
-        renderSortIndicator={renderSortIndicator}
         label="Idiom"
         sortKey="text"
+        indicator={indicator("text")}
       />
       <SortableHeaderCell
         handleSort={handleSort}
-        renderSortIndicator={renderSortIndicator}
         label="Translation"
         sortKey="translation"
+        indicator={indicator("translation")}
       />
       {columns.tone && (
         <SortableHeaderCell
           handleSort={handleSort}
-          renderSortIndicator={renderSortIndicator}
           label="Tone"
           sortKey="tone"
+          indicator={indicator("tone")}          
         />
       )}
       {columns.usage && (
         <SortableHeaderCell
           handleSort={handleSort}
-          renderSortIndicator={renderSortIndicator}
           label="Usage"
           sortKey="usage"
+          indicator={indicator("usage")}
         />
       )}
       {columns.transcription && <EmptyHeader text="audio transcription" />}
       {columns.source && <EmptyHeader />}
       {columns.assign && <EmptyHeader />}
-      {columns.audio && <EmptyHeader />}
     </tr>
-  </thead>
-);
+  </thead>;
+}
 
 export default ListingHeader;
