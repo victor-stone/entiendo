@@ -48,7 +48,7 @@ const adminService = {
 
   assignIdiom: async (idiomId, source, authToken) => {
     return await post(
-      "/api/editor/assignidiom",
+      "/api/editor/assign",
       { idiomId, source },
       authToken
     );
@@ -62,6 +62,15 @@ const adminService = {
       authToken
     );
   },
+
+  assignPublish: async (idiomId, assign, authToken) => {
+    return await post(
+      "/api/editor/publish",
+      { idiomId, assign },
+      authToken
+    );
+  },
+
 
   /*(((((((((((((((())))))))))))))))
                 IMPORT

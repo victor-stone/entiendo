@@ -26,8 +26,12 @@ import * as exampleAPI  from  '../api/exampleAPI.js';
 export const routeTable = {
   // POST routes
   POST: {
-    '/api/editor/assignidiom': { 
+    '/api/editor/assign': { 
       handler: (routeContext) => adminAPI.assignEditorToIdiom(routeContext),
+      auth: true
+    },
+    '/api/editor/publish': { 
+      handler: (routeContext) => adminAPI.assignPublish(routeContext),
       auth: true
     },
     '/api/editor/fulfill': {

@@ -1,4 +1,21 @@
-import { HighlightedText } from '../ui';
+import { Glyph, HighlightedText } from '../ui';
+
+export function AssignPublish({ obj, context }) {
+  const { onUpdateRow } = context;
+  const onClick = (e) => {
+    e.stopPropagation(); // Prevents the <tr> onClick from firing
+    const ctx = {
+      action: 'publish',
+      assigned: obj.assigned
+    };
+    onUpdateRow(obj, ctx);
+  };
+  return (
+    <button id={obj.idiomId} onClick={onClick}>
+      <Glyph name="AcademicCapIcon" />
+    </button>
+  );
+}
 
 export function Assign({ obj, context }) {
   const { voices, onUpdateRow } = context;

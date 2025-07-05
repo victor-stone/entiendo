@@ -63,8 +63,18 @@ async function _doAssign({ model, idiomId, ...remains }, erase = false) {
   return model.update(idiomId, { assigned });
 }
 
-export async function graduateAssignmentToExample(record) {
-  return _doAssign({ model, idiomId: record.idiomId }, true);
+export async function assignPublish(routeContext) {
+  const { idiomId, assign } = routeContext.payload;
+  let model = new ExampleModel();
+  const rec = await model.createExample(
+    idiomId,
+    assign.transcription,
+    assign.conjugatedSnippet,
+    assign.source,
+    assign.audio);
+  model = new IdiomModel();
+  debugAss('Published example for %s', rec.text);
+  return _doAssign({ model, idiomId: rec.idiomId }, true);
 }
 
 /*
@@ -93,7 +103,10 @@ async function _getAssignableIdioms() {
 
   const idioms = idiomQuery.idioms();
 
-  return idioms.filter(({ idiomId }) => {
+  return idioms.filter(({ idiomId, assigned }) => {
+    if( assigned ) {
+      return true;
+    }
     const examples = exampleQuery.forIdiom(idiomId);
     return !examples || !examples.length;
   });

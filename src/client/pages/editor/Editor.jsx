@@ -32,6 +32,7 @@ export function Editor() {
 
   if (isAdmin) {
     columns.push("source");
+    columns.push("publish");
     filters.push("source");
   }
 

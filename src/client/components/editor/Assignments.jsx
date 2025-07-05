@@ -5,6 +5,7 @@ import {
   useAssignmentReportsStore,
   useAssignIdiomStore,
   useUserStore,
+  useAssignPublishStore,
 } from "../../stores";
 
 export default function Assignments({
@@ -28,6 +29,7 @@ export default function Assignments({
     patchData,
   } = useAssignmentReportsStore();
   const { error: assignError, assign } = useAssignIdiomStore();
+  const { error: pubError, publish }   = useAssignPublishStore();
 
   useEffect(() => {
     if (reportName !== report) {
@@ -60,20 +62,24 @@ export default function Assignments({
     return <LoadingSpinner />;
   }
 
-  async function commitAssign(id, value) {
-    let record = await assign(id, value, getToken);
-    patchData(record);
-  }
-
   async function _onUpdateRow(row, ctx) {
     if (onUpdateRow) {
       if (!onUpdateRow(row, ctx)) {
         return;
       }
     }
+
+    let record;
     if (ctx.action == "assignSource") {
-      await commitAssign(row.idiomId, ctx.source);
+      record = await assign(row.idiomId, ctx.source, getToken);
     }
+    if( ctx.action == 'publish' ) {
+      record = await publish(row.idiomId, ctx.assigned, getToken )
+    }
+    if( record ) {
+      patchData(record);
+    }
+      
   }
 
   return (

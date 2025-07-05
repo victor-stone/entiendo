@@ -1,5 +1,7 @@
 // idiomColumns.js
-import { Assign, AssignmentSync, AssignmentSource, AssignTranscription } from "../editor/Assign";
+import { Assign, AssignmentSync, AssignmentSource, AssignTranscription,
+  AssignPublish
+ } from "../editor/Assign";
 import { AssignmentAudio } from "../editor/AssignmentForm";
 
 export const ListingColumns = [
@@ -48,6 +50,11 @@ export const ListingColumns = [
     name: "assign",
     label: "Assign",
     render: (row, ctx) => <Assign obj={row} context={ctx} />
+  },
+  {
+    name: "publish",
+    label: "Publish",
+    render: (row, ctx) => <AssignPublish obj={row} context={ctx} />
   },
   {
     name: "source",
