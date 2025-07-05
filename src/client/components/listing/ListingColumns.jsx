@@ -47,9 +47,7 @@ export const ListingColumns = [
   {
     name: "assign",
     label: "Assign",
-    render: (row, ctx) => (
-      <Assign obj={row} voices={ctx.voices} onAssign={ctx.onUpdateRow} />
-    ),
+    render: (row, ctx) => <Assign obj={row} context={ctx} />
   },
   {
     name: "source",

@@ -25,9 +25,10 @@ async function _incSyncCounter() {
 */
 
 export async function assignEditorToIdiom(routeContext) {
+  // TODO: this is too much semantics packed into the 'source'
   const { idiomId, source } = routeContext.payload;
   const model = new IdiomModel();
-  return _doAssign({ model, idiomId, source });
+  return _doAssign({ model, idiomId, source }, source == '-unassign' );
 }
 
 async function _doAssign({ model, idiomId, ...remains }, erase = false) {
@@ -51,11 +52,13 @@ async function _doAssign({ model, idiomId, ...remains }, erase = false) {
       });
     } else {
       assigned = {
-        sync: await _incSyncCounter(),
         date: Date.now(),
         ...remains,
       };
     }
+  }
+  if( !assigned.sync ) {
+      assigned.sync = await _incSyncCounter();
   }
   return model.update(idiomId, { assigned });
 }

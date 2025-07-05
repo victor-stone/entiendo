@@ -5,16 +5,6 @@ import { useState } from "react";
 import Assignments from "../../components/editor/Assignments";
 import { TabButtons } from "../../components/ui";
 
-const columns_ = {
-  tone: true,
-  usage: true,
-  source: false,
-  assign: true,
-  sync: true,
-  audio: false,
-  search: true,
-};
-
 const columns = [
   'sync',
   'text',
