@@ -2,7 +2,7 @@ import { useState } from 'react';
 import IdiomImporter from '../../components/admin/IdiomImporter'
 import ImportManager from '../../components/admin/ImportManager';
 import { Card } from '../../components/layout';
-import Listing from '../../components/admin/Listing';
+import Listing from '../../components/listing/Listing';
 
 function IdiomImportPage() {
   const [parsedIdioms,     setParsedIdioms]     = useState([]);
@@ -45,7 +45,7 @@ function IdiomImportPage() {
       {parsedIdioms.length > 0 && (
         <Card title="Results">
           <Card.Body>
-            <Listing idioms={parsedIdioms} />
+            <Listing data={parsedIdioms} />
           </Card.Body>
         </Card>
       )}

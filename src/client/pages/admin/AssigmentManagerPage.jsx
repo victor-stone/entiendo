@@ -5,7 +5,7 @@ import { useState } from "react";
 import Assignments from "../../components/editor/Assignments";
 import { TabButtons } from "../../components/ui";
 
-const columns = {
+const columns_ = {
   tone: true,
   usage: true,
   source: false,
@@ -14,6 +14,21 @@ const columns = {
   audio: false,
   search: true,
 };
+
+const columns = [
+  'sync',
+  'text',
+  'tone',
+  'usage',
+  'assign'
+];
+
+const filters = [
+  'text',
+  'tone',
+  'usage',
+  'source'
+];
 
 export default function AssignmentManagerPage() {
   const { exampleId } = useParams();
@@ -35,7 +50,7 @@ export default function AssignmentManagerPage() {
         {activeTab === "upload" ? (
           <AudioManager exampleId={exampleId} />
         ) : (
-          <Assignments reportName="ASSIGNABLE_IDIOMS" features={columns} />
+          <Assignments report="ASSIGNABLE_IDIOMS" columns={columns} filters={filters}/>
         )}
       </Card.Body>
     </Card>

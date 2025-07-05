@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Listing from '../../components/admin/Listing';
+import Listing from '../../components/listing/Listing';
 import { useIdiomListStore, useUserStore } from '../../stores';
 import { Card } from '../../components/layout/Card';
 import LoadingIndicator from '../../components/ui/LoadingIndicator';
@@ -10,7 +10,7 @@ const debugRndr = debug('react:render');
 
 function IdiomListPage() {  
   debugRndr('IdiomListPage')
-  const [selectedIdiomId, setSelectedIdiomId] = useState(null);
+  const [selectedIdiom, setSelectedIdiom] = useState(null);
   const getToken = useUserStore(s => s.getToken);
   const { data, loading, fetch, error, reset } = useIdiomListStore();
   
@@ -30,15 +30,15 @@ function IdiomListPage() {
   }
 
   function onBack() {
-    setSelectedIdiomId(null)
+    setSelectedIdiom(null)
   }
 
   return (
     <Card title={`Idiom List (${data.length})`}>
       <Card.Body className="pb-0">
-        {selectedIdiomId             
-            ? <IdiomDetail idiomId={selectedIdiomId} onBack={onBack} onChange={reset} />            
-            : <Listing data={data} onSelectItem={setSelectedIdiomId} />
+        {selectedIdiom             
+            ? <IdiomDetail idiomId={selectedIdiom.idiomId} onBack={onBack} onChange={reset} />            
+            : <Listing data={data} onSelectRow={setSelectedIdiom} />
         }
       </Card.Body>
     </Card>

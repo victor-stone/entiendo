@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useIdiomTonesStore } from '../stores';
+import { useIdiomTonesStore, useUserStore } from '../stores';
 import { LoadingSpinner} from './ui';
 import { CardField } from './layout';
 import toneDescriptions from '../../shared/constants/toneDescriptions';
@@ -9,13 +9,14 @@ const debugRender = debug('app:idiom');
 
 const hint = 'Prioritize which idioms you see based on the context they are likely to be used in.';
 
-const ToneSelector = ({ getToken, value, onChange, required = false, allowSystem = false }) => {
+const ToneSelector = ({ value, onChange, required = false, allowSystem = false }) => {
   const { data, fetch, loading, error } = useIdiomTonesStore();
+  const { getToken } = useUserStore();
 
   debugRender('Tone selector value: %s', value);
 
   useEffect(() => {
-    if (!data && !loading) {
+    if (!data && !loading && !error ) {
       fetch(getToken);
     }
   }, [data, getToken, fetch, loading]);

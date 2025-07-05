@@ -11,7 +11,7 @@ const S = ({ children }) => (
 const E = (props) => <input type="text" className={ecss} {...props} />;
 
 export function AssignmentForm({ idiom, show, onClose }) {
-  if (!show) return null;
+  if (!show || !idiom || !Object.hasOwn(idiom,'assigned')) return null;
 
   const [transcription, setTranscription] = useState(
     idiom.assigned.transcription || ''
@@ -47,7 +47,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
       <Card title="Edit Assignment">
         <Card.Body>
           <Card.Field>
-            <S>{idiom.assigned.sync}</S>
+            <S>{idiom.assigned?.sync}</S>
           </Card.Field>
           <Card.Field title="Idiom">
             <S>{idiom.text}</S>
