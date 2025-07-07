@@ -17,6 +17,7 @@ export const ListingColumns = [
     label: "Text",
     key: "text",
     sortable: true,
+    defaultSort: true
   },
   {
     name: "translation",

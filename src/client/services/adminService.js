@@ -71,6 +71,10 @@ const adminService = {
     );
   },
 
+  editors: async (authToken) => {
+    return await get("api/editors", authToken);
+  },
+
 
   /*(((((((((((((((())))))))))))))))
                 IMPORT

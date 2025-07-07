@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Glyph, AudioPlayer } from "../ui";
-import { assignmentFulfill, useUserStore } from "../../stores";
+import { useAssignmentFulfillStore, useUserStore } from "../../stores";
 import { Card } from "../layout";
 
 const ecss = "border rounded px-2 py-1 w-full dark:text-primary-900";
@@ -20,7 +20,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
     idiom.assigned.conjugatedSnippet || ''
   );
   const [selectedFile, setSelectedFile] = useState(null);
-  const { fulfill, error, loading } = assignmentFulfill();
+  const { fulfill, error, loading } = useAssignmentFulfillStore();
   const { getToken, isAdmin } = useUserStore();
 
   async function onUpload() {

@@ -6,6 +6,8 @@ import { ListingFilters } from "./ListingFilters";
 import ListingHeader from "./ListingHeader";
 import ListingBody from "./ListingBody";
 import { ListingTools } from "./ListingTools";
+import debug from 'debug';
+const debugL = debug('app:listing');
 
 const Listing = ({
   data,
@@ -16,8 +18,13 @@ const Listing = ({
   onUpdateRow,
   onSelectRow,
 }) => {
+  // Find the default sort column from ListingColumns that is also in the active columns
+  const defaultSortCol = columns
+    .map((name) => ListingColumns.find((col) => col.name === name && col.defaultSort))
+    .find(Boolean);
+
   const [listingSort, setListingSort] = useState({
-    key: "",
+    key: defaultSortCol?.key,
     direction: "ascending",
   });
 
@@ -49,6 +56,11 @@ const Listing = ({
     data
   );
 
+  context.getValueForFilter = function (filterName) {
+    const filter = _filters.find(f => f.name === filterName);
+    return filter ? filterStates[filterName] : undefined;
+  }
+
   // Apply sorting
   const _columns = columns
     .map((name) => ListingColumns.find((col) => col.name === name))
@@ -69,6 +81,8 @@ const Listing = ({
     }
   }
 
+  debugL('Tools: %s', tools);
+  
   // Build tools from ListingTools by name
   const _tools = tools
     .map((name) => ListingTools.find((t) => t.name === name))
@@ -76,7 +90,7 @@ const Listing = ({
   // Compose tool UIs (pass filteredItems as rows)
   const toolUIs = _tools.map((t) => (
     <div key={t.name} className="mb-2 md:mb-0 w-full md:w-1/4">
-      {t.render({ rows: filteredItems })}
+      {t.render({ rows: filteredItems, context })}
     </div>
   ));
 

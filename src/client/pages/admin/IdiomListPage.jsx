@@ -6,13 +6,13 @@ import LoadingIndicator from '../../components/ui/LoadingIndicator';
 import IdiomDetail from '../../components/admin/IdiomDetail';
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('react:render');
+const debugRndr = debugId;
 
 function IdiomListPage() {  
   debugRndr('IdiomListPage')
   const [selectedIdiom, setSelectedIdiom] = useState(null);
   const getToken = useUserStore(s => s.getToken);
-  const { data, loading, fetch, error, reset } = useIdiomListStore();
+  const { data, loading, fetch, error, reset, insertData } = useIdiomListStore();
   
   useEffect(() => {
     if (!data && !loading) {
@@ -33,12 +33,22 @@ function IdiomListPage() {
     setSelectedIdiom(null)
   }
 
+  function onUpdateRow(row, context) {
+    if( context.action == 'addRow') {
+      insertData(row);
+    }
+  }
+
+  const tools = [
+    'newIdiomPopup'
+  ];
+
   return (
     <Card title={`Idiom List (${data.length})`}>
       <Card.Body className="pb-0">
         {selectedIdiom             
             ? <IdiomDetail idiomId={selectedIdiom.idiomId} onBack={onBack} onChange={reset} />            
-            : <Listing data={data} onSelectRow={setSelectedIdiom} />
+            : <Listing data={data} tools={tools} onSelectRow={setSelectedIdiom} onUpdateRow={onUpdateRow} />
         }
       </Card.Body>
     </Card>

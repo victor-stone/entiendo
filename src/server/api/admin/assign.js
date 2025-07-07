@@ -3,6 +3,7 @@ import {
   ExampleModel,
   IdiomModelQuery,
   ExampleModelQuery,
+  UserModel,
   SettingsModel,
 } from "../../models/index.js";
 import debug from "debug";
@@ -23,6 +24,17 @@ async function _incSyncCounter() {
     MANAGE ASSIGNMENTS
   ((((((((((()))))))))))
 */
+
+export async function editors() {
+  const model = new UserModel();
+  const all = await model.findAll();
+  const editors = all.reduce( (arr, u) => {
+    if(u.role == 'editor' || u.role == 'admin') {
+      arr.push(r.editor);
+    } 
+  }, []);
+  return editors;
+}
 
 export async function assignEditorToIdiom(routeContext) {
   // TODO: this is too much semantics packed into the 'source'

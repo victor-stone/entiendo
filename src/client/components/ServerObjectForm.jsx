@@ -43,7 +43,7 @@ export function ServerObjectForm({ title, numCols = 1, useFetchStore, usePutStor
                     <Card.Grid columns={numCols}>
                         {Object.entries(form).sort().map(([key, value]) => (
                             <React.Fragment key={key}>
-                                <Card.GridLabel title={key} right={numCols == 2} />
+                                <Card.GridLabel title={key.replaceAll('_', ' ')} right={numCols == 2} />
                                 <Card.GridField>
                                     {typeof value === 'string' && (value.length > 60 || value.includes('\n')) ? (
                                         <textarea

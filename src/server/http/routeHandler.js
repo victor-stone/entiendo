@@ -13,23 +13,18 @@ import { getUserFromRequest, requireAuth } from '../lib/auth.js';
  */
 export const handleRequest = async (req, res) => {
   try {
-    // Prepend '/api' to the path to match route definitions in routeTable.js
     const fullPath = `/api${req.path}`;
     
-    // Find the route handler for this method and path
     const handlerInfo = getRouteHandler(req.method, fullPath);
     
-    // Return 404 if no handler found
     if (!handlerInfo) {
       return res.status(404).json({
         message: `ENTIENDO API - missing endpoint: ${fullPath} not found`
       });
     }
     
-    // Check authentication if required
     let user = null;
     if (handlerInfo.auth) {
-      // Apply the Auth0 middleware for this request
       try {
         // The middleware will add auth information to the request
         await new Promise((resolve, reject) => {
@@ -44,6 +39,7 @@ export const handleRequest = async (req, res) => {
         
         // Get user info from the request
         user = await getUserFromRequest(req);
+
       } catch (error) {
         console.error('Authentication error:', error);
         return res.status(401).json({
@@ -52,45 +48,35 @@ export const handleRequest = async (req, res) => {
       }
     }
     
-    // Extract only needed file-related information from request
     const requestBody = req.body || {};
-    
-    // Add file-specific information if present
-    if (req.files || req.file) {
+        if (req.files || req.file) {
       requestBody.files = req.files || (req.file ? [req.file] : []);
     }
-    
-    // Add any other required request properties for file handling
     if (req.headers && req.headers['content-type']) {
       requestBody.contentType = req.headers['content-type'];
     }
     
-    // Prepare routeContext parameter object for API function
-    /**
-     * The 'routeContext' object provides a consistent interface for all API handlers:
-     *
-     * @property {Object} params   Path parameters for the route, as defined in the route table (e.g., /api/user/:id provides { id: ... }).
-     * @property {Object} query    Query string parameters from the request URL (e.g., /api/user?id=123 provides { id: "123" }).
-     * @property {Object} payload  The request body, including any file-related information (such as req.body, req.files, or req.file). Used for POST/PUT data and uploaded files.
-     * @property {Object|null} user The authenticated user object, if authentication is required for the route. Populated by the authentication middleware and contains user identity and claims.
-     */
     const routeContext = {
-      // Path parameters become params
-      params: handlerInfo.params || {},
-      // Query parameters
-      query: req.query || {},
-      // Request body becomes payload with file info included
+      params : handlerInfo.params || {},
+      query  : req.query || {},
       payload: requestBody,
-      // User info
-      user: user
+      user   : user
     };
     
-    // Call the handler function with proper try/catch
     let result;
     try {
+      /* 
+        {{{{{{{ CODE CALLED HERE }}}}}}} 
+      */
+
       result = await handlerInfo.handler(routeContext);
+
     } catch (handlerError) {
-      console.error(`Handler error for ${req.method} ${fullPath}:`, handlerError);
+
+      /* 
+        {{{{{{{ API ERRORS }}}}}}} 
+      */
+      console.error(`API Handler error for ${req.method} ${fullPath}:`, handlerError);
       console.error('Request details:', {
         method: req.method,
         path: req.path,
@@ -118,8 +104,14 @@ export const handleRequest = async (req, res) => {
     
     // Return the result directly
     return res.status(statusCode).json(result);
+
   } catch (error) {
-    console.error('API Error:', error);
+
+      /* 
+        {{{{{{{ SYSTEM ERRORS }}}}}}} 
+      */
+
+    console.error('API System Error:', error);
     console.error('Stack trace:', error.stack);
     console.error('Request details:', {
       method: req.method,
@@ -138,71 +130,4 @@ export const handleRequest = async (req, res) => {
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
-};
-
-/**
- * Send API result as response to the client
- * @param {Object} res - Express response object
- * @param {string} method - HTTP method
- * @param {Object} result - API result
- */
-const sendResponse = (res, method, result) => {
-  // Set status code based on method and result
-  let statusCode = 200;
-  if (method === 'POST' && !result.error) {
-    statusCode = 201; // Created
-  }
-  
-  // Send error response if result indicates error
-  if (result && result.error) {
-    statusCode = result.statusCode || 400;
-    return res.status(statusCode).json({
-      success: false,
-      error: result.error
-    });
-  }
-  
-  // Send successful response
-  return res.status(statusCode).json({
-    success: true,
-    data: result
-  });
-};
-
-/**
- * Handle API error and send appropriate response
- * @param {Error} error - API error
- * @param {Object} res - Express response object
- */
-const handleApiError = (error, res) => {
-  console.error('API error:', error);
-  
-  // Check for known error types with status codes
-  if (error.statusCode) {
-    return res.status(error.statusCode).json({
-      success: false,
-      error: error.message
-    });
-  }
-  
-  // Handle specific error types
-  if (error.name === 'ValidationError') {
-    return res.status(400).json({
-      success: false,
-      error: error.message
-    });
-  }
-  
-  if (error.name === 'NotFoundError') {
-    return res.status(404).json({
-      success: false,
-      error: error.message
-    });
-  }
-  
-  // Default to 500 for unknown errors
-  return res.status(500).json({
-    success: false,
-    error: 'Internal server error'
-  });
 };

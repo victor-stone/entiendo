@@ -44,7 +44,9 @@ export const CardField = ({ children, hint, title, text, isFull = true }) => (
 );
 
 const CardGrid = ({children, className, style, columns = 2}) => {
-  return <Grid columns={columns} className={className} style={style}>{children}</Grid>
+  // For 2 columns, set first to 25% and second to 75%
+  const gridTemplate = columns === 2 ? { gridTemplateColumns: '25% 75%' } : {};
+  return <Grid columns={columns} className={className} style={{...gridTemplate, ...style}}>{children}</Grid>
 }
 
 const CardGridLabel = ({ title, right = true }) => (

@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { storeFetch } from '../lib/storeUtils';
 import adminService from '../services/adminService'
-const { assignFulfill, assignIdiom, assignmentReports, assignPublish } = adminService;
+const { assignFulfill, assignIdiom, assignmentReports, 
+  assignPublish, editors } = adminService;
 
 export const useAssignPublishStore = create((set, get) => ({
   loading: false,
@@ -19,7 +20,15 @@ export const useAssignIdiomStore = create((set, get) => ({
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
-export const assignmentFulfill = create((set, get) => ({
+export const useEditorsStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(editors, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
+
+export const useAssignmentFulfillStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,

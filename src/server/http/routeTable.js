@@ -60,8 +60,6 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.updateIdiom(routeContext),
       auth: true
     },
-
-
     '/api/admin/idioms': {
       handler: (routeContext) => adminAPI.importIdioms(routeContext),
       auth: true
@@ -113,6 +111,11 @@ export const routeTable = {
   
   // GET routes
   GET: {
+    '/api/editors': { 
+      handler: (routeContext) => adminAPI.editors(routeContext),
+      auth: true
+    },
+
     '/api/admin/resetcaches': { 
       handler: (routeContext) => adminAPI.resetCaches(routeContext),
       auth: true

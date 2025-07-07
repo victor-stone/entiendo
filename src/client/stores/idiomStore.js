@@ -15,6 +15,11 @@ export const useIdiomListStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
+  insertData: idiom => {
+    const data = get().data;
+    data.push(idiom);
+    set({ data })
+  },
   fetch: storeFetch(getIdiomsList, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));

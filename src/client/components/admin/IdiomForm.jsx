@@ -6,7 +6,7 @@ import debug from 'debug';
 
 const debugIF = debug('app:idiom');
 
-const IdiomForm = ({ idiom, onChange, onError }) => {
+const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) => {
   debugIF('IdiomForm')
   const getToken = useUserStore(state => state.getToken);
   const {
@@ -22,7 +22,7 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
     error: createError,
     reset: createReset } = useCreateIdiomStore();
   // Form state
-  const [text, setIdiomText] = useState('');
+  const [text, setIdiomText] = useState(textProp);
   const [translation, setTranslation] = useState('');
   const [tone, setTone] = useState('Casual');
   const [usage, setUsage] = useState('8');
@@ -45,6 +45,7 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
       setUsage(idiom.usage?.toString());
     } else {
       resetForm();
+      setIdiomText(textProp);
     }
     // eslint-disable-next-line
   }, [idiom]);
@@ -59,13 +60,15 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
     };
 
     const token = await getToken();
+    let record;
     if (idiom) {
-      await update(idiom.idiomId, idiomData, token);
+      record = await update(idiom.idiomId, idiomData, token);
       reset();
     } else {
-      await create(idiomData, token);
+      record = await create(idiomData, token);
       resetForm();
     }
+    onSave && onSave(record);
   };
 
   if (created) {
@@ -83,10 +86,12 @@ const IdiomForm = ({ idiom, onChange, onError }) => {
     debugIF('Error: %o', error || createError)
   }
 
+  const w = wide ? 'w-full' : 'w-2/3';
+
   return (
     <>
       <div className=" justify-center items-center flex">
-        <Card.Grid className="bg-secondary-100 dark:bg-primary-900 p-4 w-2/3" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
+        <Card.Grid className={`bg-secondary-100 dark:bg-primary-900 p-4 ${w}`} style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
           {(error || createError) &&
             <><Card.GridLabel title="Error" /> <Card.GridField><p className="text-red-500">{'Error on save ' + (error || createError || '')}</p></Card.GridField></>
           }

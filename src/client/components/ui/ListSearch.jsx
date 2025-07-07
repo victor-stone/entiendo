@@ -9,7 +9,7 @@ import React from "react";
  * @param {string} [label] - Optional label for the input (defaults to "Search").
  */
 const ListSearch = ({ searchTerm, setSearchTerm, className, placeholder, label }) => (
-  <div className={className || "md:w-1/3"}>
+  <div className={className}>
     <label className="block text-sm font-medium text-primary-700 dark:text-primary-300 mb-1">
       {label || "Search"}
     </label>

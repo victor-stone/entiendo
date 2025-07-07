@@ -37,8 +37,8 @@ SettingsModel.get = (key) => _cache[key];
 SettingsModel.all = () => ({ ..._cache });
 const _singleton = new SettingsModel();
 SettingsModel.flush = async () => {
-  debugSettings("Flushing settings cache");
   const records = await _singleton.findAll();
+  debugSettings("Flushing settings cache");
   records.reduce((obj, { settingsId, value }) => {
     obj[settingsId] = value;
     return obj;
