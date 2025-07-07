@@ -1,6 +1,9 @@
 import { Glyph, HighlightedText } from '../ui';
 
 export function AssignPublish({ obj, context }) {
+  if( !obj.assigned?.audio?.publicUrl ) {
+    return null;
+  }
   const { onUpdateRow } = context;
   const onClick = (e) => {
     e.stopPropagation(); // Prevents the <tr> onClick from firing

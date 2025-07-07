@@ -20,6 +20,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
     idiom.assigned.conjugatedSnippet || ''
   );
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isDragActive, setIsDragActive] = useState(false);
   const { fulfill, error, loading } = useAssignmentFulfillStore();
   const { getToken, isAdmin } = useUserStore();
 
@@ -38,8 +39,27 @@ export function AssignmentForm({ idiom, show, onClose }) {
     setSelectedFile(e.target.files[0] || null);
   }
 
-  function handleUpload() {
-    postFile(selectedFile);
+  function onDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) {
+      setSelectedFile(file);
+      // Optionally, update the file input value (not always possible for security reasons)
+    }
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(true);
+  }
+
+  function onDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
   }
 
   return (
@@ -74,11 +94,29 @@ export function AssignmentForm({ idiom, show, onClose }) {
             </Card.Field>
           )}
           <Card.Field title="Audio File">
+            <div
+              className={`border-2 border-dashed rounded p-4 mb-2 text-center cursor-pointer transition-colors ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white dark:bg-gray-800'}`}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onClick={() => document.getElementById('audio-file-input')?.click()}
+              tabIndex={0}
+              role="button"
+              aria-label="Drop audio file here or click to select"
+            >
+              {selectedFile ? (
+                <span>{selectedFile.name}</span>
+              ) : (
+                <span>Drag & drop audio file here, or click to select</span>
+              )}
+            </div>
             <input
-              className={ecss}
+              id="audio-file-input"
+              className={ecss + ' hidden'}
               type="file"
               accept="audio/*"
               onChange={onFileChange}
+              tabIndex={-1}
             />
           </Card.Field>
           <Card.Field className="flex gap-2 mt-4">
