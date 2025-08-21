@@ -4,6 +4,7 @@ export { default as UserModel } from './UserModel.js';
 export { default as ProgressModel } from './ProgressModel.js';
 export { default as PromptModel } from './PromptModel.js';
 export { default as SettingsModel } from './SettingsModel.js';
+export { default as ReportModel } from './ReportModel.js';
 
 export { default as ExampleModelQuery} from './ExampleModelQuery.js';
 export { default as ProgressModelQuery } from './ProgressModelQuery.js';

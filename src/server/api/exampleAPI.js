@@ -34,3 +34,15 @@ export async function updateExample(routeContext) {
     return await model.update(exampleId, payload);
 
 }
+
+/**
+ * Generates a unique, S3-safe audio filename for an example record
+ * @param {object} example - The example record (should have id and text fields)
+ * @returns {string} - The generated filename (e.g. example_abc123_hello_world_1720377600000.mp3)
+ */
+export function generateExampleAudioFilename(example) {
+  const base = example.exampleId;
+  const text = example.text.toString().substring(0, 20).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const timestamp = Date.now();
+  return `${text}_${base}_${timestamp}.mp3`;
+}

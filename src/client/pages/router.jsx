@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { Page, Main } from '../components/layout';
 import { Landing, Dashboard, Preferences, Exercise, 
   Calendar, BugReport, Sandbox, About, License,
-  Chat } from './index';
+  Chat, Reports } from './index';
 import { IdiomListPage, IdiomImportPage, ResetCache,
   AssignmentManagerPage, NewExamplePage, NewIdiomPage,
   SettingsPage, PromptsPage } from './admin';
@@ -88,6 +88,7 @@ const router = createBrowserRouter([
           { path: 'exercise',    element: <Exercise /> },
           { path: 'calendar',    element: <Calendar /> },
           { path: 'sandbox',     element: <Sandbox /> },
+          { path: 'reports',     element: <Reports /> },
           { path: 'bugreport',   element: <BugReport /> }
         ],
       },

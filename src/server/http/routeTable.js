@@ -16,6 +16,7 @@ import * as adminAPI    from  '../api/admin/index.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
 import * as sandboxAPI  from  '../api/sandboxAPI.js';
 import * as exampleAPI  from  '../api/exampleAPI.js';
+import * as reportAPI   from  '../api/reportingAPI.js';
 
 /**
  * The route table maps HTTP methods and paths to handler functions
@@ -111,6 +112,24 @@ export const routeTable = {
   
   // GET routes
   GET: {
+    '/api/reports': { 
+      handler: (routeContext) => reportAPI.getAllReports(routeContext),
+      auth: true
+    },
+    '/api/report/:reportId': { 
+      handler: (routeContext) => reportAPI.getReport(routeContext),
+      auth: true
+    },
+    '/api/report/generate': { 
+      handler: (routeContext) => reportAPI.generateReport(routeContext),
+      auth: true
+    },
+    
+    '/api/editors': { 
+      handler: (routeContext) => adminAPI.editors(routeContext),
+      auth: true
+    },
+
     '/api/editors': { 
       handler: (routeContext) => adminAPI.editors(routeContext),
       auth: true

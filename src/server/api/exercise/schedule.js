@@ -1,6 +1,7 @@
 import { ProgressModelQuery } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
+import { getReportState } from '../reportingAPI.js';
 
 export async function schedule(routeContext) {
   const userId   = routeContext.user.userId;
@@ -25,7 +26,8 @@ function _confidence(item) {
 }
 
 export async function scheduleStats(routeContext) {
-  const { user: { userId } } = routeContext;
+  const { user } = routeContext;
+  const { userId } = user;
 
   const query = await ProgressModelQuery.create(userId);
   const progress = query.schedule();
@@ -54,7 +56,8 @@ export async function scheduleStats(routeContext) {
     isNewAllowed : canNew,
     numSandboxes : sandboxes?.length || 0,
     missed       : missed.length,
-    unique       : unique.length
+    unique       : unique.length,
+    reportState    : await getReportState(user)
   }
 
   stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;

@@ -8,3 +8,4 @@ export * from './queryStore';
 export * from './sandboxStore';
 export * from './brandImageStore';
 export * from './editorStore';
+export * from './reportingStore';

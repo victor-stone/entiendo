@@ -80,10 +80,10 @@ const azureTTS = {
   /**
    * Generates speech from text using Azure TTS and uploads to S3
    * @param {string} text - The Spanish text to convert to speech
-   * @param {string} [voice='es-AR-ElenaNeural'] - The voice to use
+   * @param {string} [voice='es-UY-ValentinaNeural'] - The voice to use
    * @returns {Promise<{url: string, presignedUrl: string, expires: number}>} - The S3 URL, presigned URL, and expiry timestamp
    */
-  generateSpeech: async (text, voice = 'es-AR-ElenaNeural') => {
+  generateSpeech: async (text, voice = 'es-UY-ValentinaNeural') => {
     try {
       debugTTS(`[TTS] Starting speech generation for text: "${text}"`);
       debugTTS(`[TTS] Using voice: ${voice}`);
@@ -277,5 +277,51 @@ export async function deleteAudioFromS3(url) {
     });
   } catch (error) {
     throw new Error(`Failed to delete audio from S3: ${error.message}`);
+  }
+}
+
+/**
+ * Renames an audio file in S3 by copying to a new key and deleting the old one
+ * @param {string} oldUrlOrKey - The S3 URL or S3 key of the audio file to rename
+ * @param {string} newFilename - The new filename (should include extension, e.g. 'newfile.mp3')
+ * @returns {Promise<{publicUrl: string, url: string, expires: number}>} - The new S3 URLs and expiry timestamp
+ */
+export async function renameAudioInS3(oldUrlOrKey, newFilename) {
+  try {
+    const oldKey = getS3Key(oldUrlOrKey);
+    const newKey = getS3Key(`tts/${newFilename}`);
+    const bucket = process.env.AUDIO_BUCKET;
+
+    // Copy the object to the new key
+    await s3.copyObject({
+      Bucket: bucket,
+      CopySource: `/${bucket}/${oldKey}`,
+      Key: newKey
+    });
+
+    // Delete the old object
+    await s3.deleteObject({
+      Bucket: bucket,
+      Key: oldKey
+    });
+
+    // Generate the permanent S3 URL
+    const s3Url = `https://${bucket}.s3.amazonaws.com/${newKey}`;
+
+    // Generate a presigned URL that expires in 1 hour (3600 seconds)
+    const getObjectParams = {
+      Bucket: bucket,
+      Key: newKey
+    };
+    const command = new GetObjectCommand(getObjectParams);
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    return {
+      publicUrl: s3Url,
+      url: presignedUrl,
+      expires: Date.now() + (3600 * 1000)
+    };
+  } catch (error) {
+    throw new Error(`Failed to rename audio in S3: ${error.message}`);
   }
 }

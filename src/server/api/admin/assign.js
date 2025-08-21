@@ -7,10 +7,13 @@ import {
   SettingsModel,
 } from "../../models/index.js";
 import debug from "debug";
-import { deleteAudioFromS3, uploadAudioToS3 } from "../../lib/audio.js";
+import { deleteAudioFromS3, uploadAudioToS3, renameAudioInS3 } from "../../lib/audio.js";
 import { checkUrlExpiration } from "../lib/finalizeExample.js";
+import { generateExampleAudioFilename } from "../exampleAPI.js";
 
 const debugAss = debug("api:assign");
+
+const MAGIC_WORD = 'assigned';
 
 async function _incSyncCounter() {
   const counter = SettingsModel.get("SYNC_COUNTER");
@@ -67,10 +70,10 @@ async function _doAssign({ model, idiomId, ...remains }, erase = false) {
         date: Date.now(),
         ...remains,
       };
+      if( !assigned.sync ) {
+          assigned.sync = await _incSyncCounter();
+      }
     }
-  }
-  if( !assigned.sync ) {
-      assigned.sync = await _incSyncCounter();
   }
   return model.update(idiomId, { assigned });
 }
@@ -84,9 +87,17 @@ export async function assignPublish(routeContext) {
     assign.conjugatedSnippet,
     assign.source,
     assign.audio);
-  model = new IdiomModel();
+
+  // Check if audio filename starts with 'assigned_' and rename if needed
+  if (rec.audio && rec.audio.publicUrl && rec.audio.publicUrl.includes( MAGIC_WORD + '_')) {
+    const newFilename = generateExampleAudioFilename(rec);
+    const audio = await renameAudioInS3(rec.audio.publicUrl, newFilename);
+    model.addAudio(rec.exampleId, audio);
+  }
+
+  const idiomModel = new IdiomModel();
   debugAss('Published example for %s', rec.text);
-  return _doAssign({ model, idiomId: rec.idiomId }, true);
+  return _doAssign({ model: idiomModel, idiomId: rec.idiomId }, true);
 }
 
 /*
@@ -101,7 +112,24 @@ export async function assignmentReports(routeContext) {
     ASSIGNABLE_IDIOMS: _getAssignableIdioms,
     ASSIGNED_IDIOMS: _getAssignedIdioms,
   };
-  return await AUDIO_REPORTS[reportName](routeContext.payload);
+  
+  const idioms = await AUDIO_REPORTS[reportName](routeContext.payload);
+
+  const model = new IdiomModel();
+
+  for( var i = 0; i < idioms.length; i++ ) {
+    const idiom = idioms[i];
+    if( idiom?.assigned?.audio?.publicUrl ) {
+      const url = idiom.assigned?.audio?.url;
+      idiom.assigned.audio = await checkUrlExpiration(idiom.assigned.audio);
+      const needUpdate = url !== idiom.assigned?.audio?.url;
+      if( needUpdate ) {
+        const assigned = { ...idiom.assigned };
+        await model.update(idiom.idiomId, { assigned });
+      }
+    }
+  }
+  return idioms;
 }
 
 async function _getAssignedIdioms({ editor }) {
@@ -131,7 +159,7 @@ async function _getAssignableIdioms() {
 */
 
 export async function deleteAudioForExample(exampleId) {
-  const query = ExampleModelQuery.create();
+  const query   = ExampleModelQuery.create();
   const example = query.example(exampleId);
   await deleteAudioFromS3(example.audio.publicUrl);
   const model = new ExampleModel();
@@ -162,9 +190,6 @@ function _extractSnippet({ transcription, conjugatedSnippet }) {
  * review and tweak the audio before graduating it to
  * be an example.
  *
- * TODO: next is a function to 'graduate' the assigned
- * info to a ful fledged example.
- *
  * @param {Object} routeContext - Unified parameter object
  * @returns {Promise<Object>} - Updated example with audio information
  */
@@ -174,7 +199,7 @@ export async function assignmentFulfill(routeContext) {
 
   try {
     // This WILL overwrite any previous file (by design)
-    const filename = `assigned_${idiomId}.mp3`;
+    const filename = `${MAGIC_WORD}_${idiomId}.mp3`;
     const audioContent =
       payload.file !== "" && (payload.file || payload.files.file).data;
     const contentType = audioContent

@@ -50,6 +50,13 @@ aws dynamodb create-table \
   --region sa-east-1
 
 aws dynamodb create-table \
+  --table-name "Reports" \
+  --attribute-definitions '[{"AttributeName":"reportId","AttributeType":"S"}]' \
+  --key-schema '[{"AttributeName":"reportId","KeyType":"HASH"}]' \
+  --provisioned-throughput "ReadCapacityUnits=5,WriteCapacityUnits=5" \
+  --region sa-east-1
+
+aws dynamodb create-table \
   --table-name "Settings" \
   --attribute-definitions '[{"AttributeName":"settingsId","AttributeType":"S"}]' \
   --key-schema '[{"AttributeName":"settingsId","KeyType":"HASH"}]' \

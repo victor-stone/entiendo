@@ -9,7 +9,9 @@ import debug from 'debug';
 import img1 from "../assets/images/icecream.png";
 import img2 from "../assets/images/clock.png";
 import img3 from "../assets/images/doll.png";
+import img4 from "../assets/images/brain.png";
 import DoExerciseTitle from '../components/DoExerciseTitle';
+import * as ReportStates from '../../shared/constants/reportStates';
 
 const debugRender = debug('react:render');
 
@@ -36,6 +38,7 @@ const Dashboard = () => {
   }
   const showCalendar = data.numSeen > 0;
   const showSandbox = data.upToDate && data.missed;
+  const reportState = data.reportState;
 
   return (
     <Card title={<DoExerciseTitle title="¡Bienvenido!" scheduleStats={data} getToken={getToken} />}>
@@ -71,7 +74,19 @@ const Dashboard = () => {
                   : <div>Your playroom is empty.</div>
             }
           </div>
-          
+          { 0 && 
+          <div className="place-items-center text-center">
+            <HeaderImage img={img4} alt="Doll" />
+            {reportState == ReportStates.RS_NOREP_NO_AVAIL
+              ? <div>Your progress reports will be here.</div>
+              : <>
+                <div className='text-left'>Progress reports are here.</div>
+                <PageLink page="/app/reports" text="See Reports" />
+              </>
+            }
+          </div>
+          }
+
         </Grid>
       </Card.Body>
     </Card>

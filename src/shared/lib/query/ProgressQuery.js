@@ -3,11 +3,19 @@ import { usageToPathRange } from './helpers.js';
 
 const dateASC = (a,b) => a.dueDate - b.dueDate;
 
+/*
+    All of the methods here assume the data intializing this
+    class is already filtered by user.
+
+    This class should be really called PerUserProgressQuery
+
+*/
 export default class ProgressQuery extends query {
     constructor(data) {
         super(data,'progressId');
     }
 
+    // for debugging...
     _limitToUser(userId) {
         this._data = this.q('..{.userId == $userId}', { userId } );
     }
@@ -57,6 +65,24 @@ export default class ProgressQuery extends query {
 
     forIdiom(idiomId) {
         return this.queryOne(`..{.idiomId == "${idiomId}"}`);
+    }
+
+    /* return an array of progress objects, each with its .history property filtered 
+       to only include entries between the from and to dates. Any progress object with 
+       no history entries in that range is excluded from the result. The function does 
+       not return a flat list of history entries, but rather the filtered progress objects 
+       themselves
+    */
+    history(from,to = Date.now()) {
+        const prog = this.q('..{.progressId && !.isSandbox}');
+        if( prog.length ) {
+            const progress = JSON.parse(JSON.stringify(prog));
+            return progress.filter( p => {
+                p.history = p.history.filter(({date}) => date >= from && date <= to);
+                return p.history.length > 0 ;
+            });
+        }
+        return [];
     }
 
     sandboxes() {
