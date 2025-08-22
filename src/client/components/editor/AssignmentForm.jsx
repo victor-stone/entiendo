@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Glyph, AudioPlayer } from "../ui";
 import { useAssignmentFulfillStore, useUserStore } from "../../stores";
 import { Card } from "../layout";
+import debug from 'debug';
+
+const debugAudio = debug('app:audio');
 
 const ecss = "border rounded px-2 py-1 w-full dark:text-primary-900";
 
@@ -9,6 +12,33 @@ const S = ({ children }) => (
   <span className={ecss + " bg-secondary-100"}>{children}</span>
 );
 const E = (props) => <input type="text" className={ecss} {...props} />;
+
+function pickRecordingMime() {
+  const tryList = [
+    "audio/mp4;codecs=mp4a.40.2", // AAC-LC in MP4 (preferred)
+    "audio/mp4",                   // Generic MP4 container (M4A)
+    "audio/webm;codecs=opus"      // Fallback for Chrome/Edge
+  ];
+  for (const t of tryList) {
+    try {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
+        return t;
+      }
+    } catch (_) { /* ignore */ }
+  }
+  return undefined; // Final fallback: let the browser decide
+}
+
+function extForMime(mime) {
+  if (!mime) return "webm";
+  const m = String(mime).toLowerCase();
+  if (m.startsWith("audio/mp4") || m.startsWith("audio/m4a")) return "m4a";
+  if (m.startsWith("audio/webm")) return "webm";
+  if (m.startsWith("audio/ogg")) return "ogg";
+  if (m.startsWith("audio/mpeg")) return "mp3";
+  if (m.startsWith("audio/wav")) return "wav";
+  return "audio";
+}
 
 export function AssignmentForm({ idiom, show, onClose }) {
   if (!show || !idiom || !Object.hasOwn(idiom,'assigned')) return null;
@@ -69,16 +99,23 @@ export function AssignmentForm({ idiom, show, onClose }) {
   async function startRecording() {
     setRecorderError("");
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      let localChunks = [];
-      const mr = new window.MediaRecorder(stream);
+      const stream      = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let   localChunks = [];
+      const mimeType    = pickRecordingMime();
+      const mr          = mimeType ? new window.MediaRecorder(stream, { mimeType }) : new window.MediaRecorder(stream);
       setMediaRecorder(mr);
       mr.ondataavailable = (e) => {
         if (e.data.size > 0) localChunks.push(e.data);
       };
       mr.onstop = () => {
-        const blob = new Blob(localChunks, { type: mr.mimeType });
-        const file = new File([blob], `recording.${mr.mimeType.split('/')[1] || 'webm'}`);
+        // Prefer the recorder-reported type; if missing, use our chosen one; otherwise default to MP4
+        const fallback  = mimeType || "audio/mp4";
+        const finalMime = (mr.mimeType && mr.mimeType.trim()) ? mr.mimeType : fallback;
+        const blob      = new Blob(localChunks, { type: finalMime });
+        const ext       = extForMime(finalMime);
+        const file      = new File([blob], `recording.${ext}`, { type: finalMime });
+        
+        debugAudio("Recorder picked:", mr.mimeType, "| used:", finalMime);
         setSelectedFile(file);
         stream.getTracks().forEach((track) => track.stop());
       };

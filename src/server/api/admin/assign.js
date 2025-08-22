@@ -115,21 +115,28 @@ export async function assignmentReports(routeContext) {
   
   const idioms = await AUDIO_REPORTS[reportName](routeContext.payload);
 
-  const model = new IdiomModel();
+  await checkAudioUrl();
 
-  for( var i = 0; i < idioms.length; i++ ) {
-    const idiom = idioms[i];
-    if( idiom?.assigned?.audio?.publicUrl ) {
-      const url = idiom.assigned?.audio?.url;
-      idiom.assigned.audio = await checkUrlExpiration(idiom.assigned.audio);
-      const needUpdate = url !== idiom.assigned?.audio?.url;
-      if( needUpdate ) {
-        const assigned = { ...idiom.assigned };
-        await model.update(idiom.idiomId, { assigned });
+  return idioms;
+
+  /* ensure and save browser audio url */
+  
+  async function checkAudioUrl() {
+    const model = new IdiomModel();
+
+    for (var i = 0; i < idioms.length; i++) {
+      const idiom = idioms[i];
+      if (idiom?.assigned?.audio?.publicUrl) {
+        const url = idiom.assigned?.audio?.url;
+        idiom.assigned.audio = await checkUrlExpiration(idiom.assigned.audio);
+        const needUpdate = url !== idiom.assigned?.audio?.url;
+        if (needUpdate) {
+          const assigned = { ...idiom.assigned };
+          await model.update(idiom.idiomId, { assigned });
+        }
       }
     }
   }
-  return idioms;
 }
 
 async function _getAssignedIdioms({ editor }) {
