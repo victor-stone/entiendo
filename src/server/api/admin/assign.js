@@ -33,10 +33,12 @@ export async function editors() {
   const all = await model.findAll();
   const editors = all.reduce( (arr, u) => {
     if(u.role == 'editor' || u.role == 'admin') {
-      arr.push(r.editor);
+      debugAss('Found editor: ' + u.editor)
+      arr.push(u.editor);
     } 
+    return arr;
   }, []);
-  return editors;
+  return editors.filter( e => !!e );
 }
 
 export async function assignEditorToIdiom(routeContext) {

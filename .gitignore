@@ -145,5 +145,6 @@ staging/audio
 staging/stages
 staging/import
 staging/query
-scripts/temp.js
+
+scripts/temp*.*
 scripts/todays-fix-2.js

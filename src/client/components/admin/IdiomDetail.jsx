@@ -20,7 +20,7 @@ export const IdiomInfo = ({ idiom, tight = false }) => {
         <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
         <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
         <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
-        {idiom.assigned?.source && (<><Card.GridLabel title="Voice" /> <Card.GridField>{idiom.assigned.source}</Card.GridField></>) }
+        {idiom.assigned?.source && (<><Card.GridLabel title="Assigned" /> <Card.GridField>{idiom.assigned.source}</Card.GridField></>) }
         {idiom.assigned?.transcription && (<><Card.GridLabel title="Transcription" /> <Card.GridField>{idiom.assigned.transcription}</Card.GridField></>) }
         <Card.GridLabel title="Id" /> 
         <Card.GridField>

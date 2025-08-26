@@ -30,9 +30,26 @@ export async function getExampleById(routeContext) {
 
 export async function updateExample(routeContext) {
     const { params: { exampleId }, payload } = routeContext;
-    const model = new ExampleModel();
-    return await model.update(exampleId, payload);
 
+    const model   = new ExampleModel();
+    const example = await model.getById(exampleId);
+    const audio   = { ...(example.audio || {}) };
+
+    const {
+      voice,
+      ...fields
+    } = payload;
+
+    if( fields.contentType ) {
+      delete fields.contentType;
+    }
+    
+    if( voice ) {
+      audio.voice = voice;
+    }
+
+    const update = { ...fields, audio };
+    return await model.update(exampleId, update);
 }
 
 /**

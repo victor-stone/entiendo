@@ -1,4 +1,5 @@
 import { Glyph, HighlightedText } from '../ui';
+import EditorPicker from '../editor/EditorPicker';
 
 export function AssignPublish({ obj, context }) {
   if( !obj.assigned?.audio?.publicUrl ) {
@@ -21,27 +22,15 @@ export function AssignPublish({ obj, context }) {
 }
 
 export function Assign({ obj, context }) {
-  const { voices, onUpdateRow } = context;
+  const { onUpdateRow } = context;
   async function onChange(value) {
     onUpdateRow( obj, { 
       source: value || '-unassign',
       action: 'assignSource'
     } );
   }
-  return (
-    <span>
-      <select
-        value={obj.assigned?.source || ""}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option></option>
-        {voices.map((voice, i) => (
-          <option key={i}>{voice}</option>
-        ))}
-      </select>
-    </span>
-  );
-}
+  return <EditorPicker voice={obj?.assigned?.source} onChange={onChange} ecss='' expanded={false} />
+}  
 
 export function AssignmentSync({ assigned }) {
   return <span>{assigned?.sync}</span>;

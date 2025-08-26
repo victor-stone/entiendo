@@ -6,6 +6,8 @@ import debug from 'debug';
 
 const debugIF = debug('app:idiom');
 
+const ecss = "border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2 ml-2";
+
 const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) => {
   debugIF('IdiomForm')
   const getToken = useUserStore(state => state.getToken);
@@ -101,7 +103,7 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
               type="text"
               value={text}
               onChange={(e) => setIdiomText(e.target.value)}
-              className="block w-full border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2"
+              className={"block w-full " + ecss}
               required
             />
           </Card.GridField>
@@ -110,7 +112,7 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
               type="text"
               value={translation}
               onChange={(e) => setTranslation(e.target.value)}
-              className="block w-full border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2"
+              className={"block w-full " + ecss}
               required
             />
           </Card.GridField>
@@ -126,7 +128,7 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
             <select
               value={usage}
               onChange={e => setUsage(e.target.value)}
-              className="block border border-gray-300 dark:text-primary-900  rounded-md shadow-sm p-2"
+              className={"block " + ecss}
               disabled={updating || creating}
             >
               <option>1</option>

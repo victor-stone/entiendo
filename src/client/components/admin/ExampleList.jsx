@@ -4,13 +4,19 @@ import ExampleForm from './ExampleForm';
 import { Card } from '../layout';
 import debug from 'debug';
 const debugId = debug('app:idiom');
-const debugRndr = debug('react:render');
+const debugRndr = debug('app:render');
 
 const Example = ({ example }) => {
   debugRndr('Example');
+  const voice  = example?.audio?.voice;
+  const source = voice ? '' : example.source;
+  const url    = example?.audio.url;
+
   return <div className="space-y-2">
     <HighlightedText text={example.text} highlightedSnippet={example.conjugatedSnippet} />
-    {example.audio && example.audio.url && <AudioPlayer isAdmin url={example.audio.url} />}
+    {voice  && <div><b>Voice: </b> <span>{voice}</span></div>}
+    {source && <div><b>Source: </b> <span>{source}</span></div>}
+    {url    && <AudioPlayer isAdmin url={url} />}
   </div>
 }
 

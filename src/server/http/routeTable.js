@@ -130,11 +130,6 @@ export const routeTable = {
       auth: true
     },
 
-    '/api/editors': { 
-      handler: (routeContext) => adminAPI.editors(routeContext),
-      auth: true
-    },
-
     '/api/admin/resetcaches': { 
       handler: (routeContext) => adminAPI.resetCaches(routeContext),
       auth: true
