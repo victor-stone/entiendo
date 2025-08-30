@@ -53,7 +53,7 @@ async function _doAssign({ model, idiomId, ...remains }, erase = false) {
   debugAss(
     "doing %s %s %s",
     erase ? "erase" : "assign",
-    remains.source || "",
+    remains.source || remains.audio.voice || "",
     rec.text
   );
   let assigned;
@@ -94,7 +94,7 @@ export async function assignPublish(routeContext) {
   if (rec.audio && rec.audio.publicUrl && rec.audio.publicUrl.includes( MAGIC_WORD + '_')) {
     const newFilename = generateExampleAudioFilename(rec);
     const audio = await renameAudioInS3(rec.audio.publicUrl, newFilename);
-    model.addAudio(rec.exampleId, audio);
+    model.addAudio(rec.exampleId, { ...assign.audio, ...audio });
   }
 
   const idiomModel = new IdiomModel();
@@ -204,7 +204,7 @@ function _extractSnippet({ transcription, conjugatedSnippet }) {
  */
 export async function assignmentFulfill(routeContext) {
   const { payload } = routeContext;
-  const { idiomId, transcription, conjugatedSnippet } = payload;
+  const { idiomId, transcription, conjugatedSnippet, editor } = payload;
 
   try {
     // This WILL overwrite any previous file (by design)
@@ -218,6 +218,8 @@ export async function assignmentFulfill(routeContext) {
       ? await uploadAudioToS3(audioContent, filename, contentType)
       : undefined;
 
+    audio && editor && (audio.voice = editor);
+    
     const assignment = {
       model: new IdiomModel(),
       idiomId,

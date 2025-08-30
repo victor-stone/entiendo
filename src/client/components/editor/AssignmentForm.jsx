@@ -40,6 +40,12 @@ function extForMime(mime) {
   return "audio";
 }
 
+export function AssignmentAudio({ r }) {
+  const hasAudio = r.assigned?.audio?.publicUrl;
+
+  return <>{hasAudio && <Glyph name="SpeakerWaveIcon" />}</>;
+}
+
 export function AssignmentForm({ idiom, show, onClose }) {
   if (!show || !idiom || !Object.hasOwn(idiom,'assigned')) return null;
 
@@ -49,20 +55,22 @@ export function AssignmentForm({ idiom, show, onClose }) {
   const [conjugatedSnippet, setConjugatedSnippet] = useState(
     idiom.assigned.conjugatedSnippet || ''
   );
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isDragActive, setIsDragActive] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [selectedFile, setSelectedFile]     = useState(null);
+  const [isDragActive, setIsDragActive]     = useState(false);
+  const [recording, setRecording]           = useState(false);
+  const [mediaRecorder, setMediaRecorder]   = useState(null);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const [recorderError, setRecorderError] = useState("");
-  const { fulfill, error, loading } = useAssignmentFulfillStore();
-  const { getToken, isAdmin } = useUserStore();
+  const [recorderError, setRecorderError]   = useState("");
+
+  const { fulfill, error, loading }         = useAssignmentFulfillStore();
+  const { getToken, isAdmin }               = useUserStore();
 
   async function onUpload() {
     const args = {
       idiomId: idiom.idiomId,
       transcription,
       conjugatedSnippet,
+      editor
     };
     const result = await fulfill(args, selectedFile || "", getToken);
     setSelectedFile(null);
@@ -133,6 +141,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
     }
   }
 
+  const editor = idiom.assigned.source || idiom.source;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <Card title="Edit Assignment">
@@ -219,8 +228,3 @@ export function AssignmentForm({ idiom, show, onClose }) {
   );
 }
 
-export function AssignmentAudio({ r }) {
-  const hasAudio = r.assigned?.audio?.publicUrl;
-
-  return <>{hasAudio && <Glyph name="SpeakerWaveIcon" />}</>;
-}

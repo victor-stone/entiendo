@@ -43,8 +43,8 @@ export const ListingFilters = [
 	{
 		name: "source",
 		defaultValue: "",
-		render: (value, setValue ) => (
-			<EditorPicker voice={value} onChange={setValue} />
+		render: (value, setValue, context ) => (
+			<EditorPicker voices={context.editors} voice={value} onChange={setValue} />
 		),
 		filter: (row, value) => {
 			if (!value || value === "-all") return true;

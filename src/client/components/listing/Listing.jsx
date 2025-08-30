@@ -14,7 +14,7 @@ const Listing = ({
   filters = ["text", "tone", "usage"],
   columns = ["text", "translation", "tone", "usage"],
   tools = [],
-  context = { voices: ["pato", "karina", "lucia", "victor"] },
+  context = {}, // e.g. { editors: 'tato', 'paula' }
   onUpdateRow,
   onSelectRow,
 }) => {

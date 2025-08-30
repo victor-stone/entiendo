@@ -22,14 +22,14 @@ export function AssignPublish({ obj, context }) {
 }
 
 export function Assign({ obj, context }) {
-  const { onUpdateRow } = context;
+  const { onUpdateRow, editors } = context;
   async function onChange(value) {
     onUpdateRow( obj, { 
       source: value || '-unassign',
       action: 'assignSource'
     } );
   }
-  return <EditorPicker voice={obj?.assigned?.source} onChange={onChange} ecss='' expanded={false} />
+  return <EditorPicker voices={editors} voice={obj?.assigned?.source} onChange={onChange} ecss='' expanded={false} />
 }  
 
 export function AssignmentSync({ assigned }) {

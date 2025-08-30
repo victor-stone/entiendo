@@ -6,6 +6,7 @@ import {
   useAssignIdiomStore,
   useUserStore,
   useAssignPublishStore,
+  useEditorsStore
 } from "../../stores";
 
 export default function Assignments({
@@ -30,6 +31,12 @@ export default function Assignments({
   } = useAssignmentReportsStore();
   const { error: assignError, assign } = useAssignIdiomStore();
   const { error: pubError, publish }   = useAssignPublishStore();
+  const { 
+    error  : editorsError,
+    data   : editors,
+    loading: editorsLoading,
+    fetch  : fetchEditors
+  } = useEditorsStore();
 
   useEffect(() => {
     if (reportName !== report) {
@@ -39,6 +46,10 @@ export default function Assignments({
     if (!data && !loading && reportName) {
       fetch({ reportName, ...props }, getToken);
     }
+    if( !editors && !editorsLoading && !editorsError ) {
+      fetchEditors(getToken);
+    }
+
   }, [
     data,
     getToken,
@@ -48,17 +59,16 @@ export default function Assignments({
     report,
     reset,
     setReportName,
+    editors,
+    editorsLoading,
+    editorsError
   ]);
 
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
-  
-  if (assignError) {
-    return <p className="text-red-500">{assignError}</p>;
-  }
+  if (error)        { return <p className="text-red-500">{error}</p>; }  
+  if (assignError)  { return <p className="text-red-500">{assignError}</p>; }
+  if (editorsError) { return <p className="text-red-500">{editorsError}</p>; }
 
-  if (loading || !data) {
+  if (loading || !data || !editors || editorsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -88,6 +98,7 @@ export default function Assignments({
       tools={tools}
       filters={filters}
       columns={columns}
+      context={ {editors} }
       onUpdateRow={_onUpdateRow}
       onSelectRow={onSelectRow}
     />
