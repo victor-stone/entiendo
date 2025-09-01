@@ -11,6 +11,9 @@ import { deleteAudioFromS3, uploadAudioToS3, renameAudioInS3 } from "../../lib/a
 import { checkUrlExpiration } from "../lib/finalizeExample.js";
 import { generateExampleAudioFilename } from "../exampleAPI.js";
 
+const ASSIGN_ERASE = true;
+const ASSIGN_UPDATE = false;
+
 const debugAss = debug("api:assign");
 
 const MAGIC_WORD = 'assigned';
@@ -45,43 +48,59 @@ export async function assignEditorToIdiom(routeContext) {
   // TODO: this is too much semantics packed into the 'source'
   const { idiomId, source } = routeContext.payload;
   const model = new IdiomModel();
-  return _doAssign({ model, idiomId, source }, source == '-unassign' );
+  const op = source == '-unassign' ? ASSIGN_DELETE : ASSIGN_ERASE;
+  return _doAssign({ model, idiomId, source }, op );
 }
 
-async function _doAssign({ model, idiomId, ...remains }, erase = false) {
-  const rec = await model.getById(idiomId);
-  debugAss(
-    "doing %s %s %s",
-    erase ? "erase" : "assign",
-    remains.source || remains.audio.voice || "",
-    rec.text
-  );
-  let assigned;
-  if (erase) {
-    assigned = {};
-  } else {
-    if (Object.hasOwn(rec, "assigned")) {
-      assigned = rec.assigned;
-      Object.keys(remains).forEach((k) => {
-        if (remains[k]) {
-          assigned[k] = remains[k];
-        }
-      });
+async function _doAssign({ model, idiomId, ...remains }, op = ASSIGN_UPDATE) {
+  try {
+    const rec = await model.getById(idiomId);
+    debugAss(
+      "doing %s %s %s",
+      op == ASSIGN_UPDATE ? 'update' : 'erase',
+      remains.source || remains?.audio?.voice || "",
+      rec.text
+    );
+    let assigned;
+    if (op == ASSIGN_ERASE) {
+      assigned = {};
     } else {
-      assigned = {
-        date: Date.now(),
-        ...remains,
-      };
-      if( !assigned.sync ) {
-          assigned.sync = await _incSyncCounter();
+      if (Object.hasOwn(rec, "assigned")) {
+        assigned = rec.assigned;
+        Object.keys(remains).forEach((k) => {
+          if (remains[k]) {
+            assigned[k] = remains[k];
+          }
+        });
+      } else {
+        assigned = {
+          date: Date.now(),
+          ...remains,
+        };
+        if( !assigned.sync ) {
+            assigned.sync = await _incSyncCounter();
+        }
       }
     }
+    return model.update(idiomId, { assigned });
   }
-  return model.update(idiomId, { assigned });
+  catch(err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 export async function assignPublish(routeContext) {
   const { idiomId, assign } = routeContext.payload;
+
+  // hack in voice
+  if( assign.audio && !assign.audio.voice ) {
+    const voice = assign.voice || assign.source;
+    if( voice ) {
+      assign.audio.voice = voice;
+    }
+  }
+
   let model = new ExampleModel();
   const rec = await model.createExample(
     idiomId,
@@ -99,7 +118,7 @@ export async function assignPublish(routeContext) {
 
   const idiomModel = new IdiomModel();
   debugAss('Published example for %s', rec.text);
-  return _doAssign({ model: idiomModel, idiomId: rec.idiomId }, true);
+  return _doAssign({ model: idiomModel, idiomId: rec.idiomId }, ASSIGN_ERASE);
 }
 
 /*
