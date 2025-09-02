@@ -89,6 +89,12 @@ export class CalendarExhaustedError extends APIError {
   }
 }
 
+export class InvalidCodeFlowError extends APIError {
+  constructor(message = 'Invalid code flow creates bad data') {
+    super(message, ERROR_CODES.SERVICE_UNAVAILABLE, ERROR_STATUS_CODES[ERROR_CODES.SERVICE_UNAVAILABLE]);
+  }
+}
+
 export default {
   ERROR_CODES,
   ERROR_STATUS_CODES,

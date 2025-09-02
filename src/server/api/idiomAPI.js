@@ -3,6 +3,9 @@ import { IdiomModelQuery, ExampleModelQuery } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { finalizeExample } from './lib/finalizeExample.js';
 
+import debug from 'debug';
+
+const debugEx = debug('api:example')
 /**
  * Get all unique tones of idioms
  * @param {Object} routeContext - Unified parameter object
@@ -27,7 +30,9 @@ export async function getIdiom(routeContext) {
 
   if (!idiom) { throw new NotFoundError('Idiom not found'); }
 
-  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,{force: false}) ));
+  const force = true;
+
+  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,{force, debug: debugEx}) ));
   return idiom;
 }
 

@@ -1,6 +1,7 @@
 import { useUserStore, useUpdateExampleStore } from '../../stores';
 import { useState } from 'react';
 import { Card } from '../layout';
+import AudioUploader from './AudioUploader';
 
 import debug from 'debug';
 const debugId = debug('app:idiom');
@@ -10,12 +11,14 @@ const ecss = "border dark:text-primary-900 border-gray-300 rounded-md shadow-sm 
 
 const ExampleForm = ({ example, onChange, onCancel }) => {
     debugRndr('ExampleForm')
-  const { getToken } = useUserStore();
+
+  const { getToken }               = useUserStore();
   const { update, error, loading } = useUpdateExampleStore();
 
-  const [text, setText] = useState(example.text || "");
-  const [voice, setVoice] = useState(example?.audio?.voice || example.source || "");
+  const [text, setText]                           = useState(example.text || "");
+  const [voice, setVoice]                         = useState(example?.audio?.voice || example.source || "");
   const [conjugatedSnippet, setConjugatedSnippet] = useState(example.conjugatedSnippet || "");
+  const [selectedFile, setSelectedFile]           = useState(null);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -24,7 +27,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
               conjugatedSnippet,
               voice
            };
-    const rec = await update(example.exampleId, postData, getToken);
+    const rec = await update(example.exampleId, postData, selectedFile, getToken);
     if (rec && !error) {
       debugId('ExampleForm: result %o', rec)
       onChange(rec);
@@ -61,6 +64,14 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
             required
           />
         </Card.Field>
+        <AudioUploader
+          selectedFile={selectedFile}
+          onChange={setSelectedFile}
+          existingUrl={example?.audio?.url}
+          isAdmin={true}
+          loading={loading}
+        />
+
         {error && <div className="text-red-500">{error}</div>}
         <button className="btn btn-primary" type="submit" disabled={loading}>
           {loading ? "Saving..." : "Save"}

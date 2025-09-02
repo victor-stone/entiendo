@@ -7,8 +7,10 @@ import {
   SettingsModel,
 } from "../../models/index.js";
 import debug from "debug";
-import { deleteAudioFromS3, uploadAudioToS3, renameAudioInS3 } from "../../lib/audio.js";
+import { deleteAudioFromS3, renameAudioInS3 } from "../../lib/audio.js";
 import { checkUrlExpiration } from "../lib/finalizeExample.js";
+import { uploadExampleAudioFromHTTPForm } from "../lib/uploadExampleAudioFromHttpForm.js";
+
 import { generateExampleAudioFilename } from "../exampleAPI.js";
 
 const ASSIGN_ERASE = true;
@@ -226,19 +228,11 @@ export async function assignmentFulfill(routeContext) {
   const { idiomId, transcription, conjugatedSnippet, editor } = payload;
 
   try {
-    // This WILL overwrite any previous file (by design)
+    // Use helper to handle file extraction and upload
     const filename = `${MAGIC_WORD}_${idiomId}.mp3`;
-    const audioContent =
-      payload.file !== "" && (payload.file || payload.files.file).data;
-    const contentType = audioContent
-      ? (payload.file || payload.files.file).mimetype || "audio/mpeg"
-      : undefined;
-    const audio = audioContent
-      ? await uploadAudioToS3(audioContent, filename, contentType)
-      : undefined;
-
+    const audio = await uploadExampleAudioFromHTTPForm(payload, filename);
     audio && editor && (audio.voice = editor);
-    
+
     const assignment = {
       model: new IdiomModel(),
       idiomId,
@@ -255,3 +249,4 @@ export async function assignmentFulfill(routeContext) {
     throw new Error(`Failed to upload audio: ${error.message}`);
   }
 }
+

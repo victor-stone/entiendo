@@ -1,6 +1,9 @@
 // src/server/api/lib/finalizeExample.js
 import ttl from '../../lib/audio.js';
 import { ExampleModel } from '../../models/index.js';
+import { InvalidCodeFlowError } from '../../../shared/constants/errorTypes.js';
+import debug from 'debug';
+const debugEx = debug('api:example');
 
 const { generateSpeech, generatePresignedUrl } = ttl;
 
@@ -12,21 +15,15 @@ export async function finalizeExample(example, {force = true, idiom = null, mode
         example = await model.addAudio(example.exampleId, example.audio);
     }
     if( idiom ) {
-        example.idiom = idiom;
-        if (debug) {
-            if( example.idiom ) {
-                debug('Returning example for "%s (%s)": %s...',
-                    example.idiom.text,
-                    example.idiom.usage,
-                    example.text.slice(0, 14)
-                );
-            } else {
-                debug('Returning example for %s: "%s..."',
-                    example.basedOn.join(', '),
-                    example.text.slice(0, 14)
-                );
-            }
+        if( idiom.examples ) {
+            throw InvalidCodeFlowError();
         }
+        example.idiom = idiom;
+        (debug || debugEx)('Finalized example for "%s (%s)": %s...',
+            example.idiom.text,
+            example.idiom.usage,
+            example.text.slice(0, 14)
+        );
     }
     return example;
 }
@@ -63,7 +60,7 @@ function _ensureAudioAccess(example, debug, force) {
                 return example;
             }
         }
-        if (debug) debug('existing audio found and public url is current');
+        if (debug) debug('existing audio found and public url expires: ' + new Date(expires) );
     } else if (force) {
         return async () => {
             const { id, name } = _getRandomVoiceOption();

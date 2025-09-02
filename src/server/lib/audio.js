@@ -8,7 +8,7 @@ import debug from 'debug';
 
 const s3 = new S3();
 
-const debugTTS = debug('app:tts');
+const debugTTS = debug('api:tts');
 
 /**
  * Uploads an audio file to S3 and generates URLs for access
@@ -149,14 +149,14 @@ const azureTTS = {
         Key: s3Key
       };
       
-      const command = new GetObjectCommand(getObjectParams);
+      const command      = new GetObjectCommand(getObjectParams);
       const presignedUrl = await getSignedUrl(s3, command, { expiresIn });
-      
-      debugTTS(`[TTS] Presigned URL generated, expires in ${expiresIn} seconds`);
+      const expires      = Date.now() + (expiresIn * 1000);
+      debugTTS(`[TTS] Presigned URL generated, expires in ${expiresIn} seconds: ${new Date(expires)}`);
       
       return {
-        url:presignedUrl,
-        expires: Date.now() + (expiresIn * 1000)
+        url: presignedUrl,
+        expires
       };
     } catch (error) {
       // console.error('[TTS] Error generating presigned URL:', error);

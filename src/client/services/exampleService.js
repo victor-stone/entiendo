@@ -1,4 +1,4 @@
-import { get, post } from "../lib/apiClient";
+import { get, postFile } from "../lib/apiClient";
 
 const exampleService = {
 
@@ -10,8 +10,9 @@ const exampleService = {
     return await get(`/api/example/${exampleId}`);
   },
 
-  updateExample: async (exampleId, data, token) => {
-    return await post(`/api/example/${exampleId}`, data, token);
+  updateExample: async (exampleId, data, audioFile, token) => {
+    // postFile(url, file, additionalData = {}, authToken = null) {
+    return await postFile(`/api/example/${exampleId}`, audioFile, data, token);
   },
 
 };

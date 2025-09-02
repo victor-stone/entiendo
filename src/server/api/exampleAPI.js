@@ -1,6 +1,7 @@
 // src/server/api/exampleAPI.js
 import { ExampleModel, IdiomModel } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
+import { uploadExampleAudioFromHTTPForm } from './lib/uploadExampleAudioFromHttpForm.js';
 
 export async function getExamplesForIdiom(routeContext) {
   const { params } = routeContext;
@@ -28,27 +29,46 @@ export async function getExampleById(routeContext) {
     return await model.getById(exampleId);
 }
 
+function _extractNameFromUrl(url) {
+  if( !url ) {
+    return null;
+  }
+  const tts = decodeURIComponent(url.toString().split('/').pop());
+  return tts.replace('tts/','');
+}
+
 export async function updateExample(routeContext) {
     const { params: { exampleId }, payload } = routeContext;
 
-    const model   = new ExampleModel();
-    const example = await model.getById(exampleId);
-    const audio   = { ...(example.audio || {}) };
+    const model         = new ExampleModel();
+    const example       = await model.getById(exampleId);
+    const fileName      = _extractNameFromUrl(example?.audio?.publicUrl) || generateExampleAudioFilename(example);
+    const audioFromForm = await uploadExampleAudioFromHTTPForm( payload, fileName );
 
     const {
       voice,
+
+      // throw these away...
+      contentType,
+      file,
+      files,
+
+      // keep these...
       ...fields
     } = payload;
 
-    if( fields.contentType ) {
-      delete fields.contentType;
+
+    const audio = {
+      ...(example.audio || {}),
+      ...(audioFromForm || {}),
     }
-    
+
     if( voice ) {
       audio.voice = voice;
     }
 
     const update = { ...fields, audio };
+
     return await model.update(exampleId, update);
 }
 
