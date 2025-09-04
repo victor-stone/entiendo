@@ -8,11 +8,13 @@ const {
 } = reportingService;
 
 export const useReportsStore = create((set, get) => ({
-  loading: false,
-  error: null,
-  data: null,
-  fetch: storeFetch(getReports, set),
-  reset: () => set({ data: null, error: null, loading: false })
+  loading : false,
+  error   : null,
+  data    : null,
+  reset   : () => set({ data: null, error: null, loading: false }),
+
+  fetch   : storeFetch(getReports, set),
+  generate: storeFetch(generateReport, set)
 }));
 
 export const useReportStore = create((set, get) => ({
@@ -20,14 +22,6 @@ export const useReportStore = create((set, get) => ({
   error: null,
   data: null,
   fetch: storeFetch(getReport, set),
-  reset: () => set({ data: null, error: null, loading: false })
-}));
-
-export const useGenerateReportsStore = create((set, get) => ({
-  loading: false,
-  error: null,
-  data: null,
-  fetch: storeFetch(generateReport, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 

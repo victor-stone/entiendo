@@ -48,16 +48,16 @@ export async function scheduleStats(routeContext) {
   const sandboxes = query.sandboxes();
 
   const stats = {
-    pastDueDate  : earliest?.dueDate || 0,
-    numPastDue   : pastDue.length,
-    numSeen      : progress.length,
-    score        : __getAccPercentage(progress),
-    nextDueDate  : next?.dueDate || 0,
-    isNewAllowed : canNew,
-    numSandboxes : sandboxes?.length || 0,
-    missed       : missed.length,
-    unique       : unique.length,
-    reportState    : await getReportState(user)
+    pastDueDate : earliest?.dueDate || 0,
+    numPastDue  : pastDue.length,
+    numSeen     : progress.length,
+    score       : __getAccPercentage(progress),
+    nextDueDate : next?.dueDate || 0,
+    isNewAllowed: canNew,
+    numSandboxes: sandboxes?.length || 0,
+    missed      : missed.length,
+    unique      : unique.length,
+    reportState : await getReportState(user)
   }
 
   stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;

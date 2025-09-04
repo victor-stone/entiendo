@@ -18,10 +18,12 @@ const debugRender = debug('react:render');
 const HeaderImage = ({img,alt}) => <img src={img} alt={alt} className="w-20 h-20 object-contain mx-auto mb-4" />
 
 const Dashboard = () => {
+  
   debugRender('Rendering Dashboard');
-  const getToken = useUserStore(state => state.getToken);
+
+  const getToken                        = useUserStore(state => state.getToken);
   const { data, fetch, loading, error } = useScheduleStatsStore();
-  const { setImage } = useBrandImageStore();
+  const { setImage }                    = useBrandImageStore();
 
   useEffect(() => {
     setImage('candle');
@@ -37,8 +39,9 @@ const Dashboard = () => {
     return <LoadingIndicator />
   }
   const showCalendar = data.numSeen > 0;
-  const showSandbox = data.upToDate && data.missed;
-  const reportState = data.reportState;
+  const showSandbox  = data.upToDate && data.missed;
+  const reportState  = data.reportState;
+  const showReports  = true;
 
   return (
     <Card title={<DoExerciseTitle title="¡Bienvenido!" scheduleStats={data} getToken={getToken} />}>
@@ -74,7 +77,7 @@ const Dashboard = () => {
                   : <div>Your playroom is empty.</div>
             }
           </div>
-          { 0 && 
+          { showReports && 
           <div className="place-items-center text-center">
             <HeaderImage img={img4} alt="Doll" />
             {reportState == ReportStates.RS_NOREP_NO_AVAIL

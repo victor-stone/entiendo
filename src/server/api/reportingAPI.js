@@ -52,17 +52,29 @@ export async function getReport(routeContext) {
 }
 
 export async function getAllReports(routeContext) {
-    const { user, user: { userId } } = routeContext;
-    const model = new ReportModel();
-    const reports = await model.findByUser(userId);
-    if( !reports || !reports.length ) {
-        const reportState = getReportState(user);
-        if( (reportState == ReportStates.RS_GEN_NEW_AVAIL) || (reportState == ReportStates.RS_NOREP_NEW_AVAIL)) {
+    const { 
+        user, 
+        user: { userId }, 
+        query: { 
+            generate
+        } 
+    } = routeContext;
+
+    const model   = new ReportModel();
+    let   reports = await model.findByUser(userId);
+    const state   = await getReportState(user);
+
+    if( generate || !reports || !reports.length ) {
+        if( (state == ReportStates.RS_GEN_NEW_AVAIL) || (state == ReportStates.RS_NOREP_NEW_AVAIL)) {
             const report = await _generateReport(userId);
-            return [ report ];
+            reports = [ report, ...(reports || []) ];
         }
     }
-    return reports;
+
+    return {
+        reports,
+        state
+    };
 }
 
 const _countHistory   = (history) => history.reduce( (acc, prog) => acc + prog.history.length, 0 );
@@ -72,7 +84,7 @@ export async function getReportState(user) {
     const weekAgo  = Date.now() - ONE_WEEK;
     const query    = await ProgressModelQuery.create(user.userId);
     if( user.report ) {
-        if( user.report.generated > weekAgo) {
+        if( user.report.generated < weekAgo) {
             const history = query.history(user.report.generated);
             if(_countHistory(history) > REPORTING_MIN_PROGRESS) {
                 return ReportStates.RS_GEN_NEW_AVAIL;

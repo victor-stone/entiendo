@@ -2,8 +2,8 @@ import { get } from "../lib/apiClient";
 
 const reportingService = {
 
-  getReports: async (token) => {
-    return await get(`/api/reports`, token);
+  getReports: async (token) => {    
+    return await get('/api/reports', token);
   },
 
   getReport: async (reportId, token) => {
@@ -11,7 +11,7 @@ const reportingService = {
   },
 
   generateReport: async (token) => {
-    return await get('/api/report/generate', token);
+    return await get('/api/reports?generate=1', token);
   },
 
 };
