@@ -19,22 +19,53 @@ const tipsList = "mt-0 space-y-4";
 const tipItem =
   "pl-7 border-l-4 border-blue-400 text-gray-900 bg-blue-50 py-4 rounded-r-2xl shadow text-lg leading-relaxed font-medium";
 
-const DoReportsTitle = ({ title = "Reports", reports = [], onHistory }) => {
+const ecss = " border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2 ml-2 ";
+
+const formatGenerated = (msEpoch) => {
+  const d = new Date(msEpoch);
+  const weekday = d.toLocaleDateString(undefined, { weekday: "long" });
+  const day = d.toLocaleDateString(undefined, { day: "2-digit" });
+  const month = d.toLocaleDateString(undefined, { month: "short" });
+  const year = d.getFullYear();
+  return `${weekday} ${day} ${month} ${year}`;
+};
+
+const DoReportsTitle = ({
+  title = "Reports",
+  reports = [],
+  selectedIndex = 0,
+  onSelectReport,
+}) => {
   return (
     <div className="flex items-center justify-between w-full">
       <div className="text-left">{title}</div>
       <div className="text-right">
         {reports.length > 1 && (
-          <button onClick={onHistory} className="btn btn-primary">
-            History
-          </button>
+          <select
+            className={ecss + " text-sm text-black "}
+            value={selectedIndex}
+            onChange={(e) => onSelectReport && onSelectReport(Number(e.target.value))}
+          >
+            {reports.map((r, idx) => (
+              <option key={idx} value={idx}>
+                {formatGenerated(r.generated)}
+              </option>
+            ))}
+          </select>
         )}
       </div>
     </div>
   );
 };
 
-function ReportsView({ data, loading, error, onGenerate }) {
+function ReportsView({
+  data,
+  loading,
+  error,
+  onGenerate,
+  selectedIndex = 0,
+  onSelectReport,
+}) {
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
@@ -45,12 +76,24 @@ function ReportsView({ data, loading, error, onGenerate }) {
     );
   }
 
-  const report = data.reports[0];
+  const safeIndex =
+    typeof selectedIndex === "number" && selectedIndex >= 0 && selectedIndex < data.reports.length
+      ? selectedIndex
+      : 0;
+  const report = data.reports[safeIndex];
   const state = data.state;
 
   return (
     <div className={reportContainer}>
-      <Card title={<DoReportsTitle reports={data.reports} onGenerate={onGenerate} />}>
+      <Card
+        title={
+          <DoReportsTitle
+            reports={data.reports}
+            selectedIndex={safeIndex}
+            onSelectReport={onSelectReport}
+          />
+        }
+      >
         <Card.Body>
           {state == ReportStates.RS_GEN_NEW_AVAIL && (
             <div className={cardSection}>
@@ -96,4 +139,3 @@ function ReportsView({ data, loading, error, onGenerate }) {
 }
 
 export default ReportsView;
-
