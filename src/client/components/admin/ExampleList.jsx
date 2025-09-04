@@ -10,7 +10,7 @@ const Example = ({ example }) => {
   debugRndr('Example');
   const voice  = example?.audio?.voice;
   const source = voice ? '' : example.source;
-  const url    = example?.audio.url;
+  const url    = example?.audio?.url;
 
   return <div className="space-y-2">
     <HighlightedText text={example.text} highlightedSnippet={example.conjugatedSnippet} />

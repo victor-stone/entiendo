@@ -30,7 +30,10 @@ export default class IdiomQuery extends query {
     }
 
     idiom(idiomId) {
-        return this.queryOne(`..{.idiomId == "${idiomId}"}`);
+        const idiom = this.queryOne(`..{.idiomId == "${idiomId}"}`);
+        // This should probably be happening at the base 
+        // level for all queries in all cases
+        return idiom ? JSON.parse(JSON.stringify(idiom)) : null;
     }
 
     byCriteria(tone,usage,field) {

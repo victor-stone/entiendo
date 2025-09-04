@@ -7,7 +7,7 @@ import debug from 'debug';
 const debugId = debug('app:idiom');
 const debugRndr = debug('react:render');
 
-const ecss = "border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2 ml-2";
+const ecss = " border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2 ml-2 ";
 
 const ExampleForm = ({ example, onChange, onCancel }) => {
     debugRndr('ExampleForm')
@@ -57,7 +57,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
         </Card.Field>
         <Card.Field title="Voice">
           <input
-            className={"input w-full" + ecss }
+            className={"input" + ecss }
             value={voice}
             onChange={e => setVoice(e.target.value)}
             disabled={loading}

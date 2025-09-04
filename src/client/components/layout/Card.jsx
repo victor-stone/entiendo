@@ -16,7 +16,7 @@ function CardHeader({ children, title }) {
     )
 }
 
-function CardBody({ children, className, style }) {
+function CardBody({ children, className = '', style }) {
     return (
         <div style={style} className={`card-body ${className}`}>
             <div className="flex flex-col md:flex-row gap-6">

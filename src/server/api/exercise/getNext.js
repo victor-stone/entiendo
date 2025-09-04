@@ -139,16 +139,16 @@ async function _getExerciseForNewIdiom(routeContext) {
 
 async function _getNextDueIdiom(routeContext) {
     const { query: { tone, usage }, user: { userId } } = routeContext;
-    debugGetNext('Finding due idiom (tone: %s, usage: %s )', 
-        tone || '-', usage || '-');
+    
+    debugGetNext('Finding due idiom (tone: %s, usage: %s )', tone || '-', usage || '-');
 
-    const progQuery   = await ProgressModelQuery.create(userId);
-    const dueItem = progQuery.nextDue(tone,usage);
+    const progQuery = await ProgressModelQuery.create(userId);
+    const dueItem   = progQuery.nextDue(tone,usage);
 
     let idiom = null;
     if (dueItem ) {
         const idQuery = await IdiomModelQuery.create();
-        idiom = idQuery.idiom(dueItem.idiomId);
+              idiom   = idQuery.idiom(dueItem.idiomId);
     }
     return [idiom, dueItem]
 }
@@ -180,10 +180,10 @@ function _getAdminBypassExercise(routeContext) {
     const { user: { preferences } } = routeContext;
     return preferences.getNextExample ? async () => {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
-        const model          = new ExampleModel();
-        const idioms         = new IdiomModel();
-        let exercise         = await model.getById(preferences.getNextExample);
-        let idiom            = await idioms.getById(exercise.idiomId);
+        const model    = new ExampleModel();
+        const idioms   = new IdiomModel();
+        let   exercise = await model.getById(preferences.getNextExample);
+        let   idiom    = await idioms.getById(exercise.idiomId);
         return await finalizeExample(exercise, {idiom, model, debug: debugGetNext});
     } : null;
 }

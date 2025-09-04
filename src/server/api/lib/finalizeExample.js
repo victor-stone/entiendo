@@ -7,8 +7,16 @@ const debugEx = debug('api:example');
 
 const { generateSpeech, generatePresignedUrl } = ttl;
 
-export async function finalizeExample(example, {force = true, idiom = null, model = null, debug = null} = {force: true}) {
+export async function finalizeExample(
+    example, {
+        force = true, 
+        idiom = null, 
+        model = null, 
+        debug = null
+    } = {force: true}) {
+
     const needAudio = _ensureAudioAccess(example, debug, force);
+    
     if (needAudio) {
         example = await needAudio();
         if( !model ) model = new ExampleModel();
@@ -16,7 +24,7 @@ export async function finalizeExample(example, {force = true, idiom = null, mode
     }
     if( idiom ) {
         if( idiom.examples ) {
-            throw InvalidCodeFlowError();
+            throw new InvalidCodeFlowError();
         }
         example.idiom = idiom;
         (debug || debugEx)('Finalized example for "%s (%s)": %s...',

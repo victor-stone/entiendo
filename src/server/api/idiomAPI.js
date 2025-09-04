@@ -30,9 +30,12 @@ export async function getIdiom(routeContext) {
 
   if (!idiom) { throw new NotFoundError('Idiom not found'); }
 
-  const force = true;
-
-  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,{force, debug: debugEx}) ));
+  const options = {
+    force: false,
+    debug: debugEx
+  }
+  
+  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,options) ));
   return idiom;
 }
 
