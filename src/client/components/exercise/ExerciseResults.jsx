@@ -101,7 +101,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
       </Card.Section>
 
-      <NextExercise onNext={onNext} />
+      <NextExercise onNext={onNext} currentId={exercise.exampleId} />
     </div>
   );
 };

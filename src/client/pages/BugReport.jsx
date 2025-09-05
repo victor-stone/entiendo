@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {useAdminStore, useUserStore} from '../stores';
 import { Card, CardField } from '../components/layout';
 
-const BugReport = () => {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+const BugReport = ({ exampleID }) => {
+  const { exampleID: exampleIDParam } = useParams();
+  const [searchParams]                = useSearchParams();
+  const exampleIDQuery                = searchParams.get('exampleID');
+  const effectiveExampleID            = exampleID ?? exampleIDParam ?? exampleIDQuery ?? null;
+  const [title, setTitle]             = useState('');
+  const [body, setBody]               = useState('');
+  const [submitted, setSubmitted]     = useState(false);
   const [problemType, setProblemType] = useState('');
+
   const problemOptions = [
     "Can't log in",
-    "Audio doesn't match example transcript",
     "App is slow or unresponsive",
-    "Progress not saving",
-    "Bug in exercise feedback",
-    "UI layout is broken",
-    "Audio is distored/too loud/too soft",
-    "Audio does not play",
+    "Page layout is broken",
+    "--",
+    "Mistake in exercise feedback",
     "Translation is incorrect",
     "Transcription is incorrect",
+    "--",    
+    "Audio doesn't match example transcript",
+    "Audio is distored/too loud/too soft",
+    "Audio does not play",
+    "--",
     "Other (describe below)"
   ];
+  
   const { reportBug, loading, error, bugreport } = useAdminStore();
   const getToken = useUserStore(state => state.getToken);
 
@@ -28,9 +37,13 @@ const BugReport = () => {
     if (!title.trim() || !body.trim()) {
       return;
     }
-    const token = await getToken();
-    const fullBody = problemType ? `[${problemType}]\n${body}` : body;
-    await reportBug(title, fullBody, [], token);
+
+    const token       = await getToken();
+    const exampleLine = effectiveExampleID ? `\n\nexampleID: ${effectiveExampleID}` : '';
+    const fullBody    = (problemType ? `[${problemType}]\n${body}` : body) + exampleLine;
+    const labels      = effectiveExampleID ? ["has-example", `example:${effectiveExampleID}`] : [];
+
+    await reportBug(title, fullBody, labels, token);
     setSubmitted(true);
   };
 
@@ -49,6 +62,16 @@ const BugReport = () => {
     <Card title={<span>Report a Bug</span>}>
       <Card.Body>
         <form onSubmit={handleSubmit}>
+          {effectiveExampleID && (
+            <CardField title='Example ID'>
+              <input
+                type="text"
+                value={String(effectiveExampleID)}
+                readOnly
+                className='border rounded px-2 py-1 w-full bg-gray-100 dark:text-primary-900'
+              />
+            </CardField>
+          )}
           <CardField title='Problem Type'>
             <select
               value={problemType}

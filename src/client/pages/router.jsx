@@ -89,7 +89,8 @@ const router = createBrowserRouter([
           { path: 'calendar',    element: <Calendar /> },
           { path: 'sandbox',     element: <Sandbox /> },
           { path: 'reports',     element: <Reports /> },
-          { path: 'bugreport',   element: <BugReport /> }
+          { path: 'bugreport',           element: <BugReport /> },
+          { path: 'bugreport/:exampleID', element: <BugReport /> }
         ],
       },
       {
