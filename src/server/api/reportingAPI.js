@@ -1,5 +1,7 @@
 import { consultAssistant } from '../lib/openai.js';
-import { PromptModel, ProgressModelQuery, ReportModel, UserModel } from '../models/index.js';
+import { PromptModel, ProgressModelQuery, ReportModel, UserModel,
+    ExampleModelQuery, IdiomModelQuery
+ } from '../models/index.js';
 
 import * as ReportStates from '../../shared/constants/reportStates.js';
 
@@ -39,6 +41,9 @@ export async function getReport(routeContext) {
     const { user, params: { reportId } } = routeContext;
     const model = new ReportModel();
     const report = await model.getById(reportId);
+    const examples = await ExampleModelQuery.create();
+    const idioms = await IdiomModelQuery.create();
+    _resolveUUIDs(report, examples, idioms);
     if( user.report.reportId == reportId ) {
         const userModel = new UserModel();
         await userModel.update( user.userId, {
@@ -48,6 +53,20 @@ export async function getReport(routeContext) {
             }
         });
     }
+    return report;
+}
+
+const uuidRegex = /\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/g;
+
+function _resolveUUIDs(report, examples, idioms) {
+    report.insights.forEach( (insight,i) => {
+        const uuids = insight.description.match(uuidRegex)
+        uuids?.forEach( uuid => {
+            const example =  examples.example(uuid);
+            const idiom = example ?idioms.idiom(example.idiomId) : idioms.idiom(uuid);
+            report.insights[i].description = report.insights[i].description.replace( uuid, idiom.text );
+        })
+    });
     return report;
 }
 
@@ -70,6 +89,13 @@ export async function getAllReports(routeContext) {
             reports = [ report, ...(reports || []) ];
         }
     }
+
+    const examples = await ExampleModelQuery.create();
+    const idioms = await IdiomModelQuery.create();
+
+    reports = reports.map(r => _resolveUUIDs(r,examples,idioms));
+
+    reports.sort( (a,b) => b.generated - a.generated );
 
     return {
         reports,
