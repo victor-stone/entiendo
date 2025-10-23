@@ -1,7 +1,6 @@
 
 node_modules/
 .env
-.vscode
 data/
 staging/
 dist/assets
@@ -10,6 +9,7 @@ scripts/todays-fix-2.js
 config/aws/entiendo-instance-info.txt
 config/aws/entiendo-key.pem
 dist/index.html
+.vscode/
 .vscode/extensions.json
 .vscode/launch.json
 .vscode/settings.json
