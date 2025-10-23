@@ -4,8 +4,6 @@
     {
       // ===== Attach to Server =====
       // Use this when your Express server is ALREADY RUNNING with --inspect flag
-      // This lets you attach the debugger to an existing process rather than starting a new one
-      // Best for: Debugging a server that's already running, or connecting to a remote process
       "type": "node",
       "request": "attach",
       "name": "Attach to Server",

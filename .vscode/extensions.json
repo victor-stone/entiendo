@@ -3,7 +3,6 @@
         "ms-vscode.vscode-typescript-next",
         "vscode.typescript-language-features",
         "vscode.javascript-language-features",
-        "vscode.json-language-features",
         "vscode.html-language-features",
         "vscode.css-language-features"
     ]
