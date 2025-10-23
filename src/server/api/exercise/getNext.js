@@ -50,46 +50,39 @@ async function _getNextDueExercise(routeContext) {
 }
 
 async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
-    const { 
-        GET_NEXT_EXAMPLES_PER_IDIOM, 
-        GET_NEXT_ATTEMPTS_PER_EXAMPLE } = getSettings();
+    const { GET_NEXT_EXAMPLES_PER_IDIOM } = getSettings();
 
     const exQuery = await ExampleModelQuery.create();
 
+    const gatherCounts = (counts, id) => {
+        counts[id] = (counts[id] || 0) + 1;
+        return counts;
+    };
+
     const seenExampleIds      = progress.history.map( ({exampleId}) => exampleId);
-    const seenExampleIdCounts = seenExampleIds.reduce( (obj, id) => {
-        if( !obj[id] ) obj[id] = 0;
-        obj[id]++;
-        return obj;
-    }, {});
+    const seenExampleIdCounts = seenExampleIds.reduce(gatherCounts, {});
+    const controlIds          = Object.keys(seenExampleIdCounts).sort();
+    let   exercise            = null;
 
     // If user hasn't seen enough examples, try to find or create a new one
-    if (seenExampleIds.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
+    if (controlIds.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
         const examplesForIdiom = exQuery.forIdiom(idiom.idiomId);
-        let exercise = examplesForIdiom.find(({ exampleId }) => !seenExampleIds.includes(exampleId));
+        exercise = examplesForIdiom.find(({ exampleId }) => !controlIds.includes(exampleId));
         if (!!exercise) {
             debugGetNext('Found an example the user has not seen %s', exercise.exampleId);
-            return await finalizeExample(exercise, {idiom, debug: debugGetNext});
+        } else {
+            debugGetNext('User has seen all existing samples, making new %o', seenExampleIdCounts);
+            exercise = await createExample(idiom, null, examplesForIdiom);
         }
-        debugGetNext('User has seen all existing samples, making new %o', seenExampleIdCounts);
-        exercise = await createExample(idiom, null, examplesForIdiom);
-        return await finalizeExample(exercise, {idiom, debug: debugGetNext});
-    }
-
-    // User has seen all examples, pick one they've seen the least (or random)
-    let exampleToUse = seenExampleIds
-            .sort( (a,b) => seenExampleIdCounts[a] - seenExampleIdCounts[b])
-            .find(id => seenExampleIdCounts[id] < GET_NEXT_ATTEMPTS_PER_EXAMPLE);
-
-    if (exampleToUse) {
-        debugGetNext('User has seen this example before %o', seenExampleIdCounts);
     } else {
-        exampleToUse = seenExampleIds[Math.floor(Math.random() * seenExampleIds.length)];
-        debugGetNext('WARNING: User has seen all the examples max times, picking one random %o', seenExampleIdCounts);
+        // User has seen all examples, cycle them by id (why not?) from now on
+        const controlIndex = controlIds.indexOf(seenExampleIds[ seenExampleIds.length - 1 ]);
+        const exampleToUse = controlIds[ (controlIndex + 1) % controlIds.length ];
+        exercise = exQuery.example(exampleToUse);
+        debugGetNext('Using: %s', exampleToUse )
     }
-    debugGetNext('Using: %s', exampleToUse )
+
     
-    const exercise = exQuery.example(exampleToUse);
     return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }
 
