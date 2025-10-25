@@ -1,5 +1,5 @@
 import { ForbiddenError, ValidationError } from '../../../shared/constants/errorTypes.js';
-import { ExampleModel } from '../../models/index.js';
+import { Examples } from '../../models/index.js';
 import { uploadAudioToS3 } from '../../lib/audio.js';
 
 /**
@@ -15,10 +15,10 @@ export async function createExample(routeContext) {
     throw new ForbiddenError('Unauthorized. Admin role required.');
   }
   
-  const model = new ExampleModel();
+  const examples = new Examples();
   
   // Create the idiom example
-  const createdExample = await model.create(exampleData);
+  const createdExample = examples.create(exampleData);
   return createdExample;
 }
 
@@ -45,10 +45,10 @@ export async function uploadExampleAudio(routeContext) {
     throw new ValidationError('Audio file is required');
   }
   
-  const exampleModel = new ExampleModel();
+  const _examples = new Examples();
   
   // Check if example exists
-  const example = await exampleModel.getById(payload.exampleId);
+  const example = _examples.find(payload.exampleId);
   if (!example) {
     throw new ValidationError('Example not found');
   }
@@ -66,7 +66,7 @@ export async function uploadExampleAudio(routeContext) {
     const audioResult = await uploadAudioToS3(audioContent, filename, contentType);
     
     // Update the example with audio information
-    const updatedExample = await exampleModel.update(example.exampleId, {
+    const updatedExample = _examples.update(example.exampleId, {
       audio: audioResult
     });
     

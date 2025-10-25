@@ -14,7 +14,7 @@ import * as userAPI     from  '../api/userAPI.js';
 import * as exerciseAPI from  '../api/exercise/index.js';
 import * as adminAPI    from  '../api/admin/index.js';
 import * as settingsAPI from  '../api/settingsAPI.js';
-import * as sandboxAPI  from  '../api/sandboxAPI.js';
+import * as sandboxAPI  from  '../api/sandbox/index.js';
 import * as exampleAPI  from  '../api/exampleAPI.js';
 import * as reportAPI   from  '../api/reportingAPI.js';
 

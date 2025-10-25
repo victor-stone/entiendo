@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { ExampleModel, IdiomModel, ExampleModelQuery, IdiomModelQuery,  ProgressModelQuery } from '../../models/index.js';
+import { Examples, Progress, Idioms } from '../../models/index.js';
 import { NotFoundError, CalendarExhaustedError } from '../../../shared/constants/errorTypes.js';
 import { getSettings } from '../settingsAPI.js';
 import { isNewAllowed } from './isNewAllowed.js';
@@ -52,8 +52,6 @@ async function _getNextDueExercise(routeContext) {
 async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
     const { GET_NEXT_EXAMPLES_PER_IDIOM } = getSettings();
 
-    const exQuery = await ExampleModelQuery.create();
-
     const gatherCounts = (counts, id) => {
         counts[id] = (counts[id] || 0) + 1;
         return counts;
@@ -63,6 +61,8 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
     const seenExampleIdCounts = seenExampleIds.reduce(gatherCounts, {});
     const controlIds          = Object.keys(seenExampleIdCounts).sort();
     let   exercise            = null;
+
+    const exQuery = new Examples();
 
     // If user hasn't seen enough examples, try to find or create a new one
     if (controlIds.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
@@ -78,7 +78,7 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
         // User has seen all examples, cycle them by id (why not?) from now on
         const controlIndex = controlIds.indexOf(seenExampleIds[ seenExampleIds.length - 1 ]);
         const exampleToUse = controlIds[ (controlIndex + 1) % controlIds.length ];
-        exercise = exQuery.example(exampleToUse);
+        exercise = exQuery.find(exampleToUse);
         debugGetNext('Using: %s', exampleToUse )
     }
 
@@ -108,8 +108,6 @@ async function _getExerciseForNewIdiom(routeContext) {
         return null;
     }
 
-    const query = await ExampleModelQuery.create();
-    
     let  idiom = await _getNewIdiom(routeContext);
     if( !idiom ) {
         debugGetNext('New idioms are allowed but the user has seen all of this tone/usage');
@@ -118,6 +116,8 @@ async function _getExerciseForNewIdiom(routeContext) {
     }
     debugGetNext('Nothing is due for user, fetched: %s', idiom.text);
 
+    const query = new Examples();
+    
     const exercises = query.forIdiom(idiom.idiomId);
     let exercise;
     if (exercises && exercises.length > 0) {
@@ -130,18 +130,18 @@ async function _getExerciseForNewIdiom(routeContext) {
     return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }
 
-async function _getNextDueIdiom(routeContext) {
+function _getNextDueIdiom(routeContext) {
     const { query: { tone, usage }, user: { userId } } = routeContext;
     
     debugGetNext('Finding due idiom (tone: %s, usage: %s )', tone || '-', usage || '-');
 
-    const progQuery = await ProgressModelQuery.create(userId);
-    const dueItem   = progQuery.nextDue(tone,usage);
+    const _progress = new Progress();
+    const dueItem   = _progress.nextDue(userId, tone, usage);
 
     let idiom = null;
     if (dueItem ) {
-        const idQuery = await IdiomModelQuery.create();
-              idiom   = idQuery.idiom(dueItem.idiomId);
+        const _idioms = new Idioms();
+              idiom   = _idioms.find(dueItem.idiomId);
     }
     return [idiom, dueItem]
 }
@@ -149,11 +149,11 @@ async function _getNextDueIdiom(routeContext) {
 async function _getNewIdiom(routeContext) {
     const { query: { tone, usage }, user: { userId } } = routeContext;
 
-    const progQuery    = await ProgressModelQuery.create(userId);
-    const idQuery      = await IdiomModelQuery.create();
-    const idioms       = await idQuery.byCriteria(tone,usage);
-    const seenIdiomIds = new Set(progQuery.idiomIds());
-    const idiom        = idioms.find(({idiomId}) => !seenIdiomIds.has(idiomId));
+    const _progress    = new Progress();
+    const _idioms      = new Idioms();
+    const idioms       = _idioms.byCriteria(tone,usage);
+    const seenIdiomIds = _progress.idiomIds(userId);
+    const idiom        = idioms.find(({idiomId}) => !seenIdiomIds.includes(idiomId));
 
     if (idiom) {
         // debugGetNext("Found match: %s - %s: %s", tone, usage, idiom.text);
@@ -173,11 +173,11 @@ function _getAdminBypassExercise(routeContext) {
     const { user: { preferences } } = routeContext;
     return preferences.getNextExample ? async () => {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
-        const model    = new ExampleModel();
-        const idioms   = new IdiomModel();
-        let   exercise = await model.getById(preferences.getNextExample);
-        let   idiom    = await idioms.getById(exercise.idiomId);
-        return await finalizeExample(exercise, {idiom, model, debug: debugGetNext});
+        const _examples = new Examples();
+        const _idioms   = new Idioms();
+        let   exercise  = await _examples.find(preferences.getNextExample);
+        let   idiom     = await _idioms.find(exercise.idiomId);
+        return await finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
     } : null;
 }
 

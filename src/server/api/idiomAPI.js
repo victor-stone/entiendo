@@ -1,5 +1,5 @@
 // src/server/api/idiomAPI.js
-import { IdiomModelQuery, ExampleModelQuery } from '../models/index.js';
+import { Idioms, Examples } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { finalizeExample } from './lib/finalizeExample.js';
 
@@ -12,8 +12,8 @@ const debugEx = debug('api:example')
  * @returns {Promise<Object>} - Object containing array of tones
  */
 export async function getTones() {
-  const query = await IdiomModelQuery.create();
-  return query.tones();
+  const _idioms = new Idioms();
+  return _idioms.tones();
 }
 
 /**
@@ -24,9 +24,9 @@ export async function getTones() {
 export async function getIdiom(routeContext) {
   const { params: { idiomId } } = routeContext;
 
-  const query   = await IdiomModelQuery.create();
-  const exQuery = await ExampleModelQuery.create();
-  const idiom   = query.idiom(idiomId);
+  const _idioms = new Idioms();
+  const idiom   = _idioms.find(idiomId);
+
 
   if (!idiom) { throw new NotFoundError('Idiom not found'); }
 
@@ -35,7 +35,9 @@ export async function getIdiom(routeContext) {
     debug: debugEx
   }
   
-  idiom.examples = await Promise.all(exQuery.forIdiom(idiomId).map( e => finalizeExample(e,options) ));
+  const _examples = new Examples();
+  idiom.examples = await Promise.all(_examples.forIdiom(idiomId).map( e => finalizeExample(e,options) ));
+
   return idiom;
 }
 
@@ -46,9 +48,9 @@ export async function getIdiom(routeContext) {
  */
 export async function getIdiomsList(routeContext) {
   const { query: { full = false } } = routeContext;
-  const query = await IdiomModelQuery.create();
+  const _idioms = new Idioms();
   if( full ) {
-    return query.idioms();
+    return _idioms.all();
   }
-  return query.getIdiomsList();
+  return _idioms.directory();
 }

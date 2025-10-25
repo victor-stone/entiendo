@@ -1,12 +1,10 @@
-export { default as IdiomModel } from './IdiomModel.js';
-export { default as ExampleModel } from './ExampleModel.js';
-export { default as UserModel } from './UserModel.js';
-export { default as ProgressModel } from './ProgressModel.js';
-export { default as PromptModel } from './PromptModel.js';
-export { default as SettingsModel } from './SettingsModel.js';
-export { default as ReportModel } from './ReportModel.js';
-
-export { default as ExampleModelQuery} from './ExampleModelQuery.js';
-export { default as ProgressModelQuery } from './ProgressModelQuery.js';
-export { default as IdiomModelQuery } from './IdiomModelQuery.js';
+export { default as Users } from './users.js';
+export { default as Examples } from './examples.js';
+export { default as Progress } from './progress.js';
+export { default as Prompts } from './prompts.js';
+export { default as Settings } from './settings.js';
+export { default as Idioms }   from './idioms.js';
+export { default as Reports }  from './reports.js';
+export { default as Sandbox }  from './sandbox.js';
+export { default as Shovels }  from './shovels.js';
 

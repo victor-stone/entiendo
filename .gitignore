@@ -3,13 +3,5 @@ node_modules/
 .env
 data/
 staging/
-dist/assets
-scripts/temp*.*
-scripts/todays-fix-2.js
-config/aws/entiendo-instance-info.txt
-config/aws/entiendo-key.pem
-dist/index.html
+dist/
 .vscode/
-.vscode/extensions.json
-.vscode/launch.json
-.vscode/settings.json

@@ -5,8 +5,8 @@ const sandboxService = {
         return post('/api/sandbox/next', { basedOn }, token );
     },
 
-    evaluate: async (exampleId, userTranscription, userTranslation, token ) => {
-        return post('/api/sandbox/evaluate', { exampleId, userTranscription, userTranslation }, token)
+    evaluate: async (shovelId, userTranscription, userTranslation, token ) => {
+        return post('/api/sandbox/evaluate', { shovelId, userTranscription, userTranslation }, token)
     }
 }
 

@@ -1,6 +1,6 @@
 // src/server/api/lib/finalizeExample.js
 import ttl from '../../lib/audio.js';
-import { ExampleModel } from '../../models/index.js';
+import { Examples } from '../../models/index.js';
 import { InvalidCodeFlowError } from '../../../shared/constants/errorTypes.js';
 import debug from 'debug';
 const debugEx = debug('api:example');
@@ -8,32 +8,32 @@ const debugEx = debug('api:example');
 const { generateSpeech, generatePresignedUrl } = ttl;
 
 export async function finalizeExample(
-    example, {
+    record, {
         force = true, 
         idiom = null, 
         model = null, 
         debug = null
     } = {force: true}) {
 
-    const needAudio = _ensureAudioAccess(example, debug, force);
+    const needAudio = _ensureAudioAccess(record, debug, force);
     
     if (needAudio) {
-        example = await needAudio();
-        if( !model ) model = new ExampleModel();
-        example = await model.addAudio(example.exampleId, example.audio);
+        record = await needAudio();
+        if( !model ) model = new Examples();
+        record = model.addAudio(model.key(record), record.audio);
     }
     if( idiom ) {
         if( idiom.examples ) {
             throw new InvalidCodeFlowError();
         }
-        example.idiom = idiom;
+        record.idiom = idiom;
         (debug || debugEx)('Finalized example for "%s (%s)": %s...',
-            example.idiom.text,
-            example.idiom.usage,
-            example.text.slice(0, 14)
+            record.idiom.text,
+            record.idiom.usage,
+            record.text.slice(0, 14)
         );
     }
-    return example;
+    return record;
 }
 
 export async function checkUrlExpiration(audio) {
@@ -50,9 +50,9 @@ export async function checkUrlExpiration(audio) {
     return audio;
 }
 
-function _ensureAudioAccess(example, debug, force) {
+function _ensureAudioAccess(record, debug, force) {
     // Ensure example.audio exists
-    const audio = example.audio || {};
+    const audio = record.audio || {};
     const { publicUrl, expires } = audio;
 
     if (publicUrl) {
@@ -61,20 +61,20 @@ function _ensureAudioAccess(example, debug, force) {
             return async () => {
                 if (debug) debug('existing audio is found, generating a new public url');
                 const generatedUrl = await generatePresignedUrl(publicUrl);
-                example.audio = {
+                record.audio = {
                     ...audio,
                     ...generatedUrl
                 };
-                return example;
+                return record;
             }
         }
         if (debug) debug('existing audio found and public url expires: ' + new Date(expires) );
     } else if (force) {
         return async () => {
             const { id, name } = _getRandomVoiceOption();
-            example.audio = await generateSpeech(example.text, id);
+            record.audio = await generateSpeech(record.text, id);
             if (debug) debug('generating audio for example with ' + name);
-            return example;
+            return record;
         }
     }
     return null;

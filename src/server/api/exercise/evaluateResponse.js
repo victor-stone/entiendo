@@ -1,27 +1,28 @@
-import { ExampleModel, IdiomModel, PromptModel, ProgressModel, ProgressModelQuery } from '../../models/index.js';
+import { Examples, Progress, Idioms, Prompts } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 import processSirpState from '../../lib/sirp/process.js';
 
 export async function evaluateResponse(routeContext) {
     const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
 
-    const exampleModel = new ExampleModel();
-    const example      = await exampleModel.getById(exampleId);
-    const evaluation   = await _evaluateResponse(example.text, userTranscription, userTranslation);
-    const progress     = await _markProgress(exampleId, example.idiomId, evaluation, userId);
+    const _examples  = new Examples();
+    const example    = _examples.find(exampleId);
+    const evaluation = await _evaluateResponse(example.text, userTranscription, userTranslation);
+    const progress   = await _markProgress(exampleId, example.idiomId, evaluation, userId);
     return {
         evaluation,
         progress
     };
 }
 
-async function _markProgress(exampleId, idiomId, evaluation, userId) {
-    const query    = await ProgressModelQuery.create(userId);
-    let   progress = query.forIdiom(idiomId);
-    let   exists   = !!progress;
+function _markProgress(exampleId, idiomId, evaluation, userId) {
+    const _progress = new Progress();
+    
+    let   progress  = _progress.forIdiom(userId, idiomId);
+    let   exists    = !!progress;
     if (!progress) {
-        const idiomModel = new IdiomModel();
-        const idiom = await idiomModel.getById(idiomId);
+        const _idioms = new Idioms();
+        const idiom = _idioms.find(idiomId);
         const { tone, usage } = idiom;
         const createdAt = Date.now();
         progress = {
@@ -44,11 +45,9 @@ async function _markProgress(exampleId, idiomId, evaluation, userId) {
         evaluation
     });
 
-    const progressModel = new ProgressModel();
-
     return exists
-        ? progressModel.update(progress.progressId, progress)
-        : progressModel.create(progress);
+        ? _progress.update(progress.progressId, progress)
+        : _progress.create(progress);
 }
 
 /**
@@ -62,8 +61,8 @@ async function _markProgress(exampleId, idiomId, evaluation, userId) {
  */
 async function _evaluateResponse(correctSentence, userTranscription, userTranslation = "") {
     // Using exact prompt from document #90
-    const promptModel = new PromptModel();
-    const systemPrompt = await promptModel.getPromptByName('EVAL_SYSTEM_PROMPT')
+    const _prompts = new Prompts();
+    const systemPrompt = _prompts.getPromptByName('EVAL_SYSTEM_PROMPT')
 
     const userPrompt = `Correct sentence: "${correctSentence}"
   User's transcription: "${userTranscription}"

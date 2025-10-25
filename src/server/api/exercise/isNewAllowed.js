@@ -1,13 +1,13 @@
-import { ProgressModelQuery } from '../../models/index.js';
+import { Progress } from '../../models/index.js';
 import { getSettings } from '../settingsAPI.js';
 import debug from 'debug';
 
 const debugGN = debug('api:exercise:getNext');
 
-export async function isNewAllowed(userId) {
-    const query = await ProgressModelQuery.create(userId);
+export function isNewAllowed(userId) {
+    const query = new Progress();
 
-    const due = query.due();
+    const due = query.due(userId);
     if( due.length ) {
         return false;
     }

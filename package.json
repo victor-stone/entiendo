@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev:client": "vite",
-    "dev:server": "nodemon --inspect server.js",
+    "dev:server": "node --inspect server.js",
+    "dev:nodemon": "nodemon --exitcrash --inspect --ignore 'data/**' --ignore '*.json' server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "vite build",
     "preview": "vite preview",
@@ -32,7 +33,6 @@
     "@aws-sdk/s3-request-presigner": "^3.806.0",
     "@heroicons/react": "^2.2.0",
     "@octokit/rest": "^22.0.0",
-    "aws-sdk": "^2.1692.0",
     "cors": "^2.8.5",
     "csv-parse": "^5.6.0",
     "debug": "^4.4.0",
@@ -40,10 +40,8 @@
     "express": "^5.1.0",
     "express-fileupload": "^1.5.1",
     "express-oauth2-jwt-bearer": "^1.6.1",
-    "jspath": "^0.4.0",
     "jwt-decode": "^4.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.43.1",
-    "node-fetch": "^3.3.2",
     "openai": "^4.96.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -51,7 +49,6 @@
     "react-router-dom": "^7.6.1",
     "timeago.js": "^4.0.2",
     "uuid": "^11.1.0",
-    "wavesurfer.js": "^7.9.4",
     "zustand": "^5.0.4"
   },
   "devDependencies": {

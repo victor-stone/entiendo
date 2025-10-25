@@ -1,12 +1,12 @@
-import { ProgressModelQuery } from "../../models/index.js";
+import { Progress, Sandbox } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 import { getReportState } from '../reportingAPI.js';
 
 export async function schedule(routeContext) {
   const userId   = routeContext.user.userId;
-  const query    = await ProgressModelQuery.create(userId);
-  const progress = query.schedule().map(item => {
+  const query    = new Progress();
+  const progress = query.schedule(userId).map(item => {
     item.range      = usageToRange(item.usage);
     item.confidence = _confidence(item);
     return item;
@@ -16,12 +16,13 @@ export async function schedule(routeContext) {
 }
 
 function _confidence(item) {
-  const success = item.successRate ?? 0; // fallback if undefined
+  const success            = item.successRate ?? 0;             // fallback if undefined
   const normalizedInterval = Math.min(item.interval, 7) / 7;
-  const lapsePenalty = Math.min(item.lapseCount, 3) / 3;
+  const lapsePenalty       = Math.min(item.lapseCount, 3) / 3;
 
   let confidence = (success * 0.6) + (normalizedInterval * 0.3) - (lapsePenalty * 0.3);
-  confidence = Math.max(0, Math.min(confidence, 1)); // clamp
+      confidence = Math.max(0, Math.min(confidence, 1)); // clamp
+
   return confidence;
 }
 
@@ -29,8 +30,9 @@ export async function scheduleStats(routeContext) {
   const { user } = routeContext;
   const { userId } = user;
 
-  const query = await ProgressModelQuery.create(userId);
-  const progress = query.schedule();
+  const _progress = new Progress();
+  const _sandbox  = new Sandbox();
+  const progress  = _progress.schedule(userId);
 
   if( progress.length == 0 ) {
     return {
@@ -40,12 +42,12 @@ export async function scheduleStats(routeContext) {
   }
 
   const earliest  = progress[0];
-  const pastDue   = query.due();
-  const next      = query.upcoming()[0];
-  const missed    = query.missedWords(false);
+  const pastDue   = _progress.due(userId);
+  const next      = _progress.nextDue(userId);
+  const missed    = _progress.missedWords(userId, false);
   const unique    = [...new Set(missed)];
-  const canNew    = await isNewAllowed(userId);
-  const sandboxes = query.sandboxes();
+  const canNew    = isNewAllowed(userId);
+  const sandboxes = _sandbox.history(userId);
 
   const stats = {
     pastDueDate : earliest?.dueDate || 0,
@@ -57,7 +59,7 @@ export async function scheduleStats(routeContext) {
     numSandboxes: sandboxes?.length || 0,
     missed      : missed.length,
     unique      : unique.length,
-    reportState : await getReportState(user)
+    reportState : getReportState(user)
   }
 
   stats.enableGetNext = (stats.numSeen == 0) || stats.isNewAllowed || stats.numPastDue;

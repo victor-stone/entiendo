@@ -1,5 +1,5 @@
 import { ForbiddenError, ValidationError } from '../../../shared/constants/errorTypes.js';
-import { IdiomModel, IdiomModelQuery } from '../../models/index.js';
+import { Idioms } from '../../models/index.js';
 
 /**
  * Update a single idiom
@@ -11,8 +11,8 @@ export async function updateIdiom(routeContext) {
     throw new ForbiddenError('Unauthorized. Admin role required.');
   }
   
-  const idiomModel = new IdiomModel();  
-  const createdIdiom = await idiomModel.update(idiomData.idiomId, idiomData);
+  const idioms = new Idioms();  
+  const createdIdiom = idioms.update(idiomData.idiomId, idiomData);
   return createdIdiom;
 }
 
@@ -21,19 +21,18 @@ export async function updateIdiom(routeContext) {
  */
 export async function createIdiom(routeContext) {
   const { payload: idiomData, user: { role } } = routeContext;
-  const query = await IdiomModelQuery.create();
-
   if (!role || role !== 'admin') {
     throw new ForbiddenError('Unauthorized. Admin role required.');
   }
   
-  const existingIdiom = query.matchText(idiomData.text);
+  const idioms = new Idioms();  
+
+  const existingIdiom = idioms.findValue('text', idiomData.text);
   if (existingIdiom) {
     throw new ValidationError('Idiom with this text already exists');
   }
   
-  const idiomModel = new IdiomModel();  
-  const createdIdiom = await idiomModel.create(idiomData);
+  const createdIdiom = idioms.create(idiomData);
   return createdIdiom;
 }
 

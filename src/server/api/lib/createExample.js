@@ -1,27 +1,26 @@
-// src/server/api/lib/createExample.js
-import { ExampleModel, PromptModel } from '../../models/index.js';
+import { Prompts, Examples, } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 
 async function _generateExampleSentence(idiom, existingExamples) {
-    const model         = new PromptModel();
-    const systemPrompt  = await model.getPromptByName('RIOPLATENSE_EXAMPLE_SYSTEM_PROMPT');
-    let   userPrompt    = await model.getPromptByName('USER_EXAMPLE', idiom)
+    const _prompts         = new Prompts();
+    const systemPrompt  = await _prompts.getPromptByName('RIOPLATENSE_EXAMPLE_SYSTEM_PROMPT');
+    let   userPrompt    = await _prompts.getPromptByName('USER_EXAMPLE', idiom)
 
     if( existingExamples && existingExamples.length > 0 ) {
         const existingExample  = existingExamples.map(({text}) => `"${text}"`).join('\n');
-        const userWExamples    = await model.getPromptByName('USER_EXAMPLE_WITH_EXISTING', {existingExample})
+        const userWExamples    = await _prompts.getPromptByName('USER_EXAMPLE_WITH_EXISTING', {existingExample})
               userPrompt      += ' ' + userWExamples;
     }
-
+    
     const result = await generateText(systemPrompt, userPrompt);
 
     return JSON.parse(result);
 }
 
-export async function createExample(idiom, model, existingExamples) {
+export async function createExample(idiom, _examples, existingExamples) {
     const exampleData = await _generateExampleSentence(idiom, existingExamples);
-    if( !model ) model = new ExampleModel();
-    return await model.createExample(
+    if( !_examples ) _examples = new Examples();
+    return _examples.createExample(
         idiom.idiomId,
         exampleData.text,
         exampleData.conjugatedSnippet,

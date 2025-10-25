@@ -5,10 +5,10 @@ import { Card } from "../layout";
 import ExercisePrompt from "../exercise/ExercisePrompt";
 import ExerciseInput from "../exercise/ExerciseInput";
 import ExerciseEval from "../exercise/ExerciseEval";
-import { LoadingIndicator, AudioPlayer, Grid } from "../ui";
+import { LoadingIndicator } from "../ui";
 import SandboxResults from "./SandboxResults";
 
-const SandboxCard = ({query}) => {
+const SandboxCard = () => {
     const getToken                                     = useUserStore(s => s.getToken);
     const { evaluate, data: evaluation, 
                 reset: resetEval }                     = useEvaluateSandboxStore();
@@ -36,7 +36,7 @@ const SandboxCard = ({query}) => {
     const handleInputSubmit = async (transcription, translation) => {
         setUserInput(transcription, translation);
         setPhase(PHASES.evaluation);
-        const results = await evaluate(exercise.exampleId,transcription,translation, getToken);
+        const results = await evaluate(exercise.shovelId,transcription,translation, getToken);
         if (results) {
           setPhase(PHASES.results);
         }

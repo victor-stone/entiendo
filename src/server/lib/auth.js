@@ -3,7 +3,7 @@
 
 import { auth } from 'express-oauth2-jwt-bearer';
 import dotenv from 'dotenv';
-import UserModel from '../models/UserModel.js';
+import Users from '../models/users.js';
 
 // Load environment variables
 dotenv.config();
@@ -38,8 +38,8 @@ export async function getUserFromRequest(req) {
   
   try {
     // Fetch the complete user record from the database
-    const userModel = new UserModel();
-    const dbUser = await userModel.findByAuthId(userId);
+    const _users = new Users();
+    const dbUser = _users.find(userId);
     
     if (dbUser) {
       // Return merged user with database info (includes role)
@@ -47,10 +47,9 @@ export async function getUserFromRequest(req) {
     } else {
       // If no DB record exists, create one 
       // This ensures a minimal user record exists for future requests
-      const newUser = await userModel.create({
+      const newUser = _users.create({
         userId,
-        role: 'user', // Default role
-        createdAt: Date.now()
+        role: 'user' // Default role
       });
       
       return { ...tokenUser, ...newUser };

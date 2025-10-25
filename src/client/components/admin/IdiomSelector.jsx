@@ -20,7 +20,7 @@ const IdiomSelector = ({ value, onChange, required = false }) => {
   useEffect(() => {
     if( query ) {
       // Set the input value based on the selected idiom
-      const selectedIdiom = value && query.idiom(value);
+      const selectedIdiom = value && query.find(value);
       setInputValue(selectedIdiom ? selectedIdiom.text : '');
     }
   }, [value, query]);

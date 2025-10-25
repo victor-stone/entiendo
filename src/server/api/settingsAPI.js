@@ -1,17 +1,21 @@
-import { SettingsModel } from "../models/index.js";
+import { Settings } from "../models/index.js";
 
 export function getSettings() {
-  return SettingsModel.all();
+  return (new Settings()).all();
+}
+
+export function getSetting(id) {
+  return getSettings()[id];
 }
 
 export function putSettings(routeContext) {
   const { payload: { settings } } = routeContext;
-  const model = new SettingsModel();
-  return model.put(settings);
+  const s = new Settings();
+  return s.put(settings);
 }
 
 export function addSettings(routeContext) {
   const { payload: { settings } } = routeContext;
-  const model = new SettingsModel();
-  return model.add(settings);
+  const s = new Settings();
+  return s.add(settings);
 }

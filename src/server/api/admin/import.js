@@ -1,6 +1,6 @@
 import { parse } from 'csv-parse/sync';
 import { ForbiddenError, ValidationError } from '../../../shared/constants/errorTypes.js';
-import { IdiomModel, IdiomModelQuery } from '../../models/index.js';
+import { Idioms } from '../../models/index.js';
 
 import debug from 'debug';
 const debugAdmin = debug('api:admin');
@@ -24,11 +24,11 @@ function _validateIdiom(idiom) {
 /**
  * Helper function to validate multiple idioms and check for duplicates
  */
-async function _validateIdioms(records) {
+function _validateIdioms(records) {
   const idioms     = [];
   const errors     = [];
   const duplicates = [];
-  const query      = await IdiomModelQuery.create();
+  const _idioms      = new Idioms();
 
   for (let i = 0; i < records.length; i++) {
     const record = records[i];
@@ -44,7 +44,7 @@ async function _validateIdioms(records) {
       if (!validation.valid) {
         errors.push(`Row ${i + 2}: ${validation.errors.join(', ')}`);
       } else {
-        const existingIdiom = query.matchText(idiomData.text);
+        const existingIdiom = _idioms.findValue('text', idiomData.text);
         if (existingIdiom) {
           debugAdmin('validateIdioms duplicate: %s', idiomData.text);
           duplicates.push({
@@ -70,23 +70,23 @@ async function _validateIdioms(records) {
 /**
  * Import idioms from payload
  */
-export async function importIdioms(routeContext) {
+export function importIdioms(routeContext) {
   const { payload: { idioms: originalIdioms }, user: { role } } = routeContext;
   debugAdmin('importIdioms idioms: %s', originalIdioms.length);
 
   if (!role || role !== 'admin') { throw new ForbiddenError('Unauthorized. Admin role required.');}
   if (!originalIdioms || !Array.isArray(originalIdioms)) { throw new ValidationError('No idioms provided or invalid format');}
   
-  const idiomModel = new IdiomModel();
-  const { idioms, errors, duplicates } = await _validateIdioms(originalIdioms, idiomModel);
+  const _idioms = new Idioms();
+  const { idioms, errors, duplicates } = _validateIdioms(originalIdioms, _idioms);
   
-  const promises = [];
-  for (const idiom of idioms) {
-    promises.push(idiomModel.create(idiom));
-  }
-  await Promise.all(promises).catch(err => {
+  try {
+    for (const idiom of idioms) {
+      _idioms.create(idiom);
+    }
+  } catch(err) {
     debugAdmin('importIdioms error: %s', err.message);
-  });
+  }
 
   debugAdmin('importIdioms created: %s  failed: %s dupes: %s', idioms.length, errors.length, duplicates.length);
 
@@ -108,14 +108,14 @@ export async function importValidateCSV(routeContext) {
   }
   try {
     const csvContent = uploadedFile.data.toString('utf8');
-    const idiomModel = new IdiomModel();
+    const idioms = new Idioms();
     try {
       const records = parse(csvContent, {
         columns         : true,
         skip_empty_lines: true,
         trim            : true
       });
-      const validationResults = await _validateIdioms(records, idiomModel);
+      const validationResults = _validateIdioms(records, idioms);
       return {
         ...validationResults,
         totalRecords: validationResults.idioms.length + validationResults.errors.length + validationResults.duplicates.length

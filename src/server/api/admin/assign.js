@@ -1,10 +1,8 @@
 import {
-  IdiomModel,
-  ExampleModel,
-  IdiomModelQuery,
-  ExampleModelQuery,
-  UserModel,
-  SettingsModel,
+  Settings,
+  Users,
+  Idioms,
+  Examples
 } from "../../models/index.js";
 import debug from "debug";
 import { deleteAudioFromS3, renameAudioInS3 } from "../../lib/audio.js";
@@ -21,9 +19,9 @@ const debugAss = debug("api:assign");
 const MAGIC_WORD = 'assigned';
 
 async function _incSyncCounter() {
-  const counter = SettingsModel.get("SYNC_COUNTER");
-  const model = new SettingsModel();
-  await model.put("SYNC_COUNTER", counter + 1);
+  const settings = new Settings();
+  const counter = settings.get("SYNC_COUNTER");
+  await settings.put("SYNC_COUNTER", counter + 1);
   return counter;
 }
 
@@ -34,8 +32,8 @@ async function _incSyncCounter() {
 */
 
 export async function editors() {
-  const model = new UserModel();
-  const all = await model.findAll();
+  const users = new Users();
+  const all = users.findAll();
   const editors = all.reduce( (arr, u) => {
     if(u.role == 'editor' || u.role == 'admin') {
       debugAss('Found editor: ' + u.editor)
@@ -49,14 +47,14 @@ export async function editors() {
 export async function assignEditorToIdiom(routeContext) {
   // TODO: this is too much semantics packed into the 'source'
   const { idiomId, source } = routeContext.payload;
-  const model = new IdiomModel();
+  const idioms = new Idioms();
   const op = source == '-unassign' ? ASSIGN_DELETE : ASSIGN_ERASE;
-  return _doAssign({ model, idiomId, source }, op );
+  return _doAssign({ model: idioms, idiomId, source }, op );
 }
 
 async function _doAssign({ model, idiomId, ...remains }, op = ASSIGN_UPDATE) {
   try {
-    const rec = await model.getById(idiomId);
+    const rec = model.find(idiomId);
     debugAss(
       "doing %s %s %s",
       op == ASSIGN_UPDATE ? 'update' : 'erase',
@@ -103,8 +101,8 @@ export async function assignPublish(routeContext) {
     }
   }
 
-  let model = new ExampleModel();
-  const rec = await model.createExample(
+  let _examples = new Examples();
+  const rec = await _examples.createExample(
     idiomId,
     assign.transcription,
     assign.conjugatedSnippet,
@@ -115,12 +113,12 @@ export async function assignPublish(routeContext) {
   if (rec.audio && rec.audio.publicUrl && rec.audio.publicUrl.includes( MAGIC_WORD + '_')) {
     const newFilename = generateExampleAudioFilename(rec);
     const audio = await renameAudioInS3(rec.audio.publicUrl, newFilename);
-    model.addAudio(rec.exampleId, { ...assign.audio, ...audio });
+    _examples.addAudio(rec.exampleId, { ...assign.audio, ...audio });
   }
 
-  const idiomModel = new IdiomModel();
+  const _idioms = new Idioms();
   debugAss('Published example for %s', rec.text);
-  return _doAssign({ model: idiomModel, idiomId: rec.idiomId }, ASSIGN_ERASE);
+  return _doAssign({ model: _idioms, idiomId: rec.idiomId }, ASSIGN_ERASE);
 }
 
 /*
@@ -145,7 +143,7 @@ export async function assignmentReports(routeContext) {
   /* ensure and save browser audio url */
   
   async function checkAudioUrl() {
-    const model = new IdiomModel();
+    const _idioms = new Idioms();
 
     for (var i = 0; i < idioms.length; i++) {
       const idiom = idioms[i];
@@ -155,7 +153,7 @@ export async function assignmentReports(routeContext) {
         const needUpdate = url !== idiom.assigned?.audio?.url;
         if (needUpdate) {
           const assigned = { ...idiom.assigned };
-          await model.update(idiom.idiomId, { assigned });
+          await _idioms.update(idiom.idiomId, { assigned });
         }
       }
     }
@@ -163,21 +161,19 @@ export async function assignmentReports(routeContext) {
 }
 
 async function _getAssignedIdioms({ editor }) {
-  const idiomQuery = await IdiomModelQuery.create();
-  return idiomQuery.assigned(editor);
+  const idioms = new Idioms();
+  return idioms.assigned(editor);
 }
 
 async function _getAssignableIdioms() {
-  const idiomQuery = await IdiomModelQuery.create();
-  const exampleQuery = await ExampleModelQuery.create();
+  const _idioms   = new Idioms();
+  const _examples = new Examples();
 
-  const idioms = idiomQuery.idioms();
-
-  return idioms.filter(({ idiomId, assigned }) => {
+  return _idioms.filter(({ idiomId, assigned }) => {
     if( assigned ) {
       return true;
     }
-    const examples = exampleQuery.forIdiom(idiomId);
+    const examples = _examples.forIdiom(idiomId);
     return !examples || !examples.length;
   });
 }
@@ -189,11 +185,10 @@ async function _getAssignableIdioms() {
 */
 
 export async function deleteAudioForExample(exampleId) {
-  const query   = ExampleModelQuery.create();
-  const example = query.example(exampleId);
+  const examples = new Examples();
+  const example  = examples.find(exampleId);
   await deleteAudioFromS3(example.audio.publicUrl);
-  const model = new ExampleModel();
-  return await model.update(exampleId, { audio: {} });
+  return examples.update(exampleId, { audio: {} });
 }
 
 export async function replaceAudioInExample({ exampleId, audio }) {
@@ -234,7 +229,7 @@ export async function assignmentFulfill(routeContext) {
     audio && editor && (audio.voice = editor);
 
     const assignment = {
-      model: new IdiomModel(),
+      model: new Idioms(),
       idiomId,
       audio,
       ..._extractSnippet({ transcription, conjugatedSnippet }),

@@ -1,32 +1,32 @@
 // src/server/api/exampleAPI.js
-import { ExampleModel, IdiomModel } from '../models/index.js';
+import { Examples, Idioms } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { uploadExampleAudioFromHTTPForm } from './lib/uploadExampleAudioFromHttpForm.js';
 
-export async function getExamplesForIdiom(routeContext) {
+export function getExamplesForIdiom(routeContext) {
   const { params } = routeContext;
   
   if (!params.idiomId) {
     throw new Error('Idiom ID is required');
   }
   
-  const idiomModel = new IdiomModel();
-  const idiom = await idiomModel.getById(params.idiomId);
+  const _idioms = new Idioms();
+  const idiom = _idioms.find(params.idiomId);
   
   if (!idiom) {
     throw new NotFoundError('Idiom not found');
   }
   
-  const exampleModel = new ExampleModel();
-  const examples = await exampleModel.findByIdiomId(params.idiomId);
+  const _examples = new Examples();
+  const examples = _examples.forIdiom(params.idiomId);
   
   return { examples };
 } 
 
-export async function getExampleById(routeContext) {
+export function getExampleById(routeContext) {
     const { params: { exampleId } } = routeContext;
-    const model = new ExampleModel();
-    return await model.getById(exampleId);
+    const x = new Examples();
+    return x.find(exampleId);
 }
 
 function _extractNameFromUrl(url) {
@@ -40,8 +40,8 @@ function _extractNameFromUrl(url) {
 export async function updateExample(routeContext) {
     const { params: { exampleId }, payload } = routeContext;
 
-    const model         = new ExampleModel();
-    const example       = await model.getById(exampleId);
+    const _examples     = new Examples();
+    const example       = _examples.find(exampleId);
     const fileName      = _extractNameFromUrl(example?.audio?.publicUrl) || generateExampleAudioFilename(example);
     const audioFromForm = await uploadExampleAudioFromHTTPForm( payload, fileName );
 
@@ -69,7 +69,7 @@ export async function updateExample(routeContext) {
 
     const update = { ...fields, audio };
 
-    return await model.update(exampleId, update);
+    return _examples.update(exampleId, update);
 }
 
 /**

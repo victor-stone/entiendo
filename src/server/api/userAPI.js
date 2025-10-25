@@ -1,5 +1,5 @@
 // src/server/api/userAPI.js
-import { UserModel } from '../models/index.js';
+import { Users } from '../models/index.js';
 import { validateUser } from '../lib/validate.js';
 import { ValidationError } from '../../shared/constants/errorTypes.js';
 import filterDefaults from '../../shared/filterDefaults.js';
@@ -14,11 +14,11 @@ export async function syncUserFromAuth0(routeContext) {
 
   const { payload: { authUser } } = routeContext;
   const { userId } = validation;
-  const userModel = new UserModel();
-  let user = await userModel.findByAuthId(userId);
+  const users = new Users();
+  let user = users.find(userId);
 
   if (!user) {
-    user = await userModel.create({
+    user = users.create({
       userId,
       role: 'user',
       createdAt: Date.now(),
@@ -46,12 +46,13 @@ export async function syncUserFromAuth0(routeContext) {
   }
 
   if (needUpdate) 
-    user = await userModel.update(userId, user);
+    user = users.update(userId, user);
 
   return user;
 }
 
 export async function updatePreferences(routeContext) {
   const { user: { userId }, payload: { preferences } } = routeContext;
-  return (await new UserModel().update(userId, { preferences })).preferences;
+  const u = new Users();
+  return u.update(userId, { preferences }).preferences;
 }
