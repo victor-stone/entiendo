@@ -20,10 +20,14 @@ async function _generateExampleSentence(idiom, existingExamples) {
 export async function createExample(idiom, _examples, existingExamples) {
     const exampleData = await _generateExampleSentence(idiom, existingExamples);
     if( !_examples ) _examples = new Examples();
+    const { idiomId } = idiom;
+    const { text, conjugatedSnippet } = exampleData;
     return _examples.create(
-        idiom.idiomId,
-        exampleData.text,
-        exampleData.conjugatedSnippet,
-        'openai'
-    );
+        { 
+            idiomId,
+            text,
+            conjugatedSnippet,
+            source: "openai"
+        } );
+    
 }
