@@ -42,14 +42,14 @@ const adminService = {
                  EDITOR
     (((((((((((((((())))))))))))))))                 
   */
-  assignmentReports: async (specs, authToken) => {
-    return await post("/api/editor/assignmentreports", specs, authToken);
+  homeworkReports: async (specs, authToken) => {
+    return await post("/api/editor/homeworkreports", specs, authToken);
   },
 
-  assignIdiom: async (idiomId, source, authToken) => {
+  assignIdiom: async (idiomId, source, homeworkId, authToken) => {
     return await post(
       "/api/editor/assign",
-      { idiomId, source },
+      { idiomId, source, homeworkId },
       authToken
     );
   },
@@ -63,10 +63,10 @@ const adminService = {
     );
   },
 
-  assignPublish: async (idiomId, assign, authToken) => {
+  homeworkPublish: async (idiomId, homework, authToken) => {
     return await post(
       "/api/editor/publish",
-      { idiomId, assign },
+      { idiomId, homework },
       authToken
     );
   },

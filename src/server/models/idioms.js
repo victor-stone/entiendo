@@ -6,12 +6,6 @@ export default class Idioms extends db {
     super('idioms', 'idiomId', true);
   }
 
-  assigned(source = null) {
-    if (source) {
-      return this._(this.data.filter(i => i?.assigned?.source === source));
-    }
-    return this._(this.data.filter(i => !!i?.assigned?.source));
-  }
 
   byCriteria(tone, usage, field) {
     if (!tone && !usage) {
@@ -48,4 +42,15 @@ export default class Idioms extends db {
 
 }
 
-db.initCache('idioms')
+// DEBUG
+const audioFlattener = r => {
+  if( r.homework ) {
+    delete r.homework;
+  }
+  if( r.assigned ) {
+    delete r.assigned;
+  }
+  return r;
+};
+
+db.initCache('idioms', audioFlattener)

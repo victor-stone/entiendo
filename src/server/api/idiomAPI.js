@@ -25,7 +25,7 @@ export async function getIdiom(routeContext) {
   const { params: { idiomId } } = routeContext;
 
   const _idioms = new Idioms();
-  const idiom   = _idioms.find(idiomId);
+  const idiom   = _idioms.byId(idiomId);
 
 
   if (!idiom) { throw new NotFoundError('Idiom not found'); }

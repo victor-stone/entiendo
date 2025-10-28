@@ -48,10 +48,9 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
       <h2 className="text-xl font-bold mb-4">Exercise Results</h2>
-
       <Card.Panel title="Original Sentence">
-        {exercise.audio && <AudioPlayer url={exercise.audio.url} />}
-
+        <AudioPlayer url={exercise.url} />
+        <div className="text-right text-xs italic capitalize">{exercise.voice}</div>
         <Grid columns={2}>
           <ResultField title="Idiom" text={exercise.idiom?.text || 'Unknown'} />
           <ResultField title="Translation" text={exercise.idiom?.translation || 'Unknown'} />

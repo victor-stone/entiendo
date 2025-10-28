@@ -1,0 +1,49 @@
+import db from './db.js';
+// debug
+import { v4 as uuidv4 } from 'uuid';
+
+export default class History extends db {
+  constructor() {
+    super('history','historyId');
+  }
+
+  forProgress(progressId) {
+    return this.filter(h => h.progressId == progressId);
+  }
+
+  history(userId, from = 0, to = Date.now()) {
+    return this.filter( h => {
+      if( h.userId != userId ) return false;
+      if( h.date < from ) return false;
+      if( h.date > to ) return false;
+      return true;
+    });
+  }
+
+  missedWords(userId, unique) {
+    
+    const words = this.data.reduce((arr, h) => {
+      if (h.userId == userId && !!h.evaluation?.missedWords?.length) {
+        arr.push( ...h.evaluation.missedWords );
+      }
+      return arr;
+    }, [])
+
+    const flat = words
+                  .flat() // <-- I don't think this is needed
+                  .filter( w => !w.match(/[¡¿?!]/) )
+                  .map( w => w.toLowerCase() );
+
+    return unique
+      ? [... new Set(flat)].sort()
+      : flat;
+  }
+}
+
+// debug
+function mapper(h) {
+  h.historyId = uuidv4();
+  return h;
+}
+
+db.initCache('history', mapper);

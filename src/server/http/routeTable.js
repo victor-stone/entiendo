@@ -32,15 +32,15 @@ export const routeTable = {
       auth: true
     },
     '/api/editor/publish': { 
-      handler: (routeContext) => adminAPI.assignPublish(routeContext),
+      handler: (routeContext) => adminAPI.homeworkPublish(routeContext),
       auth: true
     },
     '/api/editor/fulfill': {
-      handler: (routeContext) => adminAPI.assignmentFulfill(routeContext),
+      handler: (routeContext) => adminAPI.turnInHomework(routeContext),
       auth: true
     },
-    '/api/editor/assignmentreports': { 
-      handler: (routeContext) => adminAPI.assignmentReports(routeContext),
+    '/api/editor/homeworkreports': { 
+      handler: (routeContext) => adminAPI.homeworkReports(routeContext),
       auth: true
     },
 

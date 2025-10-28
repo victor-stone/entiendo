@@ -1,6 +1,6 @@
 import { consultAssistant } from '../lib/openai.js';
-import { Progress, Prompts, Reports, 
-    Users, Examples, Idioms
+import { Prompts, Reports, Progress,
+    Users, Examples, Idioms, History
  } from '../models/index.js';
 
 import * as ReportStates from '../../shared/constants/reportStates.js';
@@ -16,19 +16,25 @@ export async function generateReport(routeContext) {
 }
 
 async function _generateReport(userId) {
-    const query    = new Progress();
-    const to       = Date.now();
-    const from     = to - ONE_WEEK;
-    const history  = query.history(userId, from);
-    const progress = JSON.stringify(history, null, 2);
+    const _history    = new History();
+    const to          = Date.now();
+    const from        = to - ONE_WEEK;
+    let   history     = _history.history(userId, from);
+    let   progressIds = history.map( h => h.progressId );
+          progressIds = new Set(progressIds);
+    const _progress   = new Progress();
+    let   progress    = _progress.filter( p => progressIds.has(p.progressId) );
+
+          progress  = JSON.stringify(progress, null, 2);
+          history   = JSON.stringify(history, null, 2);
 
     const _prompts    = new Prompts();
-    const userMessage = _prompts.getPromptByName('WEEKLY_REPORT_USER', { userId, progress })
+    const userMessage = _prompts.getPromptByName('WEEKLY_REPORT_USER', { userId, progress, history })
     const report      = await consultAssistant(OPENAI_ASSISTANT_ID, userMessage)
     const _reports    = new Reports();
     const record      = _reports.addReport(report, from, to);
 
-    const users   = new Users();
+    const users = new Users();
     users.update( userId, { report: {
         reportId: record.reportId,
         generated: to,
@@ -40,9 +46,8 @@ async function _generateReport(userId) {
 export async function getReport(routeContext) {
     const { user, params: { reportId } } = routeContext;
 
-    const _reports    = new Reports();
-    const report   = _reports.find(reportId);
-
+    const _reports = new Reports();
+    const report   = _reports.byId(reportId);
     const examples = new Examples();
     const idioms   = new Idioms();
     
@@ -66,8 +71,9 @@ function _resolveUUIDs(report, examples, idioms) {
     report.insights.forEach( (insight,i) => {
         const uuids = insight.description.match(uuidRegex)
         uuids?.forEach( uuid => {
-            const example =  examples.find(uuid);
-            const idiom = example ? idioms.find(example.idiomId) : idioms.find(uuid);
+            const example = examples.byId(uuid);
+            const idiom   = example ? idioms.byId(example.idiomId) : idioms.byId(uuid);
+
             report.insights[i].description = report.insights[i].description.replace( uuid, idiom.text );
         })
     });
@@ -84,8 +90,8 @@ export async function getAllReports(routeContext) {
     } = routeContext;
 
     const _reports = new Reports();
-    let   reports  = _reports.findAll('userId', userId);
-    const state    = await getReportState(user);
+    let   reports  = _reports.matching('userId', userId);
+    const state    = getReportState(user);
 
     if( generate || !reports || !reports.length ) {
         if( (state == ReportStates.RS_GEN_NEW_AVAIL) || (state == ReportStates.RS_NOREP_NEW_AVAIL)) {
@@ -107,25 +113,25 @@ export async function getAllReports(routeContext) {
     };
 }
 
-const _countHistory   = (history) => history.reduce( (acc, prog) => acc + prog.history.length, 0 );
-const _flattenHistory = (history) => history.map( ({history}) => history ).flat();
-
 export function getReportState(user) {
     const weekAgo  = Date.now() - ONE_WEEK;
-    const query    = new Progress();
+    const _history = new History();
+
     if( user.report ) {
         if( user.report.generated < weekAgo) {
-            const history = query.history(user.userId, user.report.generated);
-            if(_countHistory(history) > REPORTING_MIN_PROGRESS) {
+            const history = _history.history(user.userId, user.report.generated);
+            if(history.length > REPORTING_MIN_PROGRESS) {
                 return ReportStates.RS_GEN_NEW_AVAIL;
             }
         }
         return ReportStates.RS_GEN_NO_AVAIL;
     }
-    const progress = query.schedule(user.userId);
-    const history = _flattenHistory(progress);
+
+    const history = _history.history(user.userId).sort( (a,b) => a.date - b.date );
+
     if( history.length > REPORTING_MIN_PROGRESS && history[0].date < weekAgo ) {
         return ReportStates.RS_NOREP_NEW_AVAIL;
     }
+
     return ReportStates.RS_NOREP_NO_AVAIL;
 }

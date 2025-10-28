@@ -5,8 +5,8 @@ export default class Shovels extends db {
     super('shovels','shovelId', true);
   }
 
-  addAudio(shovelId, audio) {
-    return this.update(shovelId, { audio });
+  addAudio(shovelId, spec) {
+    return this.update(shovelId, spec);
   }
 
   forWord(word) {
@@ -15,5 +15,21 @@ export default class Shovels extends db {
   
 }
 
-db.initCache('shovels')
+// DEBUG
+export const audioFlattener = r => {
+  let rec = { ...r };
+  if (r.audio) {
+    const {
+      publicUrl: audio,
+      url = undefined,
+      expires = 0,
+      ...rest
+    } = r.audio; // used to be an obj
+    rec = { ...rec, audio, ...rest };
+  }
+  return rec;
+};
+
+db.preventWrite = true;
+db.initCache('shovels', audioFlattener)
 

@@ -1,4 +1,4 @@
-import { Progress, Sandbox } from "../../models/index.js";
+import { Progress, Sandbox, History } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 import { getReportState } from '../reportingAPI.js';
@@ -32,6 +32,8 @@ export async function scheduleStats(routeContext) {
 
   const _progress = new Progress();
   const _sandbox  = new Sandbox();
+  const _history  = new History();
+
   const progress  = _progress.schedule(userId);
 
   if( progress.length == 0 ) {
@@ -44,7 +46,7 @@ export async function scheduleStats(routeContext) {
   const earliest  = progress[0];
   const pastDue   = _progress.due(userId);
   const next      = _progress.nextDue(userId);
-  const missed    = _progress.missedWords(userId, false);
+  const missed    = _history.missedWords(userId, false);
   const unique    = [...new Set(missed)];
   const canNew    = isNewAllowed(userId);
   const sandboxes = _sandbox.history(userId);
@@ -77,8 +79,10 @@ export async function scheduleStats(routeContext) {
   function __getAccPercentage(progress) {
     let total = 0,
       count = 0;
+    const _history = new History();
     for (const p of progress) {
-      for (const item of p.history) {
+      const history = _history.forProgress(p.progressId)
+      for (const item of history) {
         if (item.evaluation) {
           const tScore = __accuracyToScore(
             item.evaluation.transcriptionAccuracy

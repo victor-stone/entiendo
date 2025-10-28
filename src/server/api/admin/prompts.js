@@ -7,14 +7,14 @@ const debugAdmin = debug('api:admin');
 export async function getPrompts(routeContext) {
   const { user: { role } } = routeContext;
   if (!role || role !== 'admin') { throw new ForbiddenError('Unauthorized. Admin role required.');}
-  return await _getPrompts();
+  return _getPrompts();
 }
 
 function _getPrompts() {
   const _prompts = new Prompts();
   const prompts = _prompts.all();
   const obj = prompts.reduce((obj, p) => {
-    obj[p.PromptId] = p.prompt;
+    obj[p.promptId] = p.prompt;
     return obj;
   }, {});
   return obj;

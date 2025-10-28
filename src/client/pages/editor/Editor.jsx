@@ -26,7 +26,7 @@ export function Editor() {
     setShowModal(true);
   }
 
-  const columns = ["sync", "text", "translation", "transcription"];
+  const columns = ["text", "translation", "transcription"];
   const tools = ["copyToClipboard"];
   const filters = [];
 

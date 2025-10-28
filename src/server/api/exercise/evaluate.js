@@ -1,4 +1,4 @@
-import { Examples, Progress, Idioms, Prompts } from '../../models/index.js';
+import { Examples, Progress, Idioms, Prompts, History } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 import processSirpState from '../../lib/sirp/process.js';
 
@@ -6,9 +6,9 @@ export async function evaluateResponse(routeContext) {
     const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
 
     const _examples  = new Examples();
-    const example    = _examples.find(exampleId);
+    const example    = _examples.byId(exampleId);
     const evaluation = await _evaluateResponse(example.text, userTranscription, userTranslation);
-    const progress   = await _markProgress(exampleId, example.idiomId, evaluation, userId);
+    const progress   = _markProgress(exampleId, example.idiomId, evaluation, userId);
     return {
         evaluation,
         progress
@@ -16,38 +16,37 @@ export async function evaluateResponse(routeContext) {
 }
 
 function _markProgress(exampleId, idiomId, evaluation, userId) {
+
     const _progress = new Progress();
-    
     let   progress  = _progress.forIdiom(userId, idiomId);
-    let   exists    = !!progress;
+
     if (!progress) {
         const _idioms = new Idioms();
-        const idiom = _idioms.find(idiomId);
+        const idiom = _idioms.byId(idiomId);
         const { tone, usage } = idiom;
-        const createdAt = Date.now();
-        progress = {
+        progress = _progress.create({
             idiomId,
             userId,
             tone,
-            usage,
-            createdAt,
-            history: []
-        }
+            usage
+        });
     }
 
-    progress = processSirpState(progress, evaluation);
+    const { progressId } = progress;
 
-    // TODO: curate what bits of 'evaluation' really need 
-    // to be stored. Like previous 'progress'?
-    progress.history.push({
+    progress = processSirpState(progress, evaluation);
+    progress = _progress.update( progressId, progress );
+
+    const _history = new History();
+    _history.create({
         date: Date.now(),
         exampleId,
-        evaluation
-    });
+        evaluation,
+        progressId,
+        userId
+    })
 
-    return exists
-        ? _progress.update(progress.progressId, progress)
-        : _progress.create(progress);
+    return progress;
 }
 
 /**

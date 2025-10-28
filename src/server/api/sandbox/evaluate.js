@@ -15,7 +15,7 @@ export async function evaluate(routeContext) {
 
 async function _evaluate(shovelId, userTranscription, userTranslation) {
     const _shovels         = new Shovels();
-    const { text, basedOn } = _shovels.find(shovelId);
+    const { text, basedOn } = _shovels.byId(shovelId);
     const _prompts          = new Prompts();
     const systemPrompt      = _prompts.getPromptByName('SANDBOX_EVALUATION_SYSTEM_PROMPT')
     const userPrompt        = `

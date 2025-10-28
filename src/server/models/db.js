@@ -34,13 +34,21 @@ export default class db {
     return _(this.data);
   }
 
+  byId(keyValue) {
+    return this.matchingOne(this._key, keyValue);
+  }
+
   commit() {
     try {
       const data = this.data;
       const path = this._path;
-      writeJson( path, data ).then( () => {
-        debugDB(`wrote ${data.length} records to ${path}`)
-      })
+      if( db.preventWrite ) {
+        debugDB(`blocking write of ${data.length} records to ${path}`);
+      } else {
+        writeJson( path, data ).then( () => 
+          debugDB(`wrote ${data.length} records to ${path}`)
+        );
+      }
     } catch( err ) {
       console.error(err);
     }
@@ -59,19 +67,15 @@ export default class db {
   }
 
   filter(cb) {
-    return _(this.data.filter(cb));
+    return _(this.data).filter(cb);
   }
 
-  find(keyValue) {
-    return this.findByValue(this._key, keyValue);
+  find(cb) {
+    return _(this.data).find(cb);
   }
-
-  findAll(key, value) {
-    return _(this.data.filter(record => record[key] === value));
-  }
-
-  findByValue(key, value) {
-    return _(this.data.find(record => record[key] === value));
+  
+  forEach(cb) {
+    return _(this.data).forEach(cb);
   }
 
   genIdKey() {
@@ -80,6 +84,25 @@ export default class db {
 
   key(record) {
     return record[this._key];
+  }
+
+  matching(key, value) {
+    return this.filter(record => record[key] === value);
+  }
+  
+  matchingOne(key, value) {
+    return this.find(record => record[key] === value);
+  }
+
+  reduce(cb) {
+    return _(this.data).reduce(cb, [])
+  }
+
+  remove(keyValue) {
+    const data = this.data;
+    delete data[keyValue];
+    this.data = data;
+    this.commit();
   }
   
   update(keyValue, newValues) {
@@ -103,10 +126,18 @@ export default class db {
 
 }
 
-db.initCache = (name) => {
+// debug
+db.preventWrite = false;
+
+db.initCache = ( name, mapper ) => {
   const path = _path(name);
-  readJson(path).then( data => {
-    _cache[path] = data;
+  return readJson(path).then( data => {
+    if( mapper ) {
+      _cache[path] = data.map(mapper);
+      console.log('applied mapper to ' + name )
+    } else {
+      _cache[path] = data;
+    }
     console.log( `retrieved ${data.length} records from ${name} bucket`)
   })
 }

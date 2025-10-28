@@ -81,10 +81,10 @@ export default function Assignments({
 
     let record;
     if (ctx.action == "assignSource") {
-      record = await assign(row.idiomId, ctx.source, getToken);
+      record = await assign(row.idiomId, ctx.source, row.homework?.homeworkId, getToken);
     }
     if( ctx.action == 'publish' ) {
-      record = await publish(row.idiomId, ctx.assigned, getToken )
+      record = await publish(row.idiomId, ctx.homework, getToken )
     }
     if( record ) {
       patchData(record);

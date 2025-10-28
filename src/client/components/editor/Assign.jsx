@@ -2,7 +2,7 @@ import { Glyph, HighlightedText } from '../ui';
 import EditorPicker from '../editor/EditorPicker';
 
 export function AssignPublish({ obj, context }) {
-  if( !obj.assigned?.audio?.publicUrl ) {
+  if( !obj.homework?.audio ) {
     return null;
   }
   const { onUpdateRow } = context;
@@ -10,7 +10,7 @@ export function AssignPublish({ obj, context }) {
     e.stopPropagation(); // Prevents the <tr> onClick from firing
     const ctx = {
       action: 'publish',
-      assigned: obj.assigned
+      assigned: obj.homework
     };
     onUpdateRow(obj, ctx);
   };
@@ -25,11 +25,11 @@ export function Assign({ obj, context }) {
   const { onUpdateRow, editors } = context;
   async function onChange(value) {
     onUpdateRow( obj, { 
-      source: value || '-unassign',
+      source: value || '',
       action: 'assignSource'
     } );
   }
-  return <EditorPicker voices={editors} voice={obj?.assigned?.source} onChange={onChange} ecss='' expanded={false} />
+  return <EditorPicker voices={editors} voice={obj?.homework?.source} onChange={onChange} ecss='' expanded={false} />
 }  
 
 export function AssignmentSync({ assigned }) {

@@ -1,4 +1,4 @@
-import { Progress, Sandbox, Shovels, Prompts, Settings } from '../../models/index.js';
+import { History, Sandbox, Shovels, Prompts, Settings } from '../../models/index.js';
 import debug from 'debug';
 import { generateText } from "../../lib/openai.js"
 import { finalizeExample } from "../lib/finalizeExample.js";
@@ -28,8 +28,8 @@ export async function getNext(routeContext) {
 }
 
 function _getMissedWords(userId) {
-  const _progress     = new Progress();
-  const missedWords   = _progress.missedWords(userId, true);
+  const _history     = new History();
+  const missedWords   = _history.missedWords(userId, true);
   if( missedWords.length < 10 ) {
     const defaults = (new Settings()).all()['DEFAULT_MISSED'];
     missedWords.push( ...defaults );
@@ -58,7 +58,7 @@ function _getRecentlyShoveledWords(userId) {
   const words = [];
   const _shovels = new Shovels();
   recent.forEach( ({shovelId}) => {
-    const shovel = _shovels.find(shovelId);
+    const shovel = _shovels.byId(shovelId);
     words.push( ...shovel.basedOn );
   })
 

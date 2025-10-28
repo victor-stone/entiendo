@@ -15,13 +15,13 @@ export const IdiomInfo = ({ idiom, tight = false }) => {
   return (
     <div className=" justify-center items-center flex">
       <Card.Grid className={` ${tight ? 'w-full' : 'w-2/3 p-4'}`} style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: 8 }}>
-        {idiom.assigned?.sync && (<><Card.GridLabel title="Num" /> <Card.GridField>{idiom.assigned.sync}</Card.GridField></>) }
+        {idiom.homework?.sync && (<><Card.GridLabel title="Num" /> <Card.GridField>{idiom.homework.sync}</Card.GridField></>) }
         <Card.GridLabel title="Text" /> <Card.GridField>{idiom.text}</Card.GridField> 
         <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
         <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
         <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
-        {idiom.assigned?.source && (<><Card.GridLabel title="Assigned" /> <Card.GridField>{idiom.assigned.source}</Card.GridField></>) }
-        {idiom.assigned?.transcription && (<><Card.GridLabel title="Transcription" /> <Card.GridField>{idiom.assigned.transcription}</Card.GridField></>) }
+        {idiom.homework?.source && (<><Card.GridLabel title="Assigned" /> <Card.GridField>{idiom.homework.source}</Card.GridField></>) }
+        {idiom.homework?.transcription && (<><Card.GridLabel title="Transcription" /> <Card.GridField>{idiom.homework.transcription}</Card.GridField></>) }
         <Card.GridLabel title="Id" /> 
         <Card.GridField>
           {'...' + idiom.idiomId?.slice(-10)}

@@ -49,9 +49,9 @@ const CardGrid = ({children, className, style, columns = 2}) => {
   return <Grid columns={columns} className={className} style={{...gridTemplate, ...style}}>{children}</Grid>
 }
 
-const CardGridLabel = ({ title, right = true }) => (
+const CardGridLabel = ({ title, right = true, css = '' }) => (
   <div>
-    <label className={`font-bold ${right ? 'text-right' : ''} w-full block`}>{title}</label>
+    <label className={`${css} font-bold ${right ? 'text-right' : ''} w-full block`}>{title}</label>
   </div>
 );
 

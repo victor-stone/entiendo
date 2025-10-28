@@ -12,19 +12,19 @@ const S = ({ children }) => (
 const E = (props) => <input type="text" className={ecss} {...props} />;
 
 export function AssignmentAudio({ r }) {
-  const hasAudio = r.assigned?.audio?.publicUrl;
+  const hasAudio = r.homework?.url;
 
   return <>{hasAudio && <Glyph name="SpeakerWaveIcon" />}</>;
 }
 
 export function AssignmentForm({ idiom, show, onClose }) {
-  if (!show || !idiom || !Object.hasOwn(idiom,'assigned')) return null;
+  if (!show || !idiom || !idiom.homework) return null;
 
   const [transcription, setTranscription] = useState(
-    idiom.assigned.transcription || ''
+    idiom.homework.transcription || ''
   );
   const [conjugatedSnippet, setConjugatedSnippet] = useState(
-    idiom.assigned.conjugatedSnippet || ''
+    idiom.homework.conjugatedSnippet || ''
   );
   const [selectedFile, setSelectedFile]     = useState(null);
 
@@ -34,6 +34,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
   async function onUpload() {
     const args = {
       idiomId: idiom.idiomId,
+      homeworkId: idiom.homework.homeworkId,
       transcription,
       conjugatedSnippet,
       editor
@@ -43,14 +44,11 @@ export function AssignmentForm({ idiom, show, onClose }) {
     onClose(result);
   }
 
-  const editor = idiom.assigned.source || idiom.source;
+  const editor = idiom.homework.source;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <Card title="Edit Assignment">
         <Card.Body>
-          <Card.Field>
-            <S>{idiom.assigned?.sync}</S>
-          </Card.Field>
           <Card.Field title="Idiom">
             <S>{idiom.text}</S>
           </Card.Field>
@@ -73,7 +71,7 @@ export function AssignmentForm({ idiom, show, onClose }) {
           <AudioUploader
             selectedFile={selectedFile}
             onChange={setSelectedFile}
-            existingUrl={idiom.assigned.audio?.url}
+            existingUrl={idiom.homework?.url}
             isAdmin={isAdmin}
             loading={loading}
           />

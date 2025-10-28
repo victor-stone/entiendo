@@ -7,4 +7,6 @@ export { default as Idioms }   from './idioms.js';
 export { default as Reports }  from './reports.js';
 export { default as Sandbox }  from './sandbox.js';
 export { default as Shovels }  from './shovels.js';
+export { default as History }  from './history.js';
+export { default as Homework }  from './homework.js';
 

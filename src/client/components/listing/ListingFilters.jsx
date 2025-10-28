@@ -48,8 +48,8 @@ export const ListingFilters = [
 		),
 		filter: (row, value) => {
 			if (!value || value === "-all") return true;
-			if (value === "-pending") return !!row.assigned?.source;
-			return row.assigned?.source === value;
+			if (value === "-pending") return !!row.homework?.source;
+			return row.homework?.source === value;
 		},
 	},
 ];

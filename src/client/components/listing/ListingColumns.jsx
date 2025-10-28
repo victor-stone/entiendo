@@ -8,9 +8,9 @@ export const ListingColumns = [
   {
     name: "sync",
     label: "Sync",
-    render: (row, ctx) => <AssignmentSync assigned={row.assigned} />, // ctx for future extensibility
+    render: (row, ctx) => <AssignmentSync assigned={row.homework} />, // ctx for future extensibility
     sortable: true,
-    sorter: (a, b) => (a.assigned?.sync || 0) - (b.assigned?.sync || 0)
+    sorter: (a, b) => (a.homework?.sync || 0) - (b.homework?.sync || 0)
   },
   {
     name: "text",
@@ -40,10 +40,10 @@ export const ListingColumns = [
   {
     name: "transcription",
     label: "Transcription",
-    className: 'w-[65%]',
+    className: '', // 'w-[65%]',
     render: (row, ctx) => (
       <>
-        <AssignmentAudio r={row} /> <AssignTranscription assigned={row.assigned} />
+        <AssignmentAudio r={row} /> <AssignTranscription assigned={row.homework} />
       </>
     ),
   },
@@ -60,6 +60,6 @@ export const ListingColumns = [
   {
     name: "source",
     label: "Source",
-    render: (row, ctx) => <AssignmentSource assigned={row.assigned} />, 
+    render: (row, ctx) => <AssignmentSource assigned={row.homework} />, 
   },
 ];

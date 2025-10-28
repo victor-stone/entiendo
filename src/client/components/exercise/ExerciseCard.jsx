@@ -55,6 +55,7 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
   }, [calendarFull, navigate]);
 
   debugExercise('Entering Card:[%s] %s%s', phase, loading ? 'loading' : '', exercise?.text || null);
+  
   useEffect(() => {
     const fetchExercise = async () => {
       if (criteria && getToken && !exercise && !loading && !error) {

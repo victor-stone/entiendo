@@ -39,7 +39,7 @@ export async function getUserFromRequest(req) {
   try {
     // Fetch the complete user record from the database
     const _users = new Users();
-    const dbUser = _users.find(userId);
+    const dbUser = _users.byId(userId);
     
     if (dbUser) {
       // Return merged user with database info (includes role)

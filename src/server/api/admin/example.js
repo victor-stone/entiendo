@@ -48,7 +48,7 @@ export async function uploadExampleAudio(routeContext) {
   const _examples = new Examples();
   
   // Check if example exists
-  const example = _examples.find(payload.exampleId);
+  const example = _examples.byId(payload.exampleId);
   if (!example) {
     throw new ValidationError('Example not found');
   }

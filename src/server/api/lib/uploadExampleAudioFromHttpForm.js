@@ -5,9 +5,9 @@ export async function uploadExampleAudioFromHTTPForm(payload, filename) {
   const contentType = audioContent
     ? (payload.file || payload.files.file).mimetype || "audio/mpeg"
     : undefined;
-  const audio = audioContent
+  const s3Info = audioContent
     ? await uploadAudioToS3(audioContent, filename, contentType)
-    : undefined;
-  return audio;
+    : { key: null };
+  return s3Info;
 }
 

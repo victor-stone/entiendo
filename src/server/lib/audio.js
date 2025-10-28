@@ -21,15 +21,15 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
   try {
     // Generate a unique filename if not provided
     let fileBuffer;
-    
+
     if (!filename) {
       const timestamp = Date.now();
       filename = `audio_${timestamp}.mp3`;
     }
-    
+
     // Create the S3 key with 'tts/' prefix
     const s3Key = getS3Key(`tts/${filename}`);
-    
+
     // Handle input as either a file path or buffer
     if (typeof audioContent === 'string') {
       // It's a file path
@@ -38,7 +38,7 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
       // It's already a buffer
       fileBuffer = audioContent;
     }
-    
+
     // Upload to S3
     const uploadParams = {
       Bucket: process.env.AUDIO_BUCKET,
@@ -46,24 +46,24 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
       Body: fileBuffer,
       ContentType: contentType
     };
-    
+
     await s3.putObject(uploadParams);
-    
+
     // Generate the permanent S3 URL
     const s3Url = `https://${process.env.AUDIO_BUCKET}.s3.amazonaws.com/${s3Key}`;
-    
+
     // Generate a presigned URL that expires in 1 hour (3600 seconds)
     const getObjectParams = {
       Bucket: process.env.AUDIO_BUCKET,
       Key: s3Key
     };
-    
+
     const command = new GetObjectCommand(getObjectParams);
     const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-    
+
     // Return both URLs
     return {
-      publicUrl: s3Url,
+      key: s3Url,
       url: presignedUrl,
       expires: Date.now() + (3600 * 1000) // 1 hour from now in milliseconds
     };
@@ -87,17 +87,17 @@ const azureTTS = {
     try {
       debugTTS(`[TTS] Starting speech generation for text: "${text}"`);
       debugTTS(`[TTS] Using voice: ${voice}`);
-      
+
       // Generate a unique filename
-      const timestamp     = Date.now();
+      const timestamp = Date.now();
       const sanitizedText = text.substring(0, 20).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      const filename      = `${sanitizedText}_${timestamp}.mp3`;
-      
+      const filename = `${sanitizedText}_${timestamp}.mp3`;
+
       // Create a temporary file path
       const tempFilePath = path.join(os.tmpdir(), filename);
-      
+
       debugTTS(`[TTS] Temporary file path: ${tempFilePath}`);
-      
+
       // Generate the audio file
       await _synthesizeSpeechToFile(
         process.env.AZURE_SPEECH_KEY,
@@ -106,31 +106,31 @@ const azureTTS = {
         voice,
         tempFilePath
       );
-      
+
       // Check if the file was created and has content
       const fileStats = fs.statSync(tempFilePath);
       debugTTS(`[TTS] Generated audio file size: ${fileStats.size} bytes`);
-      
+
       if (fileStats.size === 0) {
         throw new Error('Generated audio file is empty');
       }
-      
+
       // Upload to S3 using the extracted function
       const result = await uploadAudioToS3(tempFilePath, filename);
-      
+
       // Clean up the temporary file
       fs.unlinkSync(tempFilePath);
       debugTTS(`[TTS] Temporary file removed`);
-      
+
       debugTTS(`[TTS] Process completed successfully`);
-      
+
       return result;
     } catch (error) {
       // console.error('[TTS] Error generating TTS audio:', error);
       throw new Error(`Failed to generate speech audio: ${error.message}`);
     }
   },
-  
+
   /**
    * Generate a presigned URL for an existing audio file
    * @param {string} url - The S3 URL or S3 key of the audio file
@@ -140,20 +140,20 @@ const azureTTS = {
   generatePresignedUrl: async (url, expiresIn = 3600) => {
     try {
       const s3Key = getS3Key(url);
-      
+
       debugTTS(`[TTS] Generating presigned URL for S3 key: ${s3Key}`);
-      
+
       // Generate presigned URL
       const getObjectParams = {
         Bucket: process.env.AUDIO_BUCKET,
         Key: s3Key
       };
-      
-      const command      = new GetObjectCommand(getObjectParams);
+
+      const command = new GetObjectCommand(getObjectParams);
       const presignedUrl = await getSignedUrl(s3, command, { expiresIn });
-      const expires      = Date.now() + (expiresIn * 1000);
+      const expires = Date.now() + (expiresIn * 1000);
       debugTTS(`[TTS] Presigned URL generated, expires in ${expiresIn} seconds: ${new Date(expires)}`);
-      
+
       return {
         url: presignedUrl,
         expires
@@ -163,23 +163,27 @@ const azureTTS = {
       throw new Error(`Failed to generate presigned URL: ${error.message}`);
     }
   },
-  
-  /**
-   * Alternative voice options for Rioplatense Spanish
-   * 
-   * es-UY-ValentinaNeural
-   * es-UY-MateoNeural
-   * 
-   */
-  voiceOptions: [
-    { id: 'es-AR-ElenaNeural', name: 'Elena (female)', gender: 'Female' }
-    ,{ id: 'es-AR-TomasNeural', name: 'Matias (male)', gender: 'Male' }
-    ,{ id: 'es-UY-MateoNeural', name: 'Mateo (male)', gender: 'Male' }
-    ,{ id: 'es-UY-ValentinaNeural', name: 'Valentina (female)', gender: 'Female' }
-  ]
+
+  selectVoice() {
+    const voiceOptions = [
+      { id: 'es-UY-MateoNeural',     name: 'Mateo',     gender: 'Male',   weight: 0.5 },
+      { id: 'es-UY-ValentinaNeural', name: 'Valentina', gender: 'Female', weight: 0.3 },
+      { id: 'es-AR-TomasNeural',     name: 'Matias',    gender: 'Male',   weight: 0.1 },
+      { id: 'es-AR-ElenaNeural',     name: 'Elena',     gender: 'Female', weight: 0.1 }
+    ];
+
+    const r = Math.random();
+    let sum = 0;
+    for (let i = 0; i < voiceOptions.length; i++) {
+      sum += voiceOptions[i].weight;
+      if (r < sum) 
+        return voiceOptions[i];
+    }
+  },
+
 };
 
-export default azureTTS
+export default azureTTS;
 
 // LOCAL HELPER
 
@@ -195,16 +199,16 @@ export default azureTTS
 async function _synthesizeSpeechToFile(subscriptionKey, region, text, voice, outputFilePath) {
   // Create speech config
   const speechConfig = sdk.SpeechConfig.fromSubscription(subscriptionKey, region);
-  
+
   // Set output format to MP3
   speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz128KBitRateMonoMp3;
-  
+
   // Create audio config for file output
   const audioConfig = sdk.AudioConfig.fromAudioFileOutput(outputFilePath);
-  
+
   // Create synthesizer
   const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-  
+
   // Create the SSML
   const ssml = `
   <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-AR">
@@ -215,9 +219,9 @@ async function _synthesizeSpeechToFile(subscriptionKey, region, text, voice, out
     </voice>
   </speak>
   `;
-  
+
   debugTTS(`[TTS] Starting synthesis with SSML`);
-  
+
   return new Promise((resolve, reject) => {
     synthesizer.speakSsmlAsync(
       ssml,
@@ -317,11 +321,31 @@ export async function renameAudioInS3(oldUrlOrKey, newFilename) {
     const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
     return {
-      publicUrl: s3Url,
+      key: s3Url,
       url: presignedUrl,
       expires: Date.now() + (3600 * 1000)
     };
   } catch (error) {
     throw new Error(`Failed to rename audio in S3: ${error.message}`);
   }
+}
+
+const urlMap = new Map();
+
+export async function getAudioUrl(key) {
+  let mapping = urlMap.get(key);
+  if (!mapping) {
+    mapping = { url: '', expires: 0 };
+  }
+  if (mapping.expires < Date.now()) {
+    mapping = await azureTTS.generatePresignedUrl(key);
+  } else {
+    debugTTS('audio url is up to date')
+  }
+  urlMap.set(key, mapping);
+  return mapping.url;
+}
+
+export function setAudioUrl(key, url, expires) {
+  urlMap.set(key, { url, expires })
 }

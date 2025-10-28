@@ -18,7 +18,9 @@ const SandboxResults = ({userInput, evaluation, exercise, onNext}) => {
     return (
         <>
         <Card.Panel title="Original Sentence">
-            {exercise.audio && <AudioPlayer url={exercise.audio.url} />}
+
+            <AudioPlayer url={exercise.url} />
+            <div className="text-right text-xs italic capitalize">{exercise.voice}</div>
          </Card.Panel>
       <Card.Section>
         <Grid columns={2}>

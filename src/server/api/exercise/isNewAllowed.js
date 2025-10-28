@@ -5,9 +5,9 @@ import debug from 'debug';
 const debugGN = debug('api:exercise:getNext');
 
 export function isNewAllowed(userId) {
-    const query = new Progress();
+    const _progress = new Progress();
 
-    const due = query.due(userId);
+    const due = _progress.due(userId);
     if( due.length ) {
         return false;
     }
@@ -17,7 +17,7 @@ export function isNewAllowed(userId) {
         GET_NEXT_MAX_NEW_IDIOMS      // after that only allow this many per 24 hours
     } = getSettings();
 
-    const dates = query.idiomaticCreationDates();
+    const dates = _progress.creationDates();
     const now   = Date.now();
     
     //  Let the user build MAX_INITIAL amount
@@ -30,6 +30,7 @@ export function isNewAllowed(userId) {
 
     // After that only allow GET_NEXT_MAX_NEW_IDIOMS for the last 24 hours
     const recentCount = dates.filter(e => (now - e) < ONE_DAY_MS).length;
-    debugGN('Checking recent: %d against %d', recentCount, GET_NEXT_MAX_NEW_IDIOMS)
+    debugGN('Checking recent: %d against %d', recentCount, GET_NEXT_MAX_NEW_IDIOMS);
+    
     return recentCount < GET_NEXT_MAX_NEW_IDIOMS;
 }

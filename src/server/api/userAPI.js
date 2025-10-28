@@ -15,7 +15,7 @@ export async function syncUserFromAuth0(routeContext) {
   const { payload: { authUser } } = routeContext;
   const { userId } = validation;
   const users = new Users();
-  let user = users.find(userId);
+  let user = users.byId(userId);
 
   if (!user) {
     user = users.create({

@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { Examples, Progress, Idioms } from '../../models/index.js';
+import { Examples, Progress, Idioms, History } from '../../models/index.js';
 import { NotFoundError, CalendarExhaustedError } from '../../../shared/constants/errorTypes.js';
 import { getSettings } from '../settingsAPI.js';
 import { isNewAllowed } from './isNewAllowed.js';
@@ -40,16 +40,16 @@ export async function getNext(routeContext) {
 }
 
 async function _getNextDueExercise(routeContext) {
-    const [idiom, progress] = await _getNextDueIdiom(routeContext);
+    const [idiom, progressRecDue] = _getNextDueIdiom(routeContext);
 
     if (idiom) {
-        return await _getExerciseForDueIdiom({ idiom, progress, routeContext });
+        return await _getExerciseForDueIdiom({ idiom, progressRecDue });
     }
 
     return null;
 }
 
-async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
+async function _getExerciseForDueIdiom({ idiom, progressRecDue }) {
     const { GET_NEXT_EXAMPLES_PER_IDIOM } = getSettings();
 
     const gatherCounts = (counts, id) => {
@@ -57,32 +57,39 @@ async function _getExerciseForDueIdiom({ idiom, progress, routeContext }) {
         return counts;
     };
 
-    const seenExampleIds      = progress.history.map( ({exampleId}) => exampleId);
-    const seenExampleIdCounts = seenExampleIds.reduce(gatherCounts, {});
-    const controlIds          = Object.keys(seenExampleIdCounts).sort();
-    let   exercise            = null;
+    const _history   = new History();
+    const history    = _history.forProgress(progressRecDue.progressId);
+    const allSeen    = history.map( ({exampleId}) => exampleId);
+    const seenCounts = allSeen.reduce(gatherCounts, {});
+    const seen       = Object.keys(seenCounts);
+    let   exercise   = null;
 
-    const exQuery = new Examples();
+    const _examples        = new Examples();
+    const examplesForIdiom = _examples.forIdiom(idiom.idiomId);
 
-    // If user hasn't seen enough examples, try to find or create a new one
-    if (controlIds.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
-        const examplesForIdiom = exQuery.forIdiom(idiom.idiomId);
-        exercise = examplesForIdiom.find(({ exampleId }) => !controlIds.includes(exampleId));
+    // If user hasn't seen all or enough examples, try to find or create a new one
+    if (seen.length <  examplesForIdiom.length || seen.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
+        exercise = examplesForIdiom.byId(({ exampleId }) => !seen.includes(exampleId));
         if (!!exercise) {
             debugGetNext('Found an example the user has not seen %s', exercise.exampleId);
         } else {
-            debugGetNext('User has seen all existing samples, making new %o', seenExampleIdCounts);
+            debugGetNext('User has seen all existing samples, making new %o', seenCounts);
             exercise = await createExample(idiom, null, examplesForIdiom);
         }
     } else {
         // User has seen all examples, cycle them by id (why not?) from now on
-        const controlIndex = controlIds.indexOf(seenExampleIds[ seenExampleIds.length - 1 ]);
-        const exampleToUse = controlIds[ (controlIndex + 1) % controlIds.length ];
-        exercise = exQuery.find(exampleToUse);
+
+        const controlIndex = seen.sort().indexOf(allSeen[ allSeen.length - 1 ]);
+        if( controlIndex !== 1 ) {
+            console.log( 'Control index: ' + controlIndex )
+        }
+        const exampleToUse = seen[ (controlIndex + 1) % seen.length ];
+        exercise = _examples.byId(exampleToUse);
+        if( typeof exercise.audio === 'object' ) 
+            throw "WRONG EXERCISE SHAPE"
         debugGetNext('Using: %s', exampleToUse )
     }
 
-    
     return await finalizeExample(exercise, {idiom, debug: debugGetNext});
 }
 
@@ -95,7 +102,7 @@ async function _isNewAllowed(routeContext) {
 
         After that only allow GET_NEXT_MAX_NEW_IDIOMS for the last 24 hours.
 
-        You can calcuate the date of usage by looking at exercise.history[n].date
+        You can calcuate the date of usage by looking at history[n].date
     */
     const { user: { userId } } = routeContext;
     return isNewAllowed(userId);
@@ -141,7 +148,7 @@ function _getNextDueIdiom(routeContext) {
     let idiom = null;
     if (dueItem ) {
         const _idioms = new Idioms();
-              idiom   = _idioms.find(dueItem.idiomId);
+              idiom   = _idioms.byId(dueItem.idiomId);
     }
     return [idiom, dueItem]
 }
@@ -175,8 +182,8 @@ function _getAdminBypassExercise(routeContext) {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
         const _examples = new Examples();
         const _idioms   = new Idioms();
-        let   exercise  = await _examples.find(preferences.getNextExample);
-        let   idiom     = await _idioms.find(exercise.idiomId);
+        let   exercise  = await _examples.byId(preferences.getNextExample);
+        let   idiom     = await _idioms.byId(exercise.idiomId);
         return await finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
     } : null;
 }

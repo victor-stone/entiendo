@@ -16,7 +16,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
   const { update, error, loading } = useUpdateExampleStore();
 
   const [text, setText]                           = useState(example.text || "");
-  const [voice, setVoice]                         = useState(example?.audio?.voice || example.source || "");
+  const [voice, setVoice]                         = useState(example?.voice || "");
   const [conjugatedSnippet, setConjugatedSnippet] = useState(example.conjugatedSnippet || "");
   const [selectedFile, setSelectedFile]           = useState(null);
 
@@ -67,7 +67,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
         <AudioUploader
           selectedFile={selectedFile}
           onChange={setSelectedFile}
-          existingUrl={example?.audio?.url}
+          existingUrl={example?.url}
           isAdmin={true}
           loading={loading}
         />

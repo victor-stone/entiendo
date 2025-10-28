@@ -10,32 +10,11 @@ export default class Progress extends db {
 
   due(userId) {
     const now = Date.now();
-    return this._(this.data.filter(p => p.userId == userId && p.dueDate < now));
-  }
-
-  exampleIds(userId) {
-    const exampleIds = this.data.reduce((arr, p) => {
-      if (p.userId == userId) {
-        arr.push(p.history.map(h => h.exampleId))
-      }
-      return arr;
-    }, [])
-    return [...new Set(exampleIds.flat())];
+    return this.filter(p => p.userId == userId && p.dueDate < now);
   }
 
   forIdiom(userId, idiomId) {
-    return this._(this.data.find( p => p.userId == userId && p.idiomId == idiomId ))
-  }
-
-  history(userId, from, to = Date.now()) {
-    return this.data.reduce((arr, p) => {
-      if (p.userId === userId ) {
-        const copy = this._(p);
-        copy.history = p.history.filter(({ date }) => date >= from && date <= to);
-        arr.push(copy);
-      }
-      return arr;
-    }, [])
+    return this.find( p => p.userId == userId && p.idiomId == idiomId );
   }
 
   idiomIds(userId) {
@@ -47,26 +26,8 @@ export default class Progress extends db {
     return [... new Set(filtered.map(p => p.idiomId))]
   }
 
-  idiomaticCreationDates(userId) {
-    return this.data.filter(p => p.userId == userId && !!p.idiomId).map(p => p.createdAt);
-  }
-
-  missedWords(userId, unique) {
-    const words = this.data.reduce((arr, p) => {
-      if (p.userId == userId) {
-        arr.push(...p.history.filter(h => !!h.evaluation?.missedWords?.length).map(h => h.evaluation?.missedWords))
-      }
-      return arr;
-    }, [])
-
-    const flat = words
-                  .flat()
-                  .filter( w => !w.match(/[¡¿?!]/) )
-                  .map( w => w.toLowerCase() );
-
-    return unique
-      ? [... new Set(flat)].sort()
-      : flat;
+  creationDates(userId) {
+    return this.data.filter(p => p.userId == userId).map(p => p.createdAt);
   }
 
   nextDue(userId, tone, usage) {
@@ -85,13 +46,21 @@ export default class Progress extends db {
 
     }).sort(dateASC);
 
-    return recs[0];
+    return this._(recs[0]);
   }
 
   schedule(userId) {
-    return this._(this.data.filter(p => p.userId == userId)).sort(dateASC)
+    return this.filter(p => p.userId == userId).sort(dateASC)
   }
 
 }
 
-db.initCache('progress')
+// debug
+function mapper(p) {
+  if( p.history ) {
+    delete p.history;
+  }
+  return p;
+}
+
+db.initCache('progress', mapper)

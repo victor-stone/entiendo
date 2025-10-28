@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { storeFetch } from '../lib/storeUtils';
 import adminService from '../services/adminService'
-const { assignFulfill, assignIdiom, assignmentReports, 
-  assignPublish, editors } = adminService;
+const { assignFulfill, assignIdiom, homeworkReports, 
+  homeworkPublish, editors } = adminService;
 
 export const useAssignPublishStore = create((set, get) => ({
   loading: false,
   error: null,
   data: null,
-  publish: storeFetch(assignPublish, set),
+  publish: storeFetch(homeworkPublish, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
@@ -46,12 +46,12 @@ export const useAssignmentReportsStore = create((set, get) => ({
     const data = get().data;
     for( let i = 0; i < data.length; i++ ) {
       if( data[i].idiomId == idiom.idiomId ) {
-        data[i].assigned = { ...idiom.assigned };
+        data[i].homework = { ...idiom.homework };
         break;
       }
     }
     set({ data })
   },
-  fetch: storeFetch(assignmentReports, set),
+  fetch: storeFetch(homeworkReports, set),
   reset: () => set({ data: null, error: null, loading: false })
 }));

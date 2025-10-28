@@ -2,6 +2,7 @@
 import { Examples, Idioms } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { uploadExampleAudioFromHTTPForm } from './lib/uploadExampleAudioFromHttpForm.js';
+import { setAudioUrl } from '../lib/audio.js';
 
 export function getExamplesForIdiom(routeContext) {
   const { params } = routeContext;
@@ -11,7 +12,7 @@ export function getExamplesForIdiom(routeContext) {
   }
   
   const _idioms = new Idioms();
-  const idiom = _idioms.find(params.idiomId);
+  const idiom = _idioms.byId(params.idiomId);
   
   if (!idiom) {
     throw new NotFoundError('Idiom not found');
@@ -26,7 +27,7 @@ export function getExamplesForIdiom(routeContext) {
 export function getExampleById(routeContext) {
     const { params: { exampleId } } = routeContext;
     const x = new Examples();
-    return x.find(exampleId);
+    return x.byId(exampleId);
 }
 
 function _extractNameFromUrl(url) {
@@ -40,34 +41,30 @@ function _extractNameFromUrl(url) {
 export async function updateExample(routeContext) {
     const { params: { exampleId }, payload } = routeContext;
 
-    const _examples     = new Examples();
-    const example       = _examples.find(exampleId);
-    const fileName      = _extractNameFromUrl(example?.audio?.publicUrl) || generateExampleAudioFilename(example);
-    const audioFromForm = await uploadExampleAudioFromHTTPForm( payload, fileName );
+    const _examples = new Examples();
+    const example   = _examples.byId(exampleId);
+    const fileName  = _extractNameFromUrl(example.audio) || generateExampleAudioFilename(example);
+
+    const { key, url, expires } = await uploadExampleAudioFromHTTPForm( payload, fileName );
 
     const {
-      voice,
-
-      // throw these away...
-      contentType,
-      file,
-      files,
-
-      // keep these...
-      ...fields
+      text,
+      conjugatedSnippet,
+      voice
     } = payload;
 
+    const update = { 
+      text,
+      conjugatedSnippet,
+      voice,
+    };
 
-    const audio = {
-      ...(example.audio || {}),
-      ...(audioFromForm || {}),
+    if( key ) {
+      setAudioUrl( key, url, expires );
+      update.audio = key;
     }
 
-    if( voice ) {
-      audio.voice = voice;
-    }
-
-    const update = { ...fields, audio };
+    // TODO: delete existing audio if its there
 
     return _examples.update(exampleId, update);
 }
