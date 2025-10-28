@@ -128,6 +128,9 @@ export default class db {
 
 db.preventWrite = false;
 
+const _onInit = [];
+db.onInit = (name, handler) => _onInit.push( { handler, name } );
+
 db.initCache = ( name, mapper ) => {
   const path = _path(name);
   return readJson(path).then( data => {
@@ -138,6 +141,13 @@ db.initCache = ( name, mapper ) => {
       _cache[path] = data;
     }
     console.log( `retrieved ${data.length} records from ${name} bucket`)
+    if( _onInit.length ) {
+      _onInit.forEach( ({ handler, name: n }) => {
+        if( !n || name === n ) {
+          handler( _(_cache[path]), name )
+        }
+      })
+    }
   })
 }
 

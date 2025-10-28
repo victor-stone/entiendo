@@ -11,6 +11,52 @@ const s3 = new S3();
 const debugTTS = debug('api:tts');
 
 /**
+ *  UTITILY FUNC - not part of the pap
+ * 
+ * Lists all objects in the configured S3 bucket (optionally under a prefix).
+ * @param {object} [opts]
+ * @param {string} [opts.prefix] - Optional key prefix (e.g., 'tts/')
+ * @returns {Promise<Array<{key: string, size: number, lastModified: Date, etag?: string}>>}
+ */
+export async function listBucketFiles(opts = {}) {
+  const bucket = process.env.AUDIO_BUCKET;
+  if (!bucket) throw new Error('AUDIO_BUCKET env var is not set');
+
+  const prefix = opts.prefix || undefined;
+
+  let continuationToken = undefined;
+  const results = [];
+
+  try {
+    do {
+      const resp = await s3.listObjectsV2({
+        Bucket: bucket,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      });
+
+      const contents = resp.Contents || [];
+      for (const obj of contents) {
+        // Guard against possible undefined keys for folders
+        if (!obj.Key) continue;
+        results.push({
+          key: obj.Key,
+          size: obj.Size ?? 0,
+          lastModified: obj.LastModified ?? null,
+          etag: obj.ETag,
+        });
+      }
+
+      continuationToken = resp.IsTruncated ? resp.NextContinuationToken : undefined;
+    } while (continuationToken);
+
+    return results;
+  } catch (err) {
+    throw new Error(`Failed to list S3 objects: ${err.message}`);
+  }
+}
+
+/**
  * Uploads an audio file to S3 and generates URLs for access
  * @param {Buffer|string} audioContent - The audio content as a Buffer or file path
  * @param {string} [filename] - Optional custom filename (will be generated if not provided)

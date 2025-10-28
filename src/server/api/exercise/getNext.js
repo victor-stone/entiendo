@@ -69,7 +69,7 @@ async function _getExerciseForDueIdiom({ idiom, progressRecDue }) {
 
     // If user hasn't seen all or enough examples, try to find or create a new one
     if (seen.length <  examplesForIdiom.length || seen.length < GET_NEXT_EXAMPLES_PER_IDIOM) {
-        exercise = examplesForIdiom.byId(({ exampleId }) => !seen.includes(exampleId));
+        exercise = examplesForIdiom.find(({ exampleId }) => !seen.includes(exampleId));
         if (!!exercise) {
             debugGetNext('Found an example the user has not seen %s', exercise.exampleId);
         } else {
