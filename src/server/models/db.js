@@ -126,7 +126,6 @@ export default class db {
 
 }
 
-// debug
 db.preventWrite = false;
 
 db.initCache = ( name, mapper ) => {

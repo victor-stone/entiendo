@@ -55,12 +55,4 @@ export default class Progress extends db {
 
 }
 
-// debug
-function mapper(p) {
-  if( p.history ) {
-    delete p.history;
-  }
-  return p;
-}
-
-db.initCache('progress', mapper)
+db.initCache('progress')

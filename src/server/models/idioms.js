@@ -42,15 +42,4 @@ export default class Idioms extends db {
 
 }
 
-// DEBUG
-const audioFlattener = r => {
-  if( r.homework ) {
-    delete r.homework;
-  }
-  if( r.assigned ) {
-    delete r.assigned;
-  }
-  return r;
-};
-
-db.initCache('idioms', audioFlattener)
+db.initCache('idioms')

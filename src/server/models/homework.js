@@ -14,10 +14,4 @@ export default class Homework extends db {
   }
 }
 
-// debug
-function mapper(a) {
-  a.homeworkId = a.assignmenId;
-  delete a.assignmenId;
-  return a;
-}
-db.initCache('homework', mapper)
+db.initCache('homework')

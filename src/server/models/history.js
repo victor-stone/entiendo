@@ -1,6 +1,4 @@
 import db from './db.js';
-// debug
-import { v4 as uuidv4 } from 'uuid';
 
 export default class History extends db {
   constructor() {
@@ -40,10 +38,4 @@ export default class History extends db {
   }
 }
 
-// debug
-function mapper(h) {
-  h.historyId = uuidv4();
-  return h;
-}
-
-db.initCache('history', mapper);
+db.initCache('history');
