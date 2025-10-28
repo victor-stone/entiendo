@@ -140,3 +140,15 @@ db.initCache = ( name, mapper ) => {
     console.log( `retrieved ${data.length} records from ${name} bucket`)
   })
 }
+
+db.resetCache = async () => {
+  const paths = [..._cache];
+  for( var i = 0; i < paths.length; i++ ) {
+    const name = paths[i][0];
+    await db.initCache(name);
+  }
+}
+
+export async function resetCache() {
+  await db.resetCache();  
+}

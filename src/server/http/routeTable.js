@@ -18,6 +18,8 @@ import * as sandboxAPI  from  '../api/sandbox/index.js';
 import * as exampleAPI  from  '../api/exampleAPI.js';
 import * as reportAPI   from  '../api/reportingAPI.js';
 
+import { resetCache } from '../models/db.js';
+
 /**
  * The route table maps HTTP methods and paths to handler functions
  * Each entry specifies:
@@ -131,7 +133,7 @@ export const routeTable = {
     },
 
     '/api/admin/resetcaches': { 
-      handler: (routeContext) => adminAPI.resetCaches(routeContext),
+      handler: (routeContext) => resetCache( /* routeContext */ ),
       auth: true
     },
     '/api/admin/prompts': { 

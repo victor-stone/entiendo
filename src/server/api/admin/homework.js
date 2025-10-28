@@ -17,13 +17,6 @@ const debugHW = debug("api:homework");
 
 const MAGIC_WORD = 'assigned';
 
-async function _incSyncCounter() {
-  const settings = new Settings();
-  const counter = settings.get("SYNC_COUNTER");
-  await settings.put("SYNC_COUNTER", counter + 1);
-  return counter;
-}
-
 /*
   ((((((((((()))))))))))
     MANAGE ASSIGNMENTS
