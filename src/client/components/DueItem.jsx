@@ -20,7 +20,7 @@ const ConfidenceMeter = ({ value }) => {
   );
 };
 
-const DueItem = ({ item, isPastDue, isDueToday }) => (
+const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
   <div
     key={item.progressId}
     className={`sm:items-center p-4 rounded-xl shadow border-l-4 transition hover:shadow-md
@@ -46,9 +46,9 @@ const DueItem = ({ item, isPastDue, isDueToday }) => (
             icon={InboxIcon}
             color="bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200" />)
       }
-    <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} />
-    <Card.Info text={item.range.label} iconName={item.range.icon} />
-    <ConfidenceMeter value={item.confidence} />
+    { !compact && <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} /> }
+    { !compact && <Card.Info text={item.range.label} iconName={item.range.icon} /> }
+    { !compact && <ConfidenceMeter value={item.confidence} /> }
   </div>
 );
 

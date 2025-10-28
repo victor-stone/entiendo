@@ -4,6 +4,7 @@ import DueItem from './DueItem';
 
 const Schedule = ({ schedule }) => {
   const [groupByUsage, setGroupByUsage] = useState(false);
+  const [viewCompact, setViewCompact] = useState(true);
 
   if (!schedule || schedule.length === 0) {
     return <div className="p-4 text-gray-500">No exercises due at this time.</div>;
@@ -30,15 +31,33 @@ const Schedule = ({ schedule }) => {
 
   return (
     <>
+        <div className="flex justify-end p-2">
+          <label className="flex items-center space-x-2 mr-2">
+            <span className="text-xs">Compact</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={viewCompact}
+              onClick={() => setViewCompact(v => !v)}
+              className={`w-8 h-5 flex items-center rounded-full p-0.5 transition-colors ${
+                viewCompact ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
+            >
+              <div
+                className={`w-3 h-3 bg-white rounded-full shadow transform transition-transform ${
+                  viewCompact ? 'translate-x-3' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </label>
       {groupCount > 1 && (
-        <div id="groupByButton" className="flex justify-end p-2">
           <button
             className="text-xs px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
             onClick={() => setGroupByUsage(g => !g)}>
             {groupByUsage ? 'Ungroup' : 'Group by Usage'}
           </button>
-        </div>
       )}
+        </div>
         {groupByUsage ? (
           Object.entries(grouped).map(([label, items]) => (
             <div key={label} className="mb-6">
@@ -50,6 +69,7 @@ const Schedule = ({ schedule }) => {
                     item={item}
                     isPastDue={item.dueDate < now}
                     isDueToday={item.dueDate < midnightTonight}
+                    compact={viewCompact}
                   />
                 ))}
               </Grid>
@@ -63,6 +83,7 @@ const Schedule = ({ schedule }) => {
                 item={item}
                 isPastDue={item.dueDate < now}
                 isDueToday={item.dueDate < midnightTonight}
+                compact={viewCompact}
               />
             ))}
           </Grid>
