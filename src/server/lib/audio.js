@@ -61,7 +61,7 @@ export async function listBucketFiles(opts = {}) {
  * @param {Buffer|string} audioContent - The audio content as a Buffer or file path
  * @param {string} [filename] - Optional custom filename (will be generated if not provided)
  * @param {string} [contentType='audio/mpeg'] - Content type of the audio file
- * @returns {Promise<{publicUrl: string, url: string, expires: number}>} - The S3 URLs and expiry timestamp
+ * @returns {Promise<{key: string, url: string, expires: number}>} - The S3 URLs and expiry timestamp
  */
 export async function uploadAudioToS3(audioContent, filename, contentType = 'audio/mpeg') {
   try {
@@ -127,7 +127,7 @@ const azureTTS = {
    * Generates speech from text using Azure TTS and uploads to S3
    * @param {string} text - The Spanish text to convert to speech
    * @param {string} [voice='es-UY-ValentinaNeural'] - The voice to use
-   * @returns {Promise<{url: string, presignedUrl: string, expires: number}>} - The S3 URL, presigned URL, and expiry timestamp
+   * @returns {Promise<{key: string, url: string, expires: number}>} - The S3 URL, presigned URL, and expiry timestamp
    */
   generateSpeech: async (text, voice = 'es-UY-ValentinaNeural') => {
     try {
@@ -181,7 +181,7 @@ const azureTTS = {
    * Generate a presigned URL for an existing audio file
    * @param {string} url - The S3 URL or S3 key of the audio file
    * @param {number} [expiresIn=3600] - Expiration time in seconds (default 1 hour)
-   * @returns {Promise<{presignedUrl: string, expires: number}>} - The presigned URL and expiry timestamp
+   * @returns {Promise<{url: string, expires: number}>} - The presigned URL and expiry timestamp
    */
   generatePresignedUrl: async (url, expiresIn = 3600) => {
     try {
@@ -198,7 +198,7 @@ const azureTTS = {
       const command = new GetObjectCommand(getObjectParams);
       const presignedUrl = await getSignedUrl(s3, command, { expiresIn });
       const expires = Date.now() + (expiresIn * 1000);
-      debugTTS(`[TTS] Presigned URL generated, expires in ${expiresIn} seconds: ${new Date(expires)}`);
+      debugTTS(`[TTS] Presigned URL generated (expires in ${expiresIn}s at ${new Date(expires).toISOString()})`);
 
       return {
         url: presignedUrl,
@@ -334,7 +334,7 @@ export async function deleteAudioFromS3(url) {
  * Renames an audio file in S3 by copying to a new key and deleting the old one
  * @param {string} oldUrlOrKey - The S3 URL or S3 key of the audio file to rename
  * @param {string} newFilename - The new filename (should include extension, e.g. 'newfile.mp3')
- * @returns {Promise<{publicUrl: string, url: string, expires: number}>} - The new S3 URLs and expiry timestamp
+ * @returns {Promise<{key: string, url: string, expires: number}>} - The new S3 URLs and expiry timestamp
  */
 export async function renameAudioInS3(oldUrlOrKey, newFilename) {
   try {
@@ -386,12 +386,12 @@ export async function getAudioUrl(key) {
   if (mapping.expires < Date.now()) {
     mapping = await azureTTS.generatePresignedUrl(key);
   } else {
-    debugTTS('audio url is up to date')
+    debugTTS('audio url is up to date');
   }
   urlMap.set(key, mapping);
   return mapping.url;
 }
 
 export function setAudioUrl(key, url, expires) {
-  urlMap.set(key, { url, expires })
+  urlMap.set(key, { url, expires });
 }

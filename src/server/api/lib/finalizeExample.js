@@ -20,7 +20,7 @@ export async function finalizeExample
         const { id, name }          = ttl.selectVoice();
         const { key, url, expires } = await generateSpeech(record.text, id);
 
-        setAudioUrl( key, { url, expires } );
+        setAudioUrl( key, url, expires );
         
         if (debug) debug('generating audio for example with ' + name);
         
