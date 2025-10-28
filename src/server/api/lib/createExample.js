@@ -20,7 +20,7 @@ async function _generateExampleSentence(idiom, existingExamples) {
 export async function createExample(idiom, _examples, existingExamples) {
     const exampleData = await _generateExampleSentence(idiom, existingExamples);
     if( !_examples ) _examples = new Examples();
-    return _examples.createExample(
+    return _examples.create(
         idiom.idiomId,
         exampleData.text,
         exampleData.conjugatedSnippet,
