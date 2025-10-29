@@ -94,7 +94,9 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           </div>
           <div>
             <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
-            {progress?.dueDate && <ExtraInfo text={format(progress.dueDate)} label="Next review" block />}
+          {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Ex. last seen" block />}
+          {progress?.dueDate  && <ExtraInfo text={format(progress.dueDate)}  label="Next review" block />}
+
           </div>
         </Grid>
 

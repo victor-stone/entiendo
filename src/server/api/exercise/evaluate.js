@@ -5,10 +5,17 @@ import processSirpState from '../../lib/sirp/process.js';
 export async function evaluateResponse(routeContext) {
     const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
 
+    const _history   = new History();
+    const lastSeen = _history.lastSeen(userId, exampleId);
+
     const _examples  = new Examples();
     const example    = _examples.byId(exampleId);
     const evaluation = await _evaluateResponse(example.text, userTranscription, userTranslation);
     const progress   = _markProgress(exampleId, example.idiomId, evaluation, userId);
+
+
+    progress.lastSeen = lastSeen;
+
     return {
         evaluation,
         progress

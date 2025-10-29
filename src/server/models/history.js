@@ -18,6 +18,13 @@ export default class History extends db {
     });
   }
 
+  lastSeen(userId, exampleId) {
+    const sorted = this
+                    .filter(h => h.userId == userId && h.exampleId == exampleId)
+                    .sort( (a,b) => b.date - a.date );
+    return sorted[0]?.date;
+  }
+
   missedWords(userId, unique) {
     
     const words = this.data.reduce((arr, h) => {
