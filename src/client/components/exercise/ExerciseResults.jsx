@@ -50,9 +50,14 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
       <h2 className="text-xl font-bold mb-4">Exercise Results</h2>
-      <Card.Panel title="Original Sentence">
+      <Card.Panel >
+        <div className="flex justify-between items-center">
+          <h3 className="font-medium mb-2">Original sentence:</h3>
+          <div className="text-right text-xs italic capitalize mr-10">{exercise.voice}</div>
+        </div>
+
         <AudioPlayer url={exercise.url} />
-        <div className="text-right text-xs italic capitalize">{exercise.voice}</div>
+
         <Grid columns={2}>
           <ResultField title="Idiom" text={exercise.idiom?.text || 'Unknown'} />
           <ResultField title="Translation" text={exercise.idiom?.translation || 'Unknown'} />
@@ -67,7 +72,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
               userText={userInput.transcription}
               classes={tpCss}
               accuracy={evaluation.transcriptionAccuracy}
-              feedback={evaluation.transcriptionFeedback} />                        
+              feedback={evaluation.transcriptionFeedback} />
           </div>
           <div>
             <EvalFeedback title={"Translation"}
@@ -79,36 +84,40 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
           <div>
             {evaluation.transcriptionAccuracy !== 'perfect' &&
-              <EvalTopic title="Correct Transcription" 
-                      text={<HighlightedText text={exercise.text} highlightedSnippet={exercise.conjugatedSnippet} />} />}
+              <EvalTopic title="Correct Transcription"
+                text={<HighlightedText text={exercise.text} highlightedSnippet={exercise.conjugatedSnippet} />} />}
           </div>
           <div>
             {evaluation.translationAccuracy !== 'perfect' &&
               <EvalTopic title="Correct English Translation" text={evaluation.englishTranslation} />}
           </div>
-          { showInfo && <>
-          <div><hr class="mt-4 mb-4" ></hr></div>
-          <div><hr class="mt-4 mb-4" ></hr></div>
-          <div>
-            {evaluation.mistakeType && <ExtraInfo text={evaluation.mistakeType} label="Mistake type" block />}
-            {evaluation.missedWords?.length
-              ? <ExtraInfo text={evaluation.missedWords.join(', ')} label="Missed words" block />
-              : null
-            }
-            <ExtraInfo text={exercise.idiom.tone} label="Context" block />
-          </div>
-          <div>
-            <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
-          {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Exercise last seen" block />}
-          {progress?.dueDate  && <ExtraInfo text={format(progress.dueDate)}  label="Next idiom review" block />}
-
-          </div>
-</>}
         </Grid>
+        <div className={`overflow-hidden transition-all duration-700 ease-in-out
+                          ${showInfo ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+          <Grid columns={2} className="">
+            <div><hr class="mt-2 mb-2" ></hr></div>
+            <div><hr class="mt-2 mb-2" ></hr></div>
+            <div>
+              {evaluation.mistakeType && <ExtraInfo text={evaluation.mistakeType} label="Mistake type" block />}
+              {evaluation.missedWords?.length
+                ? <ExtraInfo text={evaluation.missedWords.join(', ')} label="Missed words" block />
+                : null
+              }
+              <ExtraInfo text={exercise.idiom.tone} label="Context" block />
+            </div>
+            <div>
+              <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
+              {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Exercise last seen" block />}
+              {progress?.dueDate && <ExtraInfo text={format(progress.dueDate)} label="Next idiom review" block />}
+
+            </div>
+          </Grid>
+        </div>
+
 
       </Card.Section>
 
-      <NextExercise onNext={onNext} currentId={exercise.exampleId} showInfoButton onInfo={ () => setShowinfo(!showInfo)} />
+      <NextExercise onNext={onNext} currentId={exercise.exampleId} showInfoButton onInfo={() => setShowinfo(!showInfo)} />
     </div>
   );
 };

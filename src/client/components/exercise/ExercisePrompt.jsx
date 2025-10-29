@@ -17,9 +17,9 @@ const ExercisePrompt = ({ exercise, onContinue }) => {
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <h3 className="font-medium mb-2">Listen to the sentence:</h3>
+          <div className="text-right text-xs italic capitalize mr-10">{exercise.voice}</div>
         </div>
         <AudioPlayer url={exercise.url} />
-        <div className="text-right text-xs italic capitalize">{exercise.voice}</div>
       </div>
 
       {onContinue && <div className="flex justify-end mt-4">
