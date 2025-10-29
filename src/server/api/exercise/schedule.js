@@ -46,6 +46,7 @@ export async function scheduleStats(routeContext) {
   const earliest  = progress[0];
   const pastDue   = _progress.due(userId);
   const next      = _progress.nextDue(userId);
+  const upcoming  = _progress.upcoming(userId);
   const missed    = _history.missedWords(userId, false);
   const unique    = [...new Set(missed)];
   const canNew    = isNewAllowed(userId);
@@ -56,7 +57,7 @@ export async function scheduleStats(routeContext) {
     numPastDue  : pastDue.length,
     numSeen     : progress.length,
     score       : __getAccPercentage(progress),
-    nextDueDate : next?.dueDate || 0,
+    nextDueDate : upcoming?.dueDate || 0,
     isNewAllowed: canNew,
     numSandboxes: sandboxes?.length || 0,
     missed      : missed.length,

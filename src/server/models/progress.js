@@ -49,6 +49,17 @@ export default class Progress extends db {
     return this._(recs[0]);
   }
 
+  upcoming(userId) {
+    const now = Date.now();
+    const recs = this.data.filter( p => {
+      if( p.userId !== userId ) return false;
+      if( p.dueDate < now ) return false;
+      return true;
+    }).sort(dateASC);
+
+    return this._(recs[0]);
+  }
+
   schedule(userId) {
     return this.filter(p => p.userId == userId).sort(dateASC)
   }
