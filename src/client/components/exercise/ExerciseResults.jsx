@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import AudioPlayer from '../ui/AudioPlayer';
 import { usageToRange } from '../../../shared/constants/usageRanges';
 import { HighlightedText, Grid } from '../ui';
@@ -27,6 +28,7 @@ const ExtraInfo = ({ label, text }) => (
  * Displays feedback and evaluation results
  */
 const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) => {
+  const [showInfo, setShowinfo] = useState(false);
   if (!exercise || !evaluation) return null;
 
   const getAccuracyColor = (accuracy) => {
@@ -84,6 +86,9 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
             {evaluation.translationAccuracy !== 'perfect' &&
               <EvalTopic title="Correct English Translation" text={evaluation.englishTranslation} />}
           </div>
+          { showInfo && <>
+          <div><hr class="mt-4 mb-4" ></hr></div>
+          <div><hr class="mt-4 mb-4" ></hr></div>
           <div>
             {evaluation.mistakeType && <ExtraInfo text={evaluation.mistakeType} label="Mistake type" block />}
             {evaluation.missedWords?.length
@@ -94,15 +99,16 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           </div>
           <div>
             <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
-          {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Ex. last seen" block />}
-          {progress?.dueDate  && <ExtraInfo text={format(progress.dueDate)}  label="Next review" block />}
+          {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Exercise last seen" block />}
+          {progress?.dueDate  && <ExtraInfo text={format(progress.dueDate)}  label="Next idiom review" block />}
 
           </div>
+</>}
         </Grid>
 
       </Card.Section>
 
-      <NextExercise onNext={onNext} currentId={exercise.exampleId} />
+      <NextExercise onNext={onNext} currentId={exercise.exampleId} showInfoButton onInfo={ () => setShowinfo(!showInfo)} />
     </div>
   );
 };
