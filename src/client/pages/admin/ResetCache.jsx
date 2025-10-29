@@ -20,6 +20,6 @@ export default function PromptsPage() {
         return <LoadingIndicator />
     }
 
-    return <div><pre>Data has been reset: ${JSON.stringify(data,null,2)}</pre> </div>
+    return <div><pre>Data has been reset: {JSON.stringify(data,null,2)}</pre> </div>
 
 }

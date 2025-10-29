@@ -44,7 +44,7 @@ function _validateIdioms(records) {
       if (!validation.valid) {
         errors.push(`Row ${i + 2}: ${validation.errors.join(', ')}`);
       } else {
-        const existingIdiom = _idioms.findValue('text', idiomData.text);
+        const existingIdiom = _idioms.matchingOne('text', idiomData.text);
         if (existingIdiom) {
           debugAdmin('validateIdioms duplicate: %s', idiomData.text);
           duplicates.push({

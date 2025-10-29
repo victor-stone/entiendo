@@ -1,26 +1,12 @@
 // src/server/api/exampleAPI.js
-import { Examples, Idioms } from '../models/index.js';
-import { NotFoundError } from '../../shared/constants/errorTypes.js';
+import { Examples } from '../models/index.js';
 import { uploadExampleAudioFromHTTPForm } from './lib/uploadExampleAudioFromHttpForm.js';
 import { setAudioUrl } from '../lib/audio.js';
 
 export function getExamplesForIdiom(routeContext) {
-  const { params } = routeContext;
-  
-  if (!params.idiomId) {
-    throw new Error('Idiom ID is required');
-  }
-  
-  const _idioms = new Idioms();
-  const idiom = _idioms.byId(params.idiomId);
-  
-  if (!idiom) {
-    throw new NotFoundError('Idiom not found');
-  }
-  
+  const { params } = routeContext;  
   const _examples = new Examples();
   const examples = _examples.forIdiom(params.idiomId);
-  
   return { examples };
 } 
 

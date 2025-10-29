@@ -7,9 +7,9 @@ const debugDB = debug('api:db');
 const DATA_DIR = 'entiendo/data/';
 
 const _ = o => o === undefined ? undefined : JSON.parse(JSON.stringify(o));
-const _path = (name) => DATA_DIR + name + '.json';
+const _path = (name) => name.includes('/') ? name : DATA_DIR + name + '.json';
 
-const _cache = new Map();
+const _cache = {};
 
 export default class db {
   constructor(name, key, doTS) {
@@ -152,13 +152,13 @@ db.initCache = ( name, mapper ) => {
 }
 
 db.resetCache = async () => {
-  const paths = [..._cache];
+  const paths = Object.keys(_cache)
   for( var i = 0; i < paths.length; i++ ) {
-    const name = paths[i][0];
-    await db.initCache(name);
+    await db.initCache(paths[i]);
   }
+  return `${paths.length} caches reset`
 }
 
 export async function resetCache() {
-  await db.resetCache();  
+  return await db.resetCache();  
 }

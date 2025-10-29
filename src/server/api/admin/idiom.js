@@ -27,7 +27,7 @@ export async function createIdiom(routeContext) {
   
   const idioms = new Idioms();  
 
-  const existingIdiom = idioms.findValue('text', idiomData.text);
+  const existingIdiom = idioms.matchingOne('text', idiomData.text);
   if (existingIdiom) {
     throw new ValidationError('Idiom with this text already exists');
   }
