@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Grid } from './ui';
+import { Card } from '../components/layout';
+
 import DueItem from './DueItem';
 
-const Schedule = ({ schedule }) => {
+const Schedule = ({ schedule, hasNew }) => {
   const [groupByUsage, setGroupByUsage] = useState(false);
   const [viewCompact, setViewCompact] = useState(true);
 
@@ -19,7 +21,7 @@ const Schedule = ({ schedule }) => {
   let groupCount = 0;
   if (schedule && schedule.length > 0) {
     const labels = new Set(schedule.map(item => item.range.label));
-    groupCount = labels.size;
+    groupCount = labels.size + 1;
   }
   if (groupByUsage) {
     for (const item of schedule) {
@@ -31,7 +33,8 @@ const Schedule = ({ schedule }) => {
 
   return (
     <>
-        <div className="flex justify-end p-2">
+        <div className="flex justify-around mb-2 ">
+          {hasNew && <Card.Info className="shadow rounded-[3px]" text="New exercises are avaiable!" iconName="StarIcon" />}
           <label className="flex items-center space-x-2 mr-2">
             <span className="text-xs">Compact</span>
             <button
@@ -52,7 +55,7 @@ const Schedule = ({ schedule }) => {
           </label>
       {groupCount > 1 && (
           <button
-            className="text-xs px-2 py-1 rounded border bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+            className="text-xs px-2 py-1 rounded border hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
             onClick={() => setGroupByUsage(g => !g)}>
             {groupByUsage ? 'Ungroup' : 'Group by Usage'}
           </button>

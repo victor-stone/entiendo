@@ -43,8 +43,7 @@ const Calendar = () => {
   return (
     <Card title={<DoExerciseTitle title="Calendar" scheduleStats={stats} />}>
       <Card.Body>
-        {hasNew ? <Card.Info className="mb-2 w-fit border border-gray-200 rounded-[3px]" text="New exercises are avaiable" iconName="StarIcon" /> : ''}
-        <Schedule schedule={data} loading={loading} error={error} />
+        <Schedule schedule={data} loading={loading} error={error} hasNew />
       </Card.Body>
     </Card>
   );

@@ -2,7 +2,6 @@ import { Card } from "../../components/layout";
 import Assignments from "../../components/editor/Assignments";
 
 const columns = [
-  'sync',
   'text',
   'tone',
   'usage',
