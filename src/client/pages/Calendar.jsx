@@ -43,7 +43,7 @@ const Calendar = () => {
   return (
     <Card title={<DoExerciseTitle title="Calendar" scheduleStats={stats} />}>
       <Card.Body>
-        <Schedule schedule={data} loading={loading} error={error} hasNew />
+        <Schedule schedule={data} loading={loading} error={error} hasNew={hasNew} />
       </Card.Body>
     </Card>
   );
