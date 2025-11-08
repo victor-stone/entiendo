@@ -21,7 +21,7 @@ const Schedule = ({ schedule, hasNew }) => {
   let groupCount = 0;
   if (schedule && schedule.length > 0) {
     const labels = new Set(schedule.map(item => item.range.label));
-    groupCount = labels.size + 1;
+    groupCount = labels.size;
   }
   if (groupByUsage) {
     for (const item of schedule) {
