@@ -8,7 +8,7 @@ import { Card } from '../components/layout';
 import debug from 'debug';
 import img1 from "../assets/images/icecream.png";
 import img2 from "../assets/images/clock.png";
-import img3 from "../assets/images/doll.png";
+import img3 from "../assets/images/blocks.png";
 import img4 from "../assets/images/brain.png";
 import DoExerciseTitle from '../components/DoExerciseTitle';
 import * as ReportStates from '../../shared/constants/reportStates';
@@ -73,7 +73,7 @@ const Dashboard = () => {
                 <PageLink page="/app/sandbox" text="Practice" />
               </>
               : data.numSandboxes && data.enableGetNext 
-                  ? <div>🔒 Unlock the Playroom by clearing your calendar</div>
+                  ? <div>🔒 Unlock Missing Words section by clearing your calendar</div>
                   : <div>Your playroom is empty.</div>
             }
           </div>

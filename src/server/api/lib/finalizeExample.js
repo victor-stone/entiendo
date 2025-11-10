@@ -1,5 +1,5 @@
 // src/server/api/lib/finalizeExample.js
-import { Examples, Idioms } from '../../models/index.js';
+import { Examples, Idioms, Normals } from '../../models/index.js';
 import ttl, { getAudioUrl, setAudioUrl } from '../../lib/audio.js';
 
 const { generateSpeech } = ttl;
@@ -35,6 +35,9 @@ export async function finalizeExample
         const _idioms = new Idioms();
         record.idiom = _idioms.byId(record.idiomId);
     }
+
+    const _normals = new Normals();
+    record.normal = record.idiom.normal && _normals.byId(record.idiom.normal);
 
     return record;
 }

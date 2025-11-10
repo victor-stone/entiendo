@@ -16,9 +16,9 @@ const ResultField = ({ title, text }) => (
   </div>
 );
 
-const ExtraInfo = ({ label, text }) => (
-  <div className="mb-1">
-    <span className="text-sm font-800">{label}: </span>
+const ExtraInfo = ({ label, text, block }) => (
+  <div className={`mb-1 ${block ? 'block' : ''}`} >
+    <span className="text-sm font-800" style={{ fontFamily: 'system-ui' }}>{label}: </span>
     <span className="text-sm">{text}</span>
   </div>
 );
@@ -46,6 +46,9 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
 
   const tpCss = getAccuracyColor(evaluation.transcriptionAccuracy);
   const trCss = getAccuracyColor(evaluation.translationAccuracy);
+
+  const normal = exercise.normal?.normal;
+  const explain = exercise.normal?.description;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
@@ -93,7 +96,7 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
           </div>
         </Grid>
         <div className={`overflow-hidden transition-all duration-700 ease-in-out
-                          ${showInfo ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+                          ${showInfo ? "max-h-70 opacity-100" : "max-h-0 opacity-0"}`}>
           <Grid columns={2} className="">
             <div><hr class="mt-2 mb-2" ></hr></div>
             <div><hr class="mt-2 mb-2" ></hr></div>
@@ -104,12 +107,14 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
                 : null
               }
               <ExtraInfo text={exercise.idiom.tone} label="Context" block />
+              {normal && <ExtraInfo text={normal} label="Pattern" block />}
             </div>
             <div>
               <ExtraInfo text={usageToRange(exercise.idiom.usage)?.label} label="Usage" block />
+              {explain && <ExtraInfo text={explain} label="In this context" block />}
               {progress?.lastSeen && <ExtraInfo text={format(progress.lastSeen)} label="Exercise last seen" block />}
               {progress?.dueDate && <ExtraInfo text={format(progress.dueDate)} label="Next idiom review" block />}
-
+              
             </div>
           </Grid>
         </div>
