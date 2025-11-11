@@ -1,8 +1,8 @@
 // src/server/api/lib/finalizeExample.js
 import { Examples, Idioms, Normals } from '../../models/index.js';
-import ttl, { getAudioUrl, setAudioUrl } from '../../lib/audio.js';
+import { getAudioUrl, setAudioUrl } from '../../lib/aws/s3audioBucket.js';
 
-const { generateSpeech } = ttl;
+import { generateSpeech, selectVoice } from '../../lib/elevenlabs.js';
 
 export async function finalizeExample
 (
@@ -14,20 +14,26 @@ export async function finalizeExample
     } = { force: true }
 ) {
 
-    if( record.audio ) {
+    if( debug ) {
+        if( record.audio ) {
+            debug('Audio at: ' + record.audio );
+            debug('VOICE: ' + record.voice );
+        }
+    }
+    if( record.audio && record.voice !== 'azure' ) {
         record.url = await getAudioUrl(record.audio);
     } else if ( force ) {
-        const { id, name }          = ttl.selectVoice();
-        const { key, url, expires } = await generateSpeech(record.text, id);
+        const voice = selectVoice();
+        const { key, url, expires } = await generateSpeech(record.text, voice);
 
         setAudioUrl( key, url, expires );
         
-        if (debug) debug('generating audio for example with ' + name);
+        if (debug) debug('generating audio for example with [' + voice.name + "]\n " + key);
         
         if( !model ) 
             model = new Examples();
 
-        record = model.addAudio(model.key(record), { audio: key, voice: name } );
+        record = model.addAudio(model.key(record), { audio: key, voice: voice.name } );
         record.url = url;
     }
 
