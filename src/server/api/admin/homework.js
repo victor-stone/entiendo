@@ -6,7 +6,7 @@ import {
   Homework
 } from "../../models/index.js";
 import debug from "debug";
-import { renameAudioInS3, setAudioUrl, getAudioUrl } from "../../lib/audio.js";
+import { renameAudioInS3, setAudioUrl, getAudioUrl } from "../../lib/aws/s3audioBucket.js";
 import { uploadExampleAudioFromHTTPForm } from "../lib/uploadExampleAudioFromHttpForm.js";
 
 import { generateExampleAudioFilename } from "../exampleAPI.js";

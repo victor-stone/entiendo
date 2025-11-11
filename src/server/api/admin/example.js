@@ -1,6 +1,6 @@
 import { ForbiddenError, ValidationError } from '../../../shared/constants/errorTypes.js';
 import { Examples } from '../../models/index.js';
-import { uploadAudioToS3 } from '../../lib/audio.js';
+import { uploadAudioToS3 } from '../../lib/aws/s3audioBucket.js';
 
 /**
  * Save a new example to the database

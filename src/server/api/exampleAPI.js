@@ -1,7 +1,7 @@
 // src/server/api/exampleAPI.js
 import { Examples } from '../models/index.js';
 import { uploadExampleAudioFromHTTPForm } from './lib/uploadExampleAudioFromHttpForm.js';
-import { setAudioUrl } from '../lib/audio.js';
+import { setAudioUrl } from '../lib/aws/s3audioBucket.js';
 
 export function getExamplesForIdiom(routeContext) {
   const { params } = routeContext;  

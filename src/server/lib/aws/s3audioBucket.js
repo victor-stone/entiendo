@@ -121,36 +121,32 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
  * @param {number} [expiresIn=3600] - Expiration time in seconds (default 1 hour)
  * @returns {Promise<{url: string, expires: number}>} - The presigned URL and expiry timestamp
  */
-async function generatePresignedUrl(url, expiresIn = 3600)
-{
-    try {
-      const s3Key = getS3Key(url);
+async function generatePresignedUrl(url, expiresIn = 3600) {
+  try {
+    const s3Key = getS3Key(url);
 
-      debugTTS(`[TTS] Generating presigned URL for S3 key: ${s3Key}`);
+    debugTTS(`[TTS] Generating presigned URL for S3 key: ${s3Key}`);
 
-      // Generate presigned URL
-      const getObjectParams = {
-        Bucket: process.env.AUDIO_BUCKET,
-        Key: s3Key
-      };
+    // Generate presigned URL
+    const getObjectParams = {
+      Bucket: process.env.AUDIO_BUCKET,
+      Key: s3Key
+    };
 
-      const command      = new GetObjectCommand(getObjectParams);
-      const presignedUrl = await getSignedUrl(s3, command, { expiresIn });
-      const expires      = Date.now() + (expiresIn * 1000);
-      debugTTS(`[TTS] Presigned URL generated (expires in ${expiresIn}s at ${new Date(expires).toISOString()})`);
+    const command = new GetObjectCommand(getObjectParams);
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn });
+    const expires = Date.now() + (expiresIn * 1000);
+    debugTTS(`[TTS] Presigned URL generated (expires in ${expiresIn}s at ${new Date(expires).toISOString()})`);
 
-      return {
-        url: presignedUrl,
-        expires
-      };
-    } catch (error) {
-      // console.error('[TTS] Error generating presigned URL:', error);
-      throw new Error(`Failed to generate presigned URL: ${error.message}`);
-    }
-  },
-
-
-};
+    return {
+      url: presignedUrl,
+      expires
+    };
+  } catch (error) {
+    // console.error('[TTS] Error generating presigned URL:', error);
+    throw new Error(`Failed to generate presigned URL: ${error.message}`);
+  }
+}
 
 export function generateNameFromText(text) {
   const timestamp     = Date.now();

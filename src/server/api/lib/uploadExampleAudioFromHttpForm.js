@@ -1,4 +1,4 @@
-import { uploadAudioToS3 } from "../../lib/audio.js"
+import { uploadAudioToS3 } from "../../lib/aws/s3audioBucket.js"
 
 export async function uploadExampleAudioFromHTTPForm(payload, filename) {
   const audioContent = payload.file !== "" && (payload.file || payload.files.file).data;
