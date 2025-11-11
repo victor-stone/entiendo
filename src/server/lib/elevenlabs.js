@@ -34,7 +34,8 @@ export function selectVoice() {
     voices = _voices.all();
   }
   const r = Math.random();
-  const voice = voices[ r < 0.5 ? 0 : 1];
+  const idx = Math.floor(r * Math.max(voices.length, 1));
+  const voice = voices[idx];
   return voice;
 }
 
