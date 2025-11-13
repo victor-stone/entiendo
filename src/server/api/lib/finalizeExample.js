@@ -20,7 +20,7 @@ export async function finalizeExample
             debug('VOICE: ' + record.voice );
         }
     }
-    if( record.audio && record.voice !== 'azure' ) {
+    if( record.audio ) {
         record.url = await getAudioUrl(record.audio);
     } else if ( force ) {
         const voice = selectVoice();

@@ -11,8 +11,6 @@ import { uploadExampleAudioFromHTTPForm } from "../lib/uploadExampleAudioFromHtt
 
 import { generateExampleAudioFilename } from "../exampleAPI.js";
 
-const ASSIGN_ERASE = true;
-
 const debugHW = debug("api:homework");
 
 const MAGIC_WORD = 'assigned';

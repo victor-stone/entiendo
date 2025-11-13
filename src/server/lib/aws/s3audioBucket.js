@@ -149,10 +149,7 @@ async function generatePresignedUrl(url, expiresIn = 3600) {
 }
 
 export function generateNameFromText(text) {
-  const timestamp     = Date.now();
-  const sanitizedText = text.substring(0, 20).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  const filename      = `${sanitizedText}_${timestamp}.mp3`;
-  return filename;
+  return text.substring(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp3';
 }
 
 /**
@@ -182,7 +179,7 @@ function getS3Key(urlOrKey) {
 export async function deleteAudioFromS3(url) {
   try {
     const s3Key = getS3Key(url);
-    await s3.deleteObject({
+    return await s3.deleteObject({
       Bucket: process.env.AUDIO_BUCKET,
       Key: s3Key
     });
@@ -197,7 +194,7 @@ export async function deleteAudioFromS3(url) {
  * @param {string} newFilename - The new filename (should include extension, e.g. 'newfile.mp3')
  * @returns {Promise<{key: string, url: string, expires: number}>} - The new S3 URLs and expiry timestamp
  */
-export async function renameAudioInS3(oldUrlOrKey, newFilename) {
+export async function renameAudioInS3(oldUrlOrKey, newFilename, genPublic = true) {
   try {
     const oldKey = getS3Key(oldUrlOrKey);
     const newKey = getS3Key(`tts/${newFilename}`);
@@ -219,19 +216,27 @@ export async function renameAudioInS3(oldUrlOrKey, newFilename) {
     // Generate the permanent S3 URL
     const s3Url = `https://${bucket}.s3.amazonaws.com/${newKey}`;
 
+    if( !genPublic ) {
+      return s3Url;
+    }
+
     // Generate a presigned URL that expires in 1 hour (3600 seconds)
     const getObjectParams = {
       Bucket: bucket,
       Key: newKey
     };
+
+    const EXPIRE = 3600;
+
     const command = new GetObjectCommand(getObjectParams);
-    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: EXPIRE });
 
     return {
       key: s3Url,
       url: presignedUrl,
-      expires: Date.now() + (3600 * 1000)
+      expires: Date.now() + (EXPIRE * 1000)
     };
+
   } catch (error) {
     throw new Error(`Failed to rename audio in S3: ${error.message}`);
   }

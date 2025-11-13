@@ -11,7 +11,7 @@
   "scripts": {
     "dev:client": "vite",
     "dev:nonodemon": "node  --inspect server.js",
-    "dev:server": "nodemon --inspect --ignore 'data/**' --ignore '*.json' server.js",
+    "dev:server": "nodemon --inspect --ignore 'data/**' server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "vite build",
     "preview": "vite preview",
