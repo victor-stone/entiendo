@@ -50,8 +50,9 @@ export async function getReport(routeContext) {
     const report   = _reports.byId(reportId);
     const examples = new Examples();
     const idioms   = new Idioms();
+    const progress = new Progress();
     
-    _resolveUUIDs(report, examples, idioms);
+    _resolveUUIDs(report, examples, idioms, progress);
 
     if( user.report.reportId == reportId ) {
         const users = new Users();
@@ -67,12 +68,15 @@ export async function getReport(routeContext) {
 
 const uuidRegex = /\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/g;
 
-function _resolveUUIDs(report, examples, idioms) {
+function _resolveUUIDs(report, examples, idioms, progress) {
     report.insights.forEach( (insight,i) => {
         const uuids = insight.description.match(uuidRegex)
         uuids?.forEach( uuid => {
-            const example = examples.byId(uuid);
-            const idiom   = example ? idioms.byId(example.idiomId) : idioms.byId(uuid);
+            let alt = examples.byId(uuid);
+            if( !alt ) {
+                alt = progress.byId(uuid);
+            }
+            const idiom   = alt ? idioms.byId(alt.idiomId) : idioms.byId(uuid);
 
             report.insights[i].description = report.insights[i].description.replace( uuid, idiom.text );
         })
@@ -102,8 +106,9 @@ export async function getAllReports(routeContext) {
 
     const examples = new Examples();
     const idioms = new Idioms();
+    const progress = new Progress();
 
-    reports = reports.map(r => _resolveUUIDs(r, examples, idioms));
+    reports = reports.map(r => _resolveUUIDs(r, examples, idioms, progress));
 
     reports.sort( (a,b) => b.generated - a.generated );
 
