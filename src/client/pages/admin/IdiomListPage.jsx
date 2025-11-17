@@ -46,10 +46,21 @@ function IdiomListPage() {
   return (
     <Card title={`Idiom List (${data.length})`}>
       <Card.Body className="pb-0">
-        {selectedIdiom             
-            ? <IdiomDetail idiomId={selectedIdiom.idiomId} onBack={onBack} onChange={reset} />            
-            : <Listing data={data} tools={tools} onSelectRow={setSelectedIdiom} onUpdateRow={onUpdateRow} />
-        }
+        <div className={selectedIdiom ? 'hidden' : ''}>
+          <Listing
+            data={data}
+            tools={tools}
+            onSelectRow={setSelectedIdiom}
+            onUpdateRow={onUpdateRow}
+          />
+        </div>
+        {selectedIdiom && (
+          <IdiomDetail
+            idiomId={selectedIdiom.idiomId}
+            onBack={onBack}
+            onChange={reset}
+          />
+        )}
       </Card.Body>
     </Card>
   );
