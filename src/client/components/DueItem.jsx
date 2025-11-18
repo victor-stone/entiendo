@@ -23,6 +23,8 @@ const ConfidenceMeter = ({ value }) => {
 const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
   <div
     key={item.progressId}
+    data-progress={item.progressId}
+
     className={`sm:items-center p-4 rounded-xl shadow border-l-4 transition hover:shadow-md
       ${isPastDue
         ? 'border-red-500 bg-red-10 dark:bg-red-900/20'
