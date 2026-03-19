@@ -149,7 +149,8 @@ async function generatePresignedUrl(url, expiresIn = 3600) {
 }
 
 export function generateNameFromText(text) {
-  return text.substring(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.mp3';
+  const tag = (Date.now() + '').substring(9);
+  return text.substring(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase() + tag + '.mp3';
 }
 
 /**
