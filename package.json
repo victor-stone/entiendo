@@ -10,8 +10,8 @@
   },
   "scripts": {
     "dev:client": "vite",
-    "dev:nonodemon": "node  --inspect server.js",
-    "dev:server": "nodemon --inspect --ignore 'data/**' server.js",
+    "dev:nonodemon": "node  --inspect --ignore 'staging/**' --ignore 'data/**' server.js",
+    "dev:server": "nodemon --ignore 'staging/**' --ignore 'data/**' --inspect server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "vite build",
     "preview": "vite preview",

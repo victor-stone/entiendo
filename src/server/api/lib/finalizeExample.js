@@ -37,13 +37,15 @@ export async function finalizeExample
         record.url = url;
     }
 
-    if( !record.idiom ) {
+    if( !record.idiom && !record.basedOn?.length ) {
         const _idioms = new Idioms();
         record.idiom = _idioms.byId(record.idiomId);
     }
 
-    const _normals = new Normals();
-    record.normal = record.idiom.normal && _normals.byId(record.idiom.normal);
+    if( record.idiom ) {
+        const _normals = new Normals();
+        record.normal = record.idiom.normal && _normals.byId(record.idiom.normal);
+    }
 
     return record;
 }
