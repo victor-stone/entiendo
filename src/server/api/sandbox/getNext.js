@@ -11,12 +11,18 @@ const LOOKBACK_TIME_CUTOFF = 12 * 60 * 60 * 1000; // 12 hours
 export async function getNext(routeContext) {
   const { user: { userId }, payload: { basedOn } } = routeContext;
 
-  const missedWords   = basedOn?.length > 0 ? basedOn : _getMissedWords(userId);
-  const recentWords   = _getRecentlyShoveledWords(userId);
-  const potentials    = basedOn?.length > 0 ? basedOn : missedWords.filter( w => !recentWords.includes(w) );
-  const unseenShovels = _getUnseenShovels(userId);
+  let potentials;
 
-  const shovel = unseenShovels.find( s => s.basedOn.find( w => potentials.includes(w) ) );
+  if( basedOn?.length > 0 ) {
+    potentials = basedOn;
+  } else {
+    const missedWords = _getMissedWords(userId);
+    const recentWords = _getRecentlyShoveledWords(userId);
+          potentials  = missedWords.filter( w => !recentWords.includes(w) );
+  }
+
+  const unseenShovels = _getUnseenShovels(userId);
+  const shovel        = unseenShovels.find( s => s.basedOn.find( w => potentials.includes(w) ) );
   
   if( !shovel ) {
     return _makeNewShovel(potentials.slice(0,3));
@@ -28,8 +34,8 @@ export async function getNext(routeContext) {
 }
 
 function _getMissedWords(userId) {
-  const _history     = new History();
-  const missedWords   = _history.missedWords(userId, true);
+  const _history    = new History();
+  const missedWords = _history.missedWords(userId, true);
   if( missedWords.length < 10 ) {
     const defaults = (new Settings()).all()['DEFAULT_MISSED'];
     missedWords.push( ...defaults );

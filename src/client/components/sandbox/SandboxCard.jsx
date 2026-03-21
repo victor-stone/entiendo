@@ -18,6 +18,8 @@ const SELECT_TITLE = 1;
 
 var currentTitle = titles[DRILL_TITLE];
 
+const equal = (a,b) => a.length === b.length && a.every((v,i) => v === b[i]);
+
 const SandboxCard = ({missedWords = []}) => {
     const getToken                                     = useUserStore(s => s.getToken);
     const { evaluate, data: evaluation, 
@@ -28,11 +30,14 @@ const SandboxCard = ({missedWords = []}) => {
                 setUserInput, reset }                  = useSandboxStore();
 
     useEffect(() => {
+        if( exercise && missedWords?.length && !equal(missedWords, exercise.basedOn) ) {
+            handleNextExercise();
+        }
         if( !exercise && !loading ) {
             // empty list means get all missed words
             fetch(missedWords, getToken);
         }
-    });
+    }, [ missedWords, exercise, loading ]);
 
     if( error  ) {
         return <p className="text-red-500">{error}</p>;

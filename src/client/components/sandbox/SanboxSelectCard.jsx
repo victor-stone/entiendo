@@ -2,16 +2,32 @@ import { Link } from "react-router-dom";
 import { useState } from 'react';
 import { Card } from "../layout/Card";
 import { ButtonBar } from '../ui';
+import SandboxCard from "./SandboxCard"
 
+const SandboxSelectCard = ({mode: _mode = 'input'}) => {
+      const [ term, setTerm ] = useState('');
+      const [ mode, setMode ] = useState(_mode);
 
-const SelectTermInput = ({setMode, setTerm}) => {
+      const onTerm = term => {
+        setTerm(term);
+        setMode('drill')
+      }
 
-  const [word, setWord] = useState('');
+      return (
+        <>
+        {mode == 'input' && <SelectTermInput onTerm={onTerm}/>}
+        {mode == 'drill'  && <SandboxCard missedWords={[term]} />}
+        </>
+      )
+
+}
+
+const SelectTermInput = ({onTerm}) => {
+      const [ term, setTerm ] = useState('');
 
   const handleSubmit    = (e) => {
     e.preventDefault();
-    setTerm(word);
-    setMode('drill');
+    onTerm(term)
   }
 
     return (
@@ -21,8 +37,8 @@ const SelectTermInput = ({setMode, setTerm}) => {
                     <input
                         type="text"
                         className="border rounded px-2 py-1 w-full dark:text-primary-900 "
-                        value={word}
-                        onChange={e => setWord(e.target.value)}
+                        value={term}
+                        onChange={e => setTerm(e.target.value)}
                         placeholder="Enter word"
                     />
               </Card.Field>
@@ -36,4 +52,4 @@ const SelectTermInput = ({setMode, setTerm}) => {
 
 }
 
-export default SelectTermInput;
+export default SandboxSelectCard;
