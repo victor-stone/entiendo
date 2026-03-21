@@ -5,8 +5,8 @@ import { Card } from '../components/layout';
 import { ButtonBar  } from "../components/ui";
 import SandboxCard from "../components/sandbox/SandboxCard";
 import img2 from "../assets/images/blocks.png";
+import SandboxTermInput from "../components/sandbox/SanboxTermInput";
 
-// TODO: redo all of sandbox stuff
 
 const SandboxIntro = ({click}) => (
     <Card title="Missed Words Practice">
@@ -15,7 +15,8 @@ const SandboxIntro = ({click}) => (
                 <div className="mx-auto text-center">Practice words that you missed.</div>
             <ButtonBar>
                 <Link to="/app/dashboard" className="btn mr-4">Dashboard</Link>
-                <button className="btn btn-accent" onClick={click}>Start...</button>
+                <button className="btn btn-accent" onClick={() => click('drill')}>Random</button>
+                <button className="btn btn-accent" onClick={() => click('select')}>Select</button>
             </ButtonBar>
         </Card.Body>
     </Card>
@@ -23,6 +24,7 @@ const SandboxIntro = ({click}) => (
 
 const Sandbox = () => {
     const [ mode, setMode ] = useState('intro');
+    const [ term, setTerm ] = useState('term');
     const { setImage } = useBrandImageStore();
 
     useEffect( () => {
@@ -31,8 +33,9 @@ const Sandbox = () => {
 
     return (
         <>
-        {mode == 'intro' && <SandboxIntro click={() => setMode('drill')} />}
-        {mode == 'drill' && <SandboxCard  />}
+        {mode == 'intro' && <SandboxIntro click={(mode='') => setMode(mode)} />}
+        {mode == 'drill' && <SandboxCard missedWords={[term]} />}
+        {mode == 'select' && <SandboxTermInput  setMode={setMode} setTerm={setTerm} />}
         </>
     );
 }

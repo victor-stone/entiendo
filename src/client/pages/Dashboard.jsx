@@ -39,7 +39,7 @@ const Dashboard = () => {
     return <LoadingIndicator />
   }
   const showCalendar = data.numSeen > 0;
-  const showSandbox  = data.upToDate && data.missed;
+  const showSandbox  = 1; // data.upToDate && data.missed;
   const reportState  = data.reportState;
   const showReports  = true;
 

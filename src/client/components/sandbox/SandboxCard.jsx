@@ -8,7 +8,17 @@ import ExerciseEval from "../exercise/ExerciseEval";
 import { LoadingIndicator } from "../ui";
 import SandboxResults from "./SandboxResults";
 
-const SandboxCard = () => {
+const titles = [
+    "Missing Words Drills",
+    "Drill a word"
+];
+
+const DRILL_TITLE = 0;
+const SELECT_TITLE = 1;
+
+var currentTitle = titles[DRILL_TITLE];
+
+const SandboxCard = ({missedWords = []}) => {
     const getToken                                     = useUserStore(s => s.getToken);
     const { evaluate, data: evaluation, 
                 reset: resetEval }                     = useEvaluateSandboxStore();
@@ -20,7 +30,6 @@ const SandboxCard = () => {
     useEffect(() => {
         if( !exercise && !loading ) {
             // empty list means get all missed words
-            const missedWords = []; // query.missedWords();
             fetch(missedWords, getToken);
         }
     });
@@ -49,7 +58,7 @@ const SandboxCard = () => {
     }
     
     return (
-        <Card title="Playroom Exercise">
+        <Card title={currentTitle}>
             <Card.Body>
                 {phase === PHASES.prompt && (
                     <ExercisePrompt exercise={exercise} onContinue={() => setPhase(PHASES.input)}/>

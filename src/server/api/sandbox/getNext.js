@@ -9,11 +9,11 @@ const MAX_LOOK_BACK = 25;
 const LOOKBACK_TIME_CUTOFF = 12 * 60 * 60 * 1000; // 12 hours
 
 export async function getNext(routeContext) {
-  const { user: { userId } } = routeContext;
+  const { user: { userId }, payload: { basedOn } } = routeContext;
 
-  const missedWords   = _getMissedWords(userId);
+  const missedWords   = basedOn?.length > 0 ? basedOn : _getMissedWords(userId);
   const recentWords   = _getRecentlyShoveledWords(userId);
-  const potentials    = missedWords.filter( w => !recentWords.includes(w) );
+  const potentials    = basedOn?.length > 0 ? basedOn : missedWords.filter( w => !recentWords.includes(w) );
   const unseenShovels = _getUnseenShovels(userId);
 
   const shovel = unseenShovels.find( s => s.basedOn.find( w => potentials.includes(w) ) );
