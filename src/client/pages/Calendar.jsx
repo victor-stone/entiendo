@@ -4,6 +4,9 @@ import Schedule from '../components/Schedule';
 import { Card } from '../components/layout';
 import { LoadingIndicator } from '../components/ui';
 import DoExerciseTitle from '../components/DoExerciseTitle';
+import { Link } from "react-router-dom";
+import ButtonBar from "../components/ui/ButtonBar";
+
 
 const Calendar = () => {
   const getToken = useUserStore(state => state.getToken);
@@ -44,6 +47,9 @@ const Calendar = () => {
     <Card title={<DoExerciseTitle title="Calendar" scheduleStats={stats} />}>
       <Card.Body>
         <Schedule schedule={data} loading={loading} error={error} hasNew={hasNew} />
+        <ButtonBar>
+          <Link to="/app/dashboard" className="btn btn-primary">Dashboard</Link>
+        </ButtonBar>
       </Card.Body>
     </Card>
   );

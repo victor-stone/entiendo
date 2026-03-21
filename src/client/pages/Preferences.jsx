@@ -1,6 +1,7 @@
 import { useUserStore, useBrandImageStore } from "../stores";
 import { Card, CardField } from '../components/layout';
-import { PageLink, LoadingSpinner } from "../components/ui";
+import { PageLink, LoadingSpinner, ButtonBar } from "../components/ui";
+
 import { useEffect } from "react";
 import { ToneSelectorField } from "../components/ToneSelector";
 import UsageRangeSelector from "../components/UsageRangeSelector";
@@ -45,11 +46,9 @@ const Preferences = () => {
                         />
                     </CardField>
                 }
-                <CardField>
-                    <div className="flex gap-4">
-                        <PageLink page="/app/dashboard" text="Dashboard" />
-                    </div>
-                </CardField>
+                <ButtonBar>
+                    <PageLink page="/app/dashboard" text="Dashboard" />
+                </ButtonBar>
             </Card.Body>
         </Card>
     );

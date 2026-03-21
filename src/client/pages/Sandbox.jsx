@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useBrandImageStore } from "../stores";
+import { Link } from "react-router-dom";
 import { Card } from '../components/layout';
-import { ButtonBar, Grid } from "../components/ui";
+import { ButtonBar  } from "../components/ui";
 import SandboxCard from "../components/sandbox/SandboxCard";
 import img2 from "../assets/images/blocks.png";
 
@@ -13,6 +14,7 @@ const SandboxIntro = ({click}) => (
                 <div><img src={img2} className="w-20 h-20 object-contain mx-auto" /></div>
                 <div className="mx-auto text-center">Practice words that you missed.</div>
             <ButtonBar>
+                <Link to="/app/dashboard" className="btn mr-4">Dashboard</Link>
                 <button className="btn btn-accent" onClick={click}>Start...</button>
             </ButtonBar>
         </Card.Body>
