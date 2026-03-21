@@ -1,6 +1,7 @@
 import { Card } from './layout/Card';
 import { format } from 'timeago.js';
-import { InboxIcon, ExclamationTriangleIcon, ClockIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
+import { InboxIcon, ExclamationTriangleIcon, EyeIcon,
+  ClockIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 
 const ConfidenceMeter = ({ value }) => {
   const thresholds = [0.5, 0.6, 0.7];
@@ -50,6 +51,7 @@ const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
       }
     { !compact && <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} /> }
     { !compact && <Card.Info text={item.range.label} iconName={item.range.icon} /> }
+    { !compact && <Card.Info text={`${format(item.createdAt)}`} icon={EyeIcon} /> }
     { !compact && <ConfidenceMeter value={item.confidence} /> }
   </div>
 );
