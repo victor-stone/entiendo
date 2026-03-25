@@ -22,7 +22,9 @@ export async function getNext(routeContext) {
   }
 
   const unseenShovels = _getUnseenShovels(userId);
-  const shovel        = unseenShovels.find( s => s.basedOn.find( w => potentials.includes(w) ) );
+  const shovel        = basedOn?.length
+    ? unseenShovels.find(s => basedOn.every(w => s.basedOn.includes(w)))
+    : unseenShovels.find(s => s.basedOn.find(w => potentials.includes(w)));
   
   if( !shovel ) {
     return _makeNewShovel(potentials.slice(0,3));
@@ -42,6 +44,7 @@ function _getMissedWords(userId) {
   }
   return missedWords;
 }
+
 /**
  * Returns a de-duplicated list of words that the user has recently seen.
  * 
@@ -109,6 +112,5 @@ async function _generateSandboxSentence(basedOn) {
         throw err;
     }
 }
-
 
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useIdiomStore, useUserStore } from '../../stores';
+import { useIdiomStore, useIdiomNormalStore, useUserStore } from '../../stores';
 import { useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../ui/LoadingIndicator';
 import { Card } from '../layout';
@@ -11,6 +11,25 @@ import CopyToClipboardButton from '../ui/CopyToClipboardButton';
 const debugId = debug('app:idiom');
 const debugRndr = debug('react:render');
 
+const IdiomNormal = ({ normalId }) => {
+  const { data: normal, loading, fetch, error } = useIdiomNormalStore();
+  useEffect(() => {
+    if (!normal && !loading) {
+      debugId('Idiom Normal: fetching normal')
+      fetch(normalId);
+    }
+  }, [normal, fetch, loading]);
+
+  if (error) {
+    return <span className="text-red-500">{error}</span>;
+  }
+
+  if (loading) {
+    return '';
+  }
+  return normal?.normal;
+}
+
 export const IdiomInfo = ({ idiom, tight = false }) => {
   return (
     <div className=" justify-center items-center flex">
@@ -20,6 +39,7 @@ export const IdiomInfo = ({ idiom, tight = false }) => {
         <Card.GridLabel title="Translation" /> <Card.GridField>{idiom.translation}</Card.GridField> 
         <Card.GridLabel title="Tone" /> <Card.GridField>{idiom.tone}</Card.GridField> 
         <Card.GridLabel title="Usage" /> <Card.GridField>{idiom.usage}</Card.GridField> 
+        {idiom.normal && (<><Card.GridLabel title="Normal Cat." /> <Card.GridField><IdiomNormal normalId={idiom.normal} /></Card.GridField></>) }
         {idiom.homework?.source && (<><Card.GridLabel title="Assigned" /> <Card.GridField>{idiom.homework.source}</Card.GridField></>) }
         {idiom.homework?.transcription && (<><Card.GridLabel title="Transcription" /> <Card.GridField>{idiom.homework.transcription}</Card.GridField></>) }
         <Card.GridLabel title="Id" /> 
@@ -32,6 +52,7 @@ export const IdiomInfo = ({ idiom, tight = false }) => {
   );
 };
 
+
 const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
   debugRndr('IdiomDetail')
   const params   = useParams();
@@ -39,6 +60,8 @@ const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
   const getToken = useUserStore(s => s.getToken);
 
   const { data: idiom, loading, fetch, error, reset } = useIdiomStore();
+  const { reset: resetNormal } = useIdiomNormalStore();
+
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -56,16 +79,21 @@ const IdiomDetail = ({ idiomId: idiomIdProp, onBack, onChange }) => {
     return <LoadingSpinner />
   }
 
+  function _reset() {
+    reset();
+    resetNormal();
+  }
+
   function _onBack() {
       debugId('IdiomDetail._onBack reset idiom');
-      reset();
+      _reset();
       onBack && onBack();
   }
 
   function _onChange() {
     debugId('IdiomDetail._onChange resetting idiom %s', idiomId)
     setEditing(false);
-    reset();
+    _reset();
     // fetch(idiomId, getToken);
     onChange && onChange();
   }

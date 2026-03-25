@@ -18,7 +18,8 @@ const SELECT_TITLE = 1;
 
 var currentTitle = titles[DRILL_TITLE];
 
-const equal = (a,b) => a.length === b.length && a.every((v,i) => v === b[i]);
+const includesAll = (requested = [], actual = []) =>
+    requested.every((word) => actual.includes(word));
 
 const SandboxCard = ({missedWords = []}) => {
     const getToken                                     = useUserStore(s => s.getToken);
@@ -30,14 +31,17 @@ const SandboxCard = ({missedWords = []}) => {
                 setUserInput, reset }                  = useSandboxStore();
 
     useEffect(() => {
-        if( exercise && missedWords?.length && !equal(missedWords, exercise.basedOn) ) {
-            handleNextExercise();
+        // In select mode, accept exercises that include the requested word(s).
+        // Exact-array equality causes loops when the server returns broader basedOn sets.
+        if (exercise && missedWords?.length && !includesAll(missedWords, exercise.basedOn || [])) {
+            resetNext();
+            return;
         }
-        if( !exercise && !loading ) {
+        if (!exercise && !loading) {
             // empty list means get all missed words
             fetch(missedWords, getToken);
         }
-    }, [ missedWords, exercise, loading ]);
+    }, [missedWords, exercise, loading, fetch, getToken, resetNext]);
 
     if( error  ) {
         return <p className="text-red-500">{error}</p>;

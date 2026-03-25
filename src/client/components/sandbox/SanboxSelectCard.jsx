@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { useState } from 'react';
 import { Card } from "../layout/Card";
 import { ButtonBar } from '../ui';
-import SandboxCard from "./SandboxCard"
+import SandboxCard from "./SandboxCard";
+import BasedOnSelector from '../BasedOnSelector';
 
 const SandboxSelectCard = ({mode: _mode = 'input'}) => {
       const [ term, setTerm ] = useState('');
@@ -21,6 +22,13 @@ const SandboxSelectCard = ({mode: _mode = 'input'}) => {
       )
 
 }
+
+/*
+              <Card.Field title="Choose">
+                <BasedOnSelector value={term} onChange={ (term) => setTerm(term) } />
+              </Card.Field>
+
+*/
 
 const SelectTermInput = ({onTerm}) => {
       const [ term, setTerm ] = useState('');

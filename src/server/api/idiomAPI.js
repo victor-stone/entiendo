@@ -1,5 +1,5 @@
 // src/server/api/idiomAPI.js
-import { Idioms, Examples } from '../models/index.js';
+import { Idioms, Examples, Normals } from '../models/index.js';
 import { NotFoundError } from '../../shared/constants/errorTypes.js';
 import { finalizeExample } from './lib/finalizeExample.js';
 
@@ -14,6 +14,17 @@ const debugEx = debug('api:example')
 export async function getTones() {
   const _idioms = new Idioms();
   return _idioms.tones();
+}
+
+export async function getNormals() {
+  const _normals = new Normals();
+  return _normals.all();
+}
+
+export async function getNormal(routeContext) {
+  const { params: { normalId } } = routeContext;
+  const _normals = new Normals();
+  return _normals.byId(normalId);
 }
 
 /**

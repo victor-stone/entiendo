@@ -30,7 +30,6 @@ export const useUpdateIdiomStore = create((set, get) => ({
   reset: () => set({ data: null, error: null, loading: false })
 }));
 
-
 export const useCreateExampleStore = create((set, get) => ({
   loading: false,
   error: null,

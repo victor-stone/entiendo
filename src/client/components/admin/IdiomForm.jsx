@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useUserStore, useCreateIdiomStore, useUpdateIdiomStore } from '../../stores';
 import ToneSelector from '../ToneSelector';
+import NormalSelector from '../NormalSelector';
 import { Card, CardField } from '../layout';
 import debug from 'debug';
 
@@ -8,26 +9,27 @@ const debugIF = debug('app:idiom');
 
 const ecss = "border dark:text-primary-900 border-gray-300 rounded-md shadow-sm p-2 ml-2";
 
-const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) => {
+const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp = '', onSave }) => {
   debugIF('IdiomForm')
   const getToken = useUserStore(state => state.getToken);
   const {
     update,
-    data: updated,
+    data   : updated,
     loading: updating,
     error,
     reset } = useUpdateIdiomStore();
   const {
     create,
-    data: created,
+    data   : created,
     loading: creating,
-    error: createError,
-    reset: createReset } = useCreateIdiomStore();
+    error  : createError,
+    reset  : createReset } = useCreateIdiomStore();
   // Form state
-  const [text, setIdiomText] = useState(textProp);
+  const [text, setIdiomText]          = useState(textProp);
   const [translation, setTranslation] = useState('');
-  const [tone, setTone] = useState('Casual');
-  const [usage, setUsage] = useState('8');
+  const [tone, setTone]               = useState('Casual');
+  const [usage, setUsage]             = useState('8');
+  const [normal, setNormal]           = useState('');
 
   const resetForm = () => {
     debugIF('resetting form')
@@ -45,6 +47,7 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
       setTranslation(idiom.translation);
       setTone(idiom.tone);
       setUsage(idiom.usage?.toString());
+      setNormal(idiom.normal);
     } else {
       resetForm();
       setIdiomText(textProp);
@@ -58,7 +61,8 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
       text,
       translation,
       tone,
-      usage
+      usage,
+      normal
     };
 
     const token = await getToken();
@@ -142,6 +146,13 @@ const IdiomForm = ({ idiom, onChange, wide, onError, text: textProp, onSave }) =
               <option>9</option>
               <option>10</option>
             </select>
+          </Card.GridField>
+          <Card.GridLabel title="Normal Cat." /> 
+          <Card.GridField>
+            <NormalSelector
+              value={normal}
+              onChange={setNormal}
+            />
           </Card.GridField>
         </Card.Grid>
       </div>

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import sandboxService from '../services/sandboxService';
 import { storeFetch } from '../lib/storeUtils';
-const { getNext, evaluate } = sandboxService;
+const { getNext, evaluate, getBasedOn } = sandboxService;
 
 export const useGetNextSandboxStore = create((set, get) => ({
   loading: false,
@@ -18,6 +18,14 @@ export const useEvaluateSandboxStore = create((set) => ({
   evaluate: storeFetch(evaluate,set),
   reset: () => set({ data: null, error: null, loading: false })
 }))
+
+export const useSandboxBasedOnStore = create((set, get) => ({
+  loading: false,
+  error: null,
+  data: null,
+  fetch: storeFetch(getBasedOn, set),
+  reset: () => set({ data: null, error: null, loading: false })
+}));
 
 export const PHASES = {
   prompt    : 'prompt',

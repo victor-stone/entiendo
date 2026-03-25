@@ -11,7 +11,15 @@ const idiomService = {
   getTones: async () => {
     return await get('/api/idioms/tones');
   },
+
+  getNormals: async () => {
+    return await get('/api/idioms/normals');
+  },
     
+  getNormal: async (normalId) => {
+    return await get(`/api/idioms/normal/${normalId}`);
+  },
+
   /**
    * Get list of idioms
    * @returns {Promise<Array>} - List of idioms

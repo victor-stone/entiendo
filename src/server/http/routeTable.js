@@ -29,6 +29,7 @@ import { resetCache } from '../models/db.js';
 export const routeTable = {
   // POST routes
   POST: {
+    /** EDITOR **/
     '/api/editor/assign': { 
       handler: (routeContext) => adminAPI.assignEditorToIdiom(routeContext),
       auth: true
@@ -45,8 +46,7 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.homeworkReports(routeContext),
       auth: true
     },
-
-
+    /** ADMIN **/
     '/api/admin/example-audio': {
       handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
       auth: true
@@ -80,15 +80,17 @@ export const routeTable = {
       handler: (routeContext) => adminAPI.reportAppBug(routeContext),
       auth: true
     },
-
+    /** EXAMPLE **/
     '/api/example/:exampleId': {
       handler: (routeContext) => exampleAPI.updateExample(routeContext),
       auth: false
     },
+    /** EXERCISE **/
     '/api/exercises/evaluate': {
       handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
       auth: true
     },
+    /** SANDBOX **/
     '/api/sandbox/evaluate': {
       handler: (routeContext) => sandboxAPI.evaluate(routeContext),
       auth: true
@@ -97,11 +99,12 @@ export const routeTable = {
       handler: (routeContext) => sandboxAPI.getNext(routeContext),
       auth: true
     },
-    
+    /** SETTINGS **/    
     '/api/settings': {
       handler: (routeContext) => settingsAPI.putSettings(routeContext),
       auth: true
     },
+    /** USER **/    
     '/api/users/preferences': {
       handler: (routeContext) => userAPI.updatePreferences(routeContext),
       auth: true
@@ -126,7 +129,14 @@ export const routeTable = {
       handler: (routeContext) => reportAPI.generateReport(routeContext),
       auth: true
     },
-    
+    '/api/sandbox/missedwords': { // <-- not called
+      handler: (routeContext) => sandboxAPI.getMissedWords(routeContext),
+      auth: true
+    },    
+    '/api/sandbox/basedOn': {
+      handler: (routeContext) => sandboxAPI.getBasedOn(routeContext),
+      auth: true
+    },    
     '/api/editors': { 
       handler: (routeContext) => adminAPI.editors(routeContext),
       auth: true
@@ -170,6 +180,14 @@ export const routeTable = {
     },
     '/api/idioms/tones': { 
       handler: (routeContext) => idiomAPI.getTones(routeContext),
+      auth: false 
+    },
+    '/api/idioms/normals': { 
+      handler: (routeContext) => idiomAPI.getNormals(routeContext),
+      auth: false 
+    },
+    '/api/idioms/normal/:normalId': { 
+      handler: (routeContext) => idiomAPI.getNormal(routeContext),
       auth: false 
     },
     '/api/settings': {
