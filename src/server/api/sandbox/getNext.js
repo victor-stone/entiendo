@@ -22,9 +22,7 @@ export async function getNext(routeContext) {
   }
 
   const unseenShovels = _getUnseenShovels(userId);
-  const shovel        = basedOn?.length
-    ? unseenShovels.find(s => basedOn.every(w => s.basedOn.includes(w)))
-    : unseenShovels.find(s => s.basedOn.find(w => potentials.includes(w)));
+  const shovel        = unseenShovels.find( s => s.basedOn.find( w => potentials.includes(w) ) );
   
   if( !shovel ) {
     return _makeNewShovel(potentials.slice(0,3));
@@ -112,5 +110,6 @@ async function _generateSandboxSentence(basedOn) {
         throw err;
     }
 }
+
 
 
