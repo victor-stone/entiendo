@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { useGetNextSandboxStore, useEvaluateSandboxStore,
-    useUserStore, useSandboxStore, PHASES } from "../../stores";
+import {
+    useGetNextSandboxStore, useEvaluateSandboxStore,
+    useUserStore, useSandboxStore, PHASES
+} from "../../stores";
 import { Card } from "../layout";
 import ExercisePrompt from "../exercise/ExercisePrompt";
 import ExerciseInput from "../exercise/ExerciseInput";
@@ -18,41 +20,44 @@ const SELECT_TITLE = 1;
 
 var currentTitle = titles[DRILL_TITLE];
 
-const equal = (a,b) => a.length === b.length && a.every((v,i) => v === b[i]);
+const hasAnyOverlap = (requested = [], actual = []) =>
+    requested.some((word) => actual.includes(word));
 
-const SandboxCard = ({missedWords = []}) => {
-    const getToken                                     = useUserStore(s => s.getToken);
-    const { evaluate, data: evaluation, 
-                reset: resetEval }                     = useEvaluateSandboxStore();
-    const { fetch, loading, error, 
-                data: exercise, reset: resetNext }     = useGetNextSandboxStore();
-    const { phase, userInput, setPhase, 
-                setUserInput, reset }                  = useSandboxStore();
+const SandboxCard = ({ missedWords = [] }) => {
+    const getToken = useUserStore(s => s.getToken);
+    const { evaluate, data: evaluation,
+        reset: resetEval } = useEvaluateSandboxStore();
+    const { fetch, loading, error,
+        data: exercise, reset: resetNext } = useGetNextSandboxStore();
+    const { phase, userInput, setPhase,
+        setUserInput, reset } = useSandboxStore();
 
     useEffect(() => {
-        if( exercise && missedWords?.length && !equal(missedWords, exercise.basedOn) ) {
-            handleNextExercise();
+        // In select mode, accept any shovel that matches at least one requested word.
+        if (exercise && missedWords?.length && !hasAnyOverlap(missedWords, exercise.basedOn || [])) {
+            resetNext();
+            return;
         }
-        if( !exercise && !loading ) {
+        if (!exercise && !loading) {
             // empty list means get all missed words
             fetch(missedWords, getToken);
         }
-    }, [ missedWords, exercise, loading ]);
+    }, [missedWords, exercise, loading, fetch, getToken, resetNext]);
 
-    if( error  ) {
+    if (error) {
         return <p className="text-red-500">{error}</p>;
     }
-    
-    if( loading ) {
+
+    if (loading) {
         return <LoadingIndicator />
     }
 
     const handleInputSubmit = async (transcription, translation) => {
         setUserInput(transcription, translation);
         setPhase(PHASES.evaluation);
-        const results = await evaluate(exercise.shovelId,transcription,translation, getToken);
+        const results = await evaluate(exercise.shovelId, transcription, translation, getToken);
         if (results) {
-          setPhase(PHASES.results);
+            setPhase(PHASES.results);
         }
     }
 
@@ -61,29 +66,29 @@ const SandboxCard = ({missedWords = []}) => {
         resetNext();
         resetEval();
     }
-    
+
     return (
         <Card title={currentTitle}>
             <Card.Body>
                 {phase === PHASES.prompt && (
-                    <ExercisePrompt exercise={exercise} onContinue={() => setPhase(PHASES.input)}/>
+                    <ExercisePrompt exercise={exercise} onContinue={() => setPhase(PHASES.input)} />
                 )}
-                
+
                 {phase === PHASES.input && (
                     <>
-                    <ExercisePrompt exercise={exercise} onContinue={null} />
-                    <ExerciseInput exercise={exercise} initialInput={userInput} onSubmit={handleInputSubmit}/>
+                        <ExercisePrompt exercise={exercise} onContinue={null} />
+                        <ExerciseInput exercise={exercise} initialInput={userInput} onSubmit={handleInputSubmit} />
                     </>
                 )}
 
                 {phase === PHASES.evaluation && <ExerciseEval />}
 
-                {phase === PHASES.results && <SandboxResults 
-                    exercise={exercise} 
+                {phase === PHASES.results && <SandboxResults
+                    exercise={exercise}
                     evaluation={evaluation}
                     userInput={userInput}
-                    onNext={handleNextExercise}                    
-                    />}
+                    onNext={handleNextExercise}
+                />}
             </Card.Body>
         </Card>
     )

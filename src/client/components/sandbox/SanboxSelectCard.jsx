@@ -24,9 +24,6 @@ const SandboxSelectCard = ({mode: _mode = 'input'}) => {
 }
 
 /*
-              <Card.Field title="Choose">
-                <BasedOnSelector value={term} onChange={ (term) => setTerm(term) } />
-              </Card.Field>
 
 */
 
@@ -41,6 +38,9 @@ const SelectTermInput = ({onTerm}) => {
     return (
         <Card title = {`Submit Drill Term`}>
             <Card.Body>
+              <Card.Field title="Choose">
+                <BasedOnSelector value={term} onChange={ (term) => setTerm(term) } />
+              </Card.Field>
               <Card.Field title="Word (esp.)">
                     <input
                         type="text"
@@ -51,7 +51,7 @@ const SelectTermInput = ({onTerm}) => {
                     />
               </Card.Field>
               <ButtonBar>
-                <Link to="/app/sandbox" className="btn">Cancel</Link>
+                <Link to="/app/dashboard" className="btn">Dashboard</Link>
                 <button onClick={handleSubmit} className="btn btn-primary">Submit</button>
               </ButtonBar>
             </Card.Body>
