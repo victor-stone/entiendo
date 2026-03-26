@@ -69,41 +69,57 @@ const PausedItem = ({item}) => {
   return <button className={`${color} text-sm`} onClick={onToggle}><Icon className="inline text-primary-500 w-4 h-4"/>{text}</button>;
 };
 
-const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
-  <div
-    key={item.progressId}
-    data-progress={item.progressId}
+const DueItemDetails = ({compact, item}) => !compact &&
+<>
+  <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} />
+  <Card.Info text={item.range.label} iconName={item.range.icon} />
+  <Card.Info text={`${format(item.createdAt)}`} icon={EyeIcon} />
+  <Card.Info text={`${item.seenX}x`} icon={XMarkIcon} />
+  <PausedItem item={item} />
+  <ConfidenceMeter value={item.confidence} />
+</>;
 
-    className={`sm:items-center p-4 rounded-xl shadow border-l-4 transition hover:shadow-md
-      ${isPastDue
-        ? 'border-red-500 bg-red-10 dark:bg-red-900/20'
-        : isDueToday
-          ? 'border-green-500 bg-green-10 dark:bg-green-900/20'
-          : 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-      }`}>
-        
-      {isPastDue
-        ? (<Card.Info
-          text={`Past Due: ${format(item.dueDate)}`}
-          icon={ExclamationTriangleIcon}
-          color="bg-red-30 text-red-700 dark:bg-red-900 dark:text-red-300" />)
-        : isDueToday
-          ? (<Card.Info
-            text={`Due: ${format(item.dueDate)}`}
-            icon={ClockIcon}
-            color="bg-green-95 text-green-700 dark:bg-green-900 dark:text-green-300" />)
-          : (<Card.Info
-            text={`Due: ${format(item.dueDate)}`}
-            icon={InboxIcon}
-            color="bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200" />)
-      }
-    { !compact && <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} /> }
-    { !compact && <Card.Info text={item.range.label} iconName={item.range.icon} /> }
-    { !compact && <Card.Info text={`${format(item.createdAt)}`} icon={EyeIcon} /> }
-    { !compact && <Card.Info text={`${item.seenX}x`} icon={XMarkIcon} /> }
-    { !compact && <PausedItem item={item} /> }
-    { !compact && <ConfidenceMeter value={item.confidence} /> }
-  </div>
-);
+const DueItem = ({ item, isPastDue, isDueToday, compact }) => {
+  const getDueInfo = () => {
+    if (isPastDue) {
+      return {
+        text  : `Past Due: ${format(item.dueDate)}`,
+        icon  : ExclamationTriangleIcon,
+        color : "bg-red-30 text-red-700 dark:bg-red-900 dark:text-red-300",
+        border: "border-red-500",
+        bg    : "bg-red-10 dark:bg-red-900/20"
+      };
+    }
+    if (isDueToday) {
+      return {
+        text  : `Due: ${format(item.dueDate)}`,
+        icon  : ClockIcon,
+        color : "bg-green-95 text-green-700 dark:bg-green-900 dark:text-green-300",
+        border: "border-green-500",
+        bg    : "bg-green-10 dark:bg-green-900/20"
+      };
+    }
+    return {
+      text  : `Due: ${format(item.dueDate)}`,
+      icon  : InboxIcon,
+      color : "bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200",
+      border: "border-primary-500",
+      bg    : "bg-primary-50 dark:bg-primary-900/20"
+    };
+  };
+
+  const dueInfo = getDueInfo();
+
+  return (
+    <div
+      key={item.progressId}
+      data-progress={item.progressId}
+      className={`sm:items-center p-4 rounded-xl shadow border-l-4 transition hover:shadow-md ${dueInfo.border} ${dueInfo.bg}`}
+    >
+      <Card.Info text={dueInfo.text} icon={dueInfo.icon} color={dueInfo.color} />
+      <DueItemDetails compact={compact} item={item} />
+    </div>
+  );
+};
 
 export default DueItem;
