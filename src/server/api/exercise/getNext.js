@@ -143,7 +143,7 @@ function _getNextDueIdiom(routeContext) {
     debugGetNext('Finding due idiom (tone: %s, usage: %s )', tone || '-', usage || '-');
 
     const _progress = new Progress();
-    const dueItem   = _progress.nextDue(userId, tone, usage);
+    const dueItem   = _progress.nextDue(userId, tone, usage, { includePaused: false });
 
     let idiom = null;
     if (dueItem ) {
@@ -158,8 +158,8 @@ async function _getNewIdiom(routeContext) {
 
     const _progress    = new Progress();
     const _idioms      = new Idioms();
-    const idioms       = _idioms.byCriteria(tone,usage);
-    const seenIdiomIds = _progress.idiomIds(userId);
+    const idioms       = _shuffle(_idioms.byCriteria(tone,usage));
+    const seenIdiomIds = _progress.idiomIds(userId, { includePaused: false });
     const idiom        = idioms.find(({idiomId}) => !seenIdiomIds.includes(idiomId));
 
     if (idiom) {
@@ -176,6 +176,15 @@ async function _getNewIdiom(routeContext) {
     return idiom;
 }
 
+function _shuffle(items) {
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 function _getAdminBypassExercise(routeContext) {
     const { user: { preferences } } = routeContext;
     return preferences.getNextExample ? async () => {
@@ -187,4 +196,3 @@ function _getAdminBypassExercise(routeContext) {
         return await finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
     } : null;
 }
-

@@ -1,7 +1,12 @@
+import { useEffect, useState } from 'react';
 import { Card } from './layout/Card';
 import { format } from 'timeago.js';
+import { useUserStore } from '../stores';
+import exerciseService from '../services/exerciseService';
+
 import { InboxIcon, ExclamationTriangleIcon, EyeIcon,
-  ClockIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
+  ClockIcon, ChatBubbleLeftRightIcon, XMarkIcon, 
+  PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
 
 const ConfidenceMeter = ({ value }) => {
   const thresholds = [0.5, 0.6, 0.7];
@@ -19,6 +24,49 @@ const ConfidenceMeter = ({ value }) => {
       {dots}
     </div>
   );
+};
+
+const PausedItem = ({item}) => {
+  const getToken              = useUserStore(state => state.getToken);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+  const [paused, setPaused]   = useState(!!item.paused);
+
+  useEffect(() => {
+    setPaused(!!item.paused);
+  }, [item.paused]);
+
+  if (error) {
+    return <span className="text-red-500">{error}</span>;
+  }
+
+  if (loading) {
+    return '...'
+  }
+
+  const onToggle = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      const updated = await exerciseService.togglePaused(item.progressId, token);
+      if (typeof updated?.paused === 'boolean') {
+        setPaused(updated.paused);
+      } else {
+        setPaused(prev => !prev);
+      }
+    } catch (err) {
+      setError(err.message || 'Unable to toggle pause');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const color = paused ? 'text-red-700' : 'text-green-700';
+  const text  = paused ? 'unpause' : 'pause';
+  const Icon  = paused ? PlayIcon : PauseIcon;
+
+  return <button className={`${color} text-sm`} onClick={onToggle}><Icon className="inline text-primary-500 w-4 h-4"/>{text}</button>;
 };
 
 const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
@@ -52,6 +100,8 @@ const DueItem = ({ item, isPastDue, isDueToday, compact }) => (
     { !compact && <Card.Info text={item.tone} icon={ChatBubbleLeftRightIcon} /> }
     { !compact && <Card.Info text={item.range.label} iconName={item.range.icon} /> }
     { !compact && <Card.Info text={`${format(item.createdAt)}`} icon={EyeIcon} /> }
+    { !compact && <Card.Info text={`${item.seenX}x`} icon={XMarkIcon} /> }
+    { !compact && <PausedItem item={item} /> }
     { !compact && <ConfidenceMeter value={item.confidence} /> }
   </div>
 );

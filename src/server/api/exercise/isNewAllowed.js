@@ -7,7 +7,7 @@ const debugGN = debug('api:exercise:getNext');
 export function isNewAllowed(userId) {
     const _progress = new Progress();
 
-    const due = _progress.due(userId);
+    const due = _progress.due(userId, { includePaused: false });
     if( due.length ) {
         return false;
     }
@@ -17,7 +17,7 @@ export function isNewAllowed(userId) {
         GET_NEXT_MAX_NEW_IDIOMS      // after that only allow this many per 24 hours
     } = getSettings();
 
-    const dates = _progress.creationDates();
+    const dates = _progress.creationDates(userId, { includePaused: false });
     const now   = Date.now();
     
     //  Let the user build MAX_INITIAL amount

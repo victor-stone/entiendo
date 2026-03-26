@@ -90,6 +90,10 @@ export const routeTable = {
       handler: (routeContext) => exerciseAPI.evaluateResponse(routeContext),
       auth: true
     },
+    '/api/exercises/pause/:progressId': {
+      handler: (routeContext) => exerciseAPI.togglePaused(routeContext),
+      auth: true
+    },
     /** SANDBOX **/
     '/api/sandbox/evaluate': {
       handler: (routeContext) => sandboxAPI.evaluate(routeContext),

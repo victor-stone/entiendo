@@ -8,29 +8,37 @@ export default class Progress extends db {
     super('progress', 'progressId', true);
   }
 
-  due(userId) {
+  due(userId, { includePaused = true } = {}) {
     const now = Date.now();
-    return this.filter(p => p.userId == userId && p.dueDate < now);
+    return this.filter(p => {
+      if (p.userId != userId)         return false;
+      if (!includePaused && p.paused) return false;
+      if (!(p.dueDate < now))         return false;
+      return true;
+    });
   }
 
   forIdiom(userId, idiomId) {
     return this.find( p => p.userId == userId && p.idiomId == idiomId );
   }
 
-  idiomIds(userId) {
+  idiomIds(userId, { includePaused = true } = {}) {
     const filtered = this.data.filter( p => {
       if( !p.idiomId ) return false;
       if( p.userId != userId ) return false;
+      if( !includePaused && p.paused ) return false;
       return true;
     })
     return [... new Set(filtered.map(p => p.idiomId))]
   }
 
-  creationDates(userId) {
-    return this.data.filter(p => p.userId == userId).map(p => p.createdAt);
+  creationDates(userId, { includePaused = true } = {}) {
+    return this.data
+      .filter(p => p.userId == userId && (includePaused || !p.paused))
+      .map(p => p.createdAt);
   }
 
-  nextDue(userId, tone, usage) {
+  nextDue(userId, tone, usage, { includePaused = true } = {}) {
     const now = Date.now();
     const { lo, hi } = usage
       ? usageRangeOptions.find(({ value }) => value === usage)
@@ -38,6 +46,7 @@ export default class Progress extends db {
 
     const recs = this.data.filter(p => {
       if (p.userId !== userId) return false;
+      if (!includePaused && p.paused) return false;
       if (tone && p.tone != tone) return false;
       if (usage && (p.usage < lo || p.usage > hi)) return false;
       if (p.dueDate > now) return false;

@@ -1,16 +1,17 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
-const { getSchedule, getScheduleStats, getNext, evaluateResponse } = exerciseService;
+const { getSchedule, getScheduleStats, 
+  getNext, evaluateResponse } = exerciseService;
 import debug from 'debug';
 const debugStore = debug('app:store');
 import { storeFetch } from '../lib/storeUtils';
 
 export const useScheduleStatsStore = create((set, get) => ({
   loading: false,
-  error: null,
-  data: null,
-  fetch: storeFetch(getScheduleStats, set),
-  reset: () => {
+  error  : null,
+  data   : null,
+  fetch  : storeFetch(getScheduleStats, set),
+  reset  : () => {
     debugStore('Clearing useScheduleStatsStore')
     return set({ data: null, error: null, loading: false })
   }
@@ -18,10 +19,10 @@ export const useScheduleStatsStore = create((set, get) => ({
 
 export const useScheduleStore = create((set, get) => ({
   loading: false,
-  error: null,
-  data: null,
-  fetch: storeFetch(getSchedule, set),
-  reset: () => {
+  error  : null,
+  data   : null,
+  fetch  : storeFetch(getSchedule, set),
+  reset  : () => {
     debugStore('Clearing useScheduleStore')
     return set({ data: null, error: null, loading: false })
   }

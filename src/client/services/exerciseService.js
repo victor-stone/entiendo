@@ -14,6 +14,11 @@ const exerciseService = {
     return response;
   },
 
+  togglePaused: async(progressId, authToken) => {
+    const response = await post(`/api/exercises/pause/${progressId}`, {}, authToken);
+    return response;
+  },
+
   getNext: async (criteria, authToken) => {
     const params = new URLSearchParams();
 

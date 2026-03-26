@@ -2,17 +2,30 @@ import { Progress, Sandbox, History } from "../../models/index.js";
 import { usageToRange } from "../../../shared/constants/usageRanges.js";
 import { isNewAllowed } from "./isNewAllowed.js";
 import { getReportState } from '../reportingAPI.js';
+import { ValidationError, NotFoundError } from "../../../shared/constants/errorTypes.js";
 
 export async function schedule(routeContext) {
-  const userId   = routeContext.user.userId;
-  const query    = new Progress();
-  const progress = query.schedule(userId).map(item => {
-    item.range      = usageToRange(item.usage);
-    item.confidence = _confidence(item);
+  const userId    = routeContext.user.userId;
+  const _progress = new Progress();
+  const _history  = new History();
+  const progress  = _progress.schedule(userId).map(item => {
+    const history         = _history.forProgress(item.progressId);
+          item.seenX      = history.length;
+          item.range      = usageToRange(item.usage);
+          item.confidence = _confidence(item);
     return item;
   });  
 
   return progress;
+}
+
+export async function togglePaused(routeContext) {
+  const progressId = routeContext?.params?.progressId || routeContext?.payload?.progressId;
+
+  const _progress = new Progress();
+  const progress = _progress.byId(progressId);
+
+  return _progress.update(progressId, { paused: !progress.paused });
 }
 
 function _confidence(item) {
