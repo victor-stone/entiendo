@@ -11,9 +11,9 @@ const debugGetNext = debug('api:exercise:getNext');
 export async function getNext(routeContext) {
     debugGetNext('**** Getting next exercise for user %s *****', routeContext.user.name || routeContext.user.userId);
 
-    const bypassExercise = _getAdminBypassExercise(routeContext);
+    const [bypassExercise,args] = _getAdminBypassExercise(routeContext);
     if (bypassExercise) 
-        return await bypassExercise();
+        return await finalizeExample(bypassExercise,args)
 
     let exercise = await _getNextDueExercise(routeContext);
     if( exercise ) {
@@ -187,12 +187,14 @@ function _shuffle(items) {
 
 function _getAdminBypassExercise(routeContext) {
     const { user: { preferences } } = routeContext;
-    return preferences.getNextExample ? async () => {
+    if( preferences.getNextExample ) {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
         const _examples = new Examples();
         const _idioms   = new Idioms();
-        let   exercise  = await _examples.byId(preferences.getNextExample);
-        let   idiom     = await _idioms.byId(exercise.idiomId);
-        return await finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
-    } : null;
+        let   exercise  = _examples.byId(preferences.getNextExample);
+        let   idiom     = _idioms.byId(exercise.idiomId);
+        return [exercise, { idiom, model: _examples, debug: debugGetNext }]
+//        return finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
+    }
+    return [null];
 }

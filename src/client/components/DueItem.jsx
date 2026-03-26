@@ -66,7 +66,7 @@ const PausedItem = ({item}) => {
   const text  = paused ? 'unpause' : 'pause';
   const Icon  = paused ? PlayIcon : PauseIcon;
 
-  return <button className={`${color} text-sm`} onClick={onToggle}><Icon className="inline text-primary-500 w-4 h-4"/>{text}</button>;
+  return <button title={item.idiomId} className={`${color} text-sm`} onClick={onToggle}><Icon className="inline text-primary-500 w-4 h-4"/>{text}</button>;
 };
 
 const DueItemDetails = ({compact, item}) => !compact &&
