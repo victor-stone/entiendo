@@ -26,6 +26,7 @@ export default class Shovels extends db {
       ? [... new Set(flat)].sort()
       : flat;
   }
+
 }
 
 db.initCache('shovels')

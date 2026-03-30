@@ -25,7 +25,7 @@ export default class History extends db {
     return sorted[0]?.date;
   }
 
-  missedWords(userId, unique) {
+  missedWords(userId, unique, withCounts = false) {
     
     const words = this.data.reduce((arr, h) => {
       if (h.userId == userId && !!h.evaluation?.missedWords?.length) {
@@ -39,9 +39,21 @@ export default class History extends db {
                   .filter( w => !w.match(/[¡¿?!]/) )
                   .map( w => w.toLowerCase() );
 
-    return unique
-      ? [... new Set(flat)].sort()
-      : flat;
+    if( !withCounts ) {
+      return unique
+        ? [... new Set(flat)].sort()
+        : flat;
+    }
+
+    const counts = {};
+    for (const word of flat) {
+      counts[word] = (counts[word] || 0) + 1;
+    }
+
+    return Object.entries(counts)
+      .map(([word, count]) => ({ word, count }))
+      .sort((a, b) => a.word.localeCompare(b.word));
+
   }
 }
 

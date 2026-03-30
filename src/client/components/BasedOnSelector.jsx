@@ -36,8 +36,8 @@ const BasedOnSelector = ({ value = '', onChange }) => {
           disabled={loading}
         >
           {data.map(word => (
-            <option key={word} value={word}>
-              {word}
+            <option key={word.word} value={word.word}>
+              {`${word.word} (${word.count})`}
             </option>
           ))}
         </select>

@@ -8,6 +8,6 @@ export async function getMissedWords(routeContext) { // not called (?)
 
 export async function getBasedOn(routeContext) {
   const { user: { userId } } = routeContext;
-  const _shovels = new Shovels();
-  return _shovels.basedOn(userId);
+  const _history = new History();
+  return _history.missedWords(userId, false, true);
 }
