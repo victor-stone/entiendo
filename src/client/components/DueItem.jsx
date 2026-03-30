@@ -81,6 +81,15 @@ const DueItemDetails = ({compact, item}) => !compact &&
 
 const DueItem = ({ item, isPastDue, isDueToday, compact }) => {
   const getDueInfo = () => {
+    if( item.paused ) {
+      return {
+        text: `Paused (${format(item.dueDate)})`,
+        icon: PauseIcon,
+        color : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
+        border: "border-slate-500",
+        bg    : "bg-slate-50 dark:bg-slate-900/20"
+      }
+    }
     if (isPastDue) {
       return {
         text  : `Past Due: ${format(item.dueDate)}`,

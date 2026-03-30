@@ -70,7 +70,10 @@ export default class Progress extends db {
   }
 
   schedule(userId) {
-    return this.filter(p => p.userId == userId).sort(dateASC)
+    const all = this.filter(p => p.userId == userId);
+    const active = all.filter(p => !p.paused).sort(dateASC);
+    const paused = all.filter(p => p.paused).sort(dateASC);
+    return active.concat(paused);
   }
 
 }
