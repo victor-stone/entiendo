@@ -57,7 +57,7 @@ export async function scheduleStats(routeContext) {
   }
 
   const earliest  = progress[0];
-  const pastDue   = _progress.due(userId);
+  const pastDue   = _progress.due(userId, {includePaused : false});
   const next      = _progress.nextDue(userId);
   const upcoming  = _progress.upcoming(userId);
   const missed    = _history.missedWords(userId, false);
