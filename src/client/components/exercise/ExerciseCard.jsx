@@ -118,10 +118,7 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
       {phase === 'input' && (
         <>
           <ExercisePrompt exercise={exercise} onContinue={null} />
-          <ExerciseInput 
-            exercise={exercise}
-            initialInput={userInput}
-            onSubmit={handleInputSubmit}
+          <ExerciseInput exercise={exercise} onSubmit={handleInputSubmit}
           />
         </>
       )}

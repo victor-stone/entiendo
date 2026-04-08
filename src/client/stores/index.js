@@ -9,3 +9,4 @@ export * from './reportingStore';
 export * from './sandboxStore';
 export * from './settingsStore';
 export * from './userStore';
+export * from './flashStore';

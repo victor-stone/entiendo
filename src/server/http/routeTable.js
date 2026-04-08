@@ -17,6 +17,7 @@ import * as settingsAPI from  '../api/settingsAPI.js';
 import * as sandboxAPI  from  '../api/sandbox/index.js';
 import * as exampleAPI  from  '../api/exampleAPI.js';
 import * as reportAPI   from  '../api/reportingAPI.js';
+import * as flashAPI    from  '../api/flash/index.js';
 
 import { resetCache } from '../models/db.js';
 
@@ -94,6 +95,7 @@ export const routeTable = {
       handler: (routeContext) => exerciseAPI.togglePaused(routeContext),
       auth: true
     },
+    
     /** SANDBOX **/
     '/api/sandbox/evaluate': {
       handler: (routeContext) => sandboxAPI.evaluate(routeContext),
@@ -101,6 +103,15 @@ export const routeTable = {
     },
     '/api/sandbox/next': {
       handler: (routeContext) => sandboxAPI.getNext(routeContext),
+      auth: true
+    },
+    /** FLASH **/
+    '/api/flash/evaluate': {
+      handler: (routeContext) => flashAPI.evaluate(routeContext),
+      auth: true
+    },
+    '/api/flash/next': {
+      handler: (routeContext) => flashAPI.getNext(routeContext),
       auth: true
     },
     /** SETTINGS **/    

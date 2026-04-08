@@ -11,4 +11,6 @@ export { default as History }  from './history.js';
 export { default as Homework }  from './homework.js';
 export { default as Normals } from './normals.js';
 export { default as Voices } from './voices.js';
+export { default as Flash } from './flash.js';
+export { default as Chips } from './chips.js';
 

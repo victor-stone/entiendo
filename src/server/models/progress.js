@@ -1,6 +1,28 @@
 import db from './db.js';
 import usageRangeOptions from '../../shared/constants/usageRanges.js'
 
+
+/*
+  Created once per idiom per user - keep cumulative progress
+  for that user for that particular idiom (see: history)
+
+ {
+    "idiomId": "cdb3f030-aec3-45f1-8f38-76020244ceb8",
+    "userId": "google-oauth2|101722812212104773442",
+    "tone": "Casual",
+    "usage": 8,
+    "progressId": "823c05d8-8359-49a5-9155-236af779ea65",
+    "createdAt": 1775233510981,
+    "interval": 3,
+    "difficulty": 2.5,
+    "dueDate": 1775752297339,
+    "successRate": 0.8556666666666667,
+    "lapseCount": 0,
+    "isLeech": false,
+    "successStreak": 2
+  }
+
+*/
 const dateASC = (a, b) => a.dueDate - b.dueDate;
 
 export default class Progress extends db {

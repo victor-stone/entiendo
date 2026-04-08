@@ -10,6 +10,7 @@ import img1 from "../assets/images/icecream.png";
 import img2 from "../assets/images/clock.png";
 import img3 from "../assets/images/blocks.png";
 import img4 from "../assets/images/brain.png";
+import img5 from "../assets/images/cards.png";
 import DoExerciseTitle from '../components/DoExerciseTitle';
 import * as ReportStates from '../../shared/constants/reportStates';
 
@@ -89,6 +90,12 @@ const Dashboard = () => {
             }
           </div>
           }
+
+          <div className="place-items-center text-center">
+            <HeaderImage img={img5} alt="Lantern" />
+            <div className='text-left'>Practice phrases</div>
+            <PageLink page="/app/flash" text="Flash Cards" />
+          </div>
 
         </Grid>
       </Card.Body>

@@ -6,6 +6,7 @@ export { default as Exercise } from './Exercise';
 export { default as Calendar } from './Calendar';
 export { default as BugReport } from './BugReport';
 export { default as Sandbox } from './Sandbox';
+export { default as Flash } from './Flash';
 export { default as About } from './About';
 export { default as License } from './License';
 export { default as Chat } from './Chat';

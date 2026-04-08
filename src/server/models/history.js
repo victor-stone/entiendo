@@ -1,5 +1,30 @@
 import db from './db.js';
 
+/*
+  Logs every attempt at hearing/transcribing an exercise 
+  (see: progress)
+
+  {
+    "date": 1773948139879,
+    "exampleId": "f0ee434e-1d95-4fbf-ba9e-375eb9a4f538",
+    "evaluation": {
+      "transcriptionAccuracy": "minor errors",
+      "translationAccuracy": "perfect",
+      "mistakeType": "audio misunderstanding",
+      "transcriptionFeedback": "Good attempt, but you missed a word and misheard another.",
+      "translationFeedback": "Great job! Your translation captures the meaning perfectly.",
+      "englishTranslation": "Come on, don't give up because there's still a lot to do.",
+      "missedWords": [
+        "todavía",
+        "queda"
+      ]
+    },
+    "progressId": "e2f8c25e-e8d0-446b-91ec-5f14938348a8",
+    "userId": "google-oauth2|101722812212104773442",
+    "historyId": "2835849c-590e-40e7-88d0-28a261649b29"
+  }  
+
+*/
 export default class History extends db {
   constructor() {
     super('history','historyId');
