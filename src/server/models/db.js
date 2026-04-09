@@ -13,6 +13,7 @@ const _cache = {};
 
 export default class db {
   constructor(name, key, doTS) {
+    debugDB('DEBUG: ' + process.env?.DEBUG + '   DB: ' + process.env?.DB);
     this._doTime = doTS;
     this._key    = key;
     this._path   = _path(name)

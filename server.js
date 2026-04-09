@@ -27,7 +27,7 @@ const __dirname = path.dirname(__filename);
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   // Uncomment the following line if you want to keep the server running despite unhandled rejections
-  // process.exit(1);
+  process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {

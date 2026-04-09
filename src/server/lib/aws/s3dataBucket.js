@@ -1,4 +1,8 @@
 import { S3Client, GetObjectCommand, PutObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s3";
+import JsonFile from '../jsonfile.js';
+import path from "path";
+import dotenv from 'dotenv';
+dotenv.config({override: true});
 
 // --- CONFIG ---
 const REGION = process.env.AWS_REGION || "sa-east-1";
@@ -17,26 +21,52 @@ const streamToString = async (stream) =>
 
 // --- read JSON ---
 export async function readJson(key, versionId = null) {
-  const params = { Bucket: BUCKET, Key: key };
-  if (versionId) params.VersionId = versionId;
+  if( process.env?.DB === 'OFFLINE') {
+    console.log( 'READING OFFLINE '+ key);
+    const name = path.basename(key)
+    try {
+      const jsonfile = new JsonFile(name);
+      jsonfile.open();
+      return jsonfile.data;
+    } catch(err) {
+      console.error( name + ' failed to load');
+      return [];
+    }
+  } else {
+    const params = { Bucket: BUCKET, Key: key };
+    if (versionId) params.VersionId = versionId;
 
-  const { Body } = await s3.send(new GetObjectCommand(params));
-  const text = await streamToString(Body);
-  return JSON.parse(text);
+    const { Body } = await s3.send(new GetObjectCommand(params));
+    const text = await streamToString(Body);
+    return JSON.parse(text);
+  }
 }
 
 // --- write JSON ---
 export async function writeJson(key, data) {
-  const body = JSON.stringify(data, null, 2);
-  const res = await s3.send(
-    new PutObjectCommand({
-      Bucket: BUCKET,
-      Key: key,
-      Body: body,
-      ContentType: "application/json",
-    })
-  );
-  return res.VersionId || null; // will be set if versioning is enabled
+  if( process.env?.DB === 'OFFLINE') {
+    const name = path.basename(key)
+    try {
+      const jsonfile = new JsonFile(name);
+      jsonfile.data = body;
+      jsonfile.write();
+      return "offline-version";
+    } catch(err) {
+      console.error( name + ' failed to load');
+      return null;
+    }
+  } else {
+    const body = JSON.stringify(data, null, 2);
+    const res = await s3.send(
+      new PutObjectCommand({
+        Bucket: BUCKET,
+        Key: key,
+        Body: body,
+        ContentType: "application/json",
+      })
+    );
+    return res.VersionId || null; // will be set if versioning is enabled
+  }
 }
 
 // --- list versions of an object ---
