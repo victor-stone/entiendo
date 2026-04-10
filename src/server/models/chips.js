@@ -24,7 +24,7 @@ export default class Chips extends db {
   }
 
   oldest(userId) {
-    const recs = this.forUser(userId).sort( (a,b) => b.date - a.date );
+    const recs = this.forUser(userId).sort( (a,b) => a.date - b.date );
     return recs.length ? recs[0] : null;
   }
 
