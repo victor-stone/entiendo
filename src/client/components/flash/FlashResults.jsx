@@ -1,5 +1,5 @@
 import { Card } from "../layout";
-import { AudioPlayer, Grid } from "../ui";
+import { Grid } from "../ui";
 import EvalFeedback from "../EvalFeedback";
 import EvalTopic from "../EvalTopic";
 import NextExercise from "../NextExercise";

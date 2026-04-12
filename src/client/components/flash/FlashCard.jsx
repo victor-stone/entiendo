@@ -3,7 +3,7 @@ import {
     useGetNextFlashStore, useEvaluateFlashStore,
     useUserStore, useFlashStore, PHASES
 } from "../../stores";
-import { Card } from "../layout";
+import { Card } from "../layout/Card"
 import ExerciseInput from "../exercise/ExerciseInput";
 import ExerciseEval from "../exercise/ExerciseEval";
 import { LoadingIndicator } from "../ui";
@@ -111,4 +111,4 @@ const FlashCard = () => {
     )
 }
 
-export default FlashCard;
+export default { FlashCard, FlashModes };
