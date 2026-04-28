@@ -1,3 +1,6 @@
+/*
+  Never got this to work properly with oauth 
+*/
 import { useEffect, useState } from 'react';
 import { useBetaSettingStore } from '../stores/settingsStore';
 import debug from 'debug';
