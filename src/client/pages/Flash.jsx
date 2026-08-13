@@ -8,7 +8,7 @@ const { FlashCard, FlashModes } = flash;
 
 const Flash = () => {
 
-  const { setMode } = useFlashStore();
+  const { setMode, userInput } = useFlashStore();
   const [started, setStarted] = useState(false);
 
   return (
@@ -17,7 +17,7 @@ const Flash = () => {
           : 
           <Card title={"Flash Cards"} >
             <Card.Body>
-              <FlashModes mode={'new'} onSelect={setMode} />
+              <FlashModes mode={userInput.mode} onSelect={setMode} />
                 <NextExercise onNext={ () => setStarted(true) }/>
             </Card.Body>
          </Card>

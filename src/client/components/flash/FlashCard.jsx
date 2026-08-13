@@ -12,9 +12,10 @@ import FlashResults from "./FlashResults";
 
 const FlashModes = ({ mode, onSelect }) => {
   return <select 
-   className="form-select text-dark bg-transparent"
-  style={{ fontSize: "10pt" }}
-  value={mode} onChange={e => onSelect(e.target.value)}>
+    className = "form-select text-dark bg-transparent"
+    style     = {{ fontSize: "10pt" }}
+    value     = {mode} 
+    onChange  = {e => onSelect(e.target.value)}>
         <option>new</option>
         <option>flubbed</option>
         <option>review</option>

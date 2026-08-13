@@ -14,7 +14,8 @@ export async function getNext(routeContext) {
   if( mode == 'review' ) {
     chip = _chips.oldest(userId);
   } else if( mode == 'flubbed') {
-    chip = _chips.worstScore(userId);
+    const before = Date.now() - 5 * 60 * 1000; // 5 minutes ago
+    chip = _chips.worstScore(userId, before);
   }
 
   if( chip ) {

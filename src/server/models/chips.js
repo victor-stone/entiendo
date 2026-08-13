@@ -28,8 +28,13 @@ export default class Chips extends db {
     return recs.length ? recs[0] : null;
   }
 
-  worstScore(userId) {
+  worstScore(userId, before = '') {
     const recs = this.forUser(userId).sort( (a,b) => a.score - b.score );
+    if( before ) {
+      if( recs.length ) {
+        return recs.find( rec => rec.date < before );
+      }
+    }
     return recs.length ? recs[0] : null;
   }
 }
