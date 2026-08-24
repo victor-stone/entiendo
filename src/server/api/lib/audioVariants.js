@@ -38,7 +38,7 @@ export async function ensureAudioVariant(
   }
 
   const variants = getAudioVariants(record);
-  if (shouldReuseVariant(variants[voiceType], voiceType, force)) {
+  if (shouldReuseVariant(variants[voiceType], voiceType)) {
     return resolveExistingVariant(record, variants, voiceType, getAudioUrlFn);
   }
 
@@ -154,7 +154,7 @@ async function generateAndPersistVariant({
   const beforeGeneration = model.byId(recordId) || record;
   const currentVariants = getAudioVariants(beforeGeneration);
   const currentVariant = currentVariants[voiceType];
-  if (shouldReuseVariant(currentVariant, voiceType, true)) {
+  if (shouldReuseVariant(currentVariant, voiceType)) {
     return resolveExistingVariant(
       beforeGeneration,
       currentVariants,
@@ -196,7 +196,7 @@ async function generateAndPersistVariant({
     latestVariant?.source === 'upload'
     || (
       variantChangedDuringGeneration
-      && shouldReuseVariant(latestVariant, voiceType, true)
+      && shouldReuseVariant(latestVariant, voiceType)
     )
   ) {
     return resolveExistingVariant(
@@ -252,9 +252,9 @@ function createPlayback(voiceType, variant, url) {
   };
 }
 
-function shouldReuseVariant(variant, voiceType, force) {
+function shouldReuseVariant(variant, voiceType) {
   if (!variant) return false;
-  if (voiceType !== VOICE_EDUCATION || !force) return true;
+  if (voiceType !== VOICE_EDUCATION) return true;
   if (variant.source === 'upload') return true;
 
   return variant.voiceId === EDUCATION_VOICE_ID

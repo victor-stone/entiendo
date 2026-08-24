@@ -132,7 +132,6 @@ test('concurrent requests generate and persist one education variant', async () 
         voiceName: 'Zeta',
         voiceId: EDUCATION_VOICE_ID,
         speed: 0.85,
-        source: 'tts',
       },
     },
   };
@@ -265,6 +264,36 @@ test('manual education uploads are never replaced by TTS', async () => {
 
   assert.equal(model.writeCount, 0);
   assert.equal(result.playback.url, 'signed:manual.mp3');
+});
+
+test('stale Zeta audio is not served when generation is disabled', async () => {
+  const record = {
+    exampleId: 'stale-no-generation',
+    text: 'Audio viejo.',
+    audioVariants: {
+      [VOICE_EDUCATION]: {
+        key: 'education-old.mp3',
+        voiceName: 'Zeta',
+        voiceId: EDUCATION_VOICE_ID,
+        speed: 0.85,
+      },
+    },
+  };
+  const model = new FakeExamples(record);
+  let signed = false;
+
+  const result = await ensureAudioVariant(record, VOICE_EDUCATION, {
+    force: false,
+    model,
+    getAudioUrlFn: async () => {
+      signed = true;
+      return 'must-not-be-used';
+    },
+  });
+
+  assert.equal(result.playback, null);
+  assert.equal(signed, false);
+  assert.equal(model.writeCount, 0);
 });
 
 test('a manual education upload arriving during generation wins', async () => {
