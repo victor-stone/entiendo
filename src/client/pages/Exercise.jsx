@@ -2,14 +2,19 @@ import ExerciseCard from '../components/exercise/ExerciseCard';
 import { LoadingIndicator } from '../components/ui';
 import { useUserStore } from '../stores';
 import { useScheduleStatsStore, useScheduleStore, useExerciseStore } from '../stores';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { VOICE_TYPE } from '../../shared/constants/voiceTypes';
 
 
 const Exercise = () => {
-    const {preferences, loading } = useUserStore    ();
+    const { preferences, loading, setPreference } = useUserStore();
     const resetExercise           = useExerciseStore(state => state.resetExercise);
     const { reset:resetStats }    = useScheduleStatsStore();
     const { reset:resetList }     = useScheduleStore();
+    const criteria = useMemo(() => ({
+        ...(preferences?.filter || {}),
+        [VOICE_TYPE]: preferences?.[VOICE_TYPE]
+    }), [preferences?.filter, preferences?.[VOICE_TYPE]]);
 
     useEffect(() => {
         resetExercise();
@@ -25,7 +30,15 @@ const Exercise = () => {
         resetList();
     }
     
-    return <ExerciseCard criteria={preferences.filter} onExerciseDone={reset}/>;
+    const persistVoiceType = (voiceType) => setPreference(VOICE_TYPE, voiceType);
+
+    return (
+        <ExerciseCard
+            criteria={criteria}
+            onExerciseDone={reset}
+            onVoiceTypeChange={persistVoiceType}
+        />
+    );
 };
 
 export default Exercise;

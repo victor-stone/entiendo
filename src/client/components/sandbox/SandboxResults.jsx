@@ -15,14 +15,16 @@ import NextExercise from "../NextExercise";
 */
 
 const SandboxResults = ({userInput, evaluation, exercise, onNext}) => {
+    const playback = exercise.playback;
+
     return (
         <>
         <Card.Panel >
         <div className="flex justify-between items-center">
           <h3 className="font-medium mb-2">Original sentence:</h3>
-          <div className="text-right text-xs italic capitalize mr-10">{exercise.voice}</div>
+          <div className="text-right text-xs italic capitalize mr-10">{playback?.voiceName}</div>
         </div>
-            <AudioPlayer url={exercise.url} />
+            <AudioPlayer url={playback?.url} />
          </Card.Panel>
       <Card.Section>
         <Grid columns={2}>

@@ -71,12 +71,22 @@ const SandboxCard = ({ missedWords = [] }) => {
         <Card title={currentTitle}>
             <Card.Body>
                 {phase === PHASES.prompt && (
-                    <ExercisePrompt exercise={exercise} onContinue={() => setPhase(PHASES.input)} />
+                    <ExercisePrompt
+                        exercise={exercise}
+                        fixedAudio
+                        fixedPlayback={exercise?.playback}
+                        onContinue={() => setPhase(PHASES.input)}
+                    />
                 )}
 
                 {phase === PHASES.input && (
                     <>
-                        <ExercisePrompt exercise={exercise} onContinue={null} />
+                        <ExercisePrompt
+                            exercise={exercise}
+                            fixedAudio
+                            fixedPlayback={exercise?.playback}
+                            onContinue={null}
+                        />
                         <ExerciseInput exercise={exercise} onSubmit={handleInputSubmit} />
                     </>
                 )}

@@ -1,7 +1,6 @@
 import ListSearch from "../ui/ListSearch";
 import ToneSelector from "../ToneSelector";
 import UsageSelector from "../admin/UsageSelector";
-import EditorPicker from "../editor/EditorPicker";
 
 export const ListingFilters = [
 	{
@@ -39,17 +38,5 @@ export const ListingFilters = [
 			<UsageSelector value={value} onChange={setValue} />
 		),
 		filter: (row, value) => value === "all" || String(row.usage) === value,
-	},
-	{
-		name: "source",
-		defaultValue: "",
-		render: (value, setValue, context ) => (
-			<EditorPicker voices={context.editors} voice={value} onChange={setValue} />
-		),
-		filter: (row, value) => {
-			if (!value || value === "-all") return true;
-			if (value === "-pending") return !!row.homework?.source;
-			return row.homework?.source === value;
-		},
 	},
 ];

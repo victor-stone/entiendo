@@ -27,7 +27,8 @@ export async function createExample(idiom, _examples, existingExamples) {
             idiomId,
             text,
             conjugatedSnippet,
-            source: "openai"
+            source: "openai",
+            audioVariants: {}
         } );
     
 }

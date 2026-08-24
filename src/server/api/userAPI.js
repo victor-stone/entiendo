@@ -3,6 +3,27 @@ import { Users } from '../models/index.js';
 import { validateUser } from '../lib/validate.js';
 import { ValidationError } from '../../shared/constants/errorTypes.js';
 import filterDefaults from '../../shared/filterDefaults.js';
+import {
+  VOICE_TYPE,
+  isVoiceType,
+  normalizeVoiceType
+} from '../../shared/constants/voiceTypes.js';
+
+const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+export function normalizePreferences(preferences = {}) {
+  const safePreferences = isObject(preferences) ? preferences : {};
+  const filter = isObject(safePreferences.filter) ? safePreferences.filter : {};
+
+  return {
+    ...safePreferences,
+    filter: {
+      ...filterDefaults,
+      ...filter
+    },
+    [VOICE_TYPE]: normalizeVoiceType(safePreferences[VOICE_TYPE])
+  };
+}
 
 /**
  * Synchronize user data from Auth0 profile
@@ -26,11 +47,11 @@ export async function syncUserFromAuth0(routeContext) {
     });
   }
 
-  user.preferences = user.preferences || {};
   let needUpdate = false;
 
-  if (!user.preferences.filter) {
-    user.preferences.filter = { ...filterDefaults };
+  const normalizedPreferences = normalizePreferences(user.preferences);
+  if (JSON.stringify(user.preferences) !== JSON.stringify(normalizedPreferences)) {
+    user.preferences = normalizedPreferences;
     needUpdate = true;
   }
   if (!user.name && authUser.name) {
@@ -52,7 +73,22 @@ export async function syncUserFromAuth0(routeContext) {
 }
 
 export async function updatePreferences(routeContext) {
-  const { user: { userId }, payload: { preferences } } = routeContext;
+  const validation = validateUser(routeContext);
+  if (!validation.valid)
+    throw new ValidationError(validation.error.message || 'Invalid user data');
+
+  const preferences = routeContext.payload?.preferences;
+  if (!isObject(preferences))
+    throw new ValidationError('Preferences must be an object');
+
+  if (
+    Object.prototype.hasOwnProperty.call(preferences, VOICE_TYPE) &&
+    !isVoiceType(preferences[VOICE_TYPE])
+  ) {
+    throw new ValidationError(`Invalid voice type: ${preferences[VOICE_TYPE]}`);
+  }
+
+  const normalizedPreferences = normalizePreferences(preferences);
   const u = new Users();
-  return u.update(userId, { preferences }).preferences;
+  return u.update(validation.userId, { preferences: normalizedPreferences }).preferences;
 }

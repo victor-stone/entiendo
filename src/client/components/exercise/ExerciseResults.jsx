@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import AudioPlayer from '../ui/AudioPlayer';
 import { usageToRange } from '../../../shared/constants/usageRanges';
 import { HighlightedText, Grid } from '../ui';
 import { Card } from '../layout';
@@ -8,6 +7,7 @@ import { Link } from 'react-router-dom';
 import EvalTopic from '../EvalTopic';
 import EvalFeedback from '../EvalFeedback';
 import NextExercise from '../NextExercise';
+import ExerciseAudio from './ExerciseAudio';
 
 const ResultField = ({ title, text }) => (
   <div>
@@ -27,7 +27,14 @@ const ExtraInfo = ({ label, text, block }) => (
  * ExerciseResults component - Phase 4 "results"
  * Displays feedback and evaluation results
  */
-const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) => {
+const ExerciseResults = ({
+  exercise,
+  evaluation,
+  progress,
+  userInput,
+  onNext,
+  onVoiceTypeChange,
+}) => {
   const [showInfo, setShowinfo] = useState(false);
   if (!exercise || !evaluation) return null;
 
@@ -54,12 +61,10 @@ const ExerciseResults = ({ exercise, evaluation, progress, userInput, onNext }) 
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
       <h2 className="text-xl font-bold mb-4">Exercise Results</h2>
       <Card.Panel >
-        <div className="flex justify-between items-center">
-          <h3 className="font-medium mb-2">Original sentence:</h3>
-          <div className="text-right text-xs italic capitalize mr-10">{exercise.voice}</div>
-        </div>
-
-        <AudioPlayer url={exercise.url} />
+        <ExerciseAudio
+          title="Original sentence:"
+          onVoiceTypeChange={onVoiceTypeChange}
+        />
 
         <Grid columns={2}>
           <ResultField title="Idiom" text={exercise.idiom?.text || 'Unknown'} />

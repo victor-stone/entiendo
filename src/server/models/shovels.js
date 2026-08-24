@@ -11,17 +11,17 @@ import db from './db.js';
       "todavía"
     ],
     "shovelId": "b720879c-a8b1-4397-983f-8c6626545c9c",
-    "audio": "https://entiendo-audio-files-426593798727.s3.amazonaws.com/tts/todav_a_tengo_que_terminar_el_9912.mp3",
-    "voice": "Agustin"
+    "audioVariants": {
+      "conversation": {
+        "key": "https://entiendo-audio-files-426593798727.s3.amazonaws.com/tts/todav_a_tengo_que_terminar_el_9912.mp3",
+        "voiceName": "Agustin"
+      }
+    }
   }  
 */
 export default class Shovels extends db {
   constructor() {
     super('shovels','shovelId', true);
-  }
-
-  addAudio(shovelId, spec) {
-    return this.update(shovelId, spec);
   }
 
   forWord(word) {
@@ -45,4 +45,3 @@ export default class Shovels extends db {
 }
 
 db.initCache('shovels')
-

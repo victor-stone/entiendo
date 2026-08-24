@@ -39,44 +39,6 @@ const adminService = {
   },
 
   /*(((((((((((((((())))))))))))))))
-                 EDITOR
-    (((((((((((((((())))))))))))))))                 
-  */
-  homeworkReports: async (specs, authToken) => {
-    return await post("/api/editor/homeworkreports", specs, authToken);
-  },
-
-  assignIdiom: async (idiomId, source, homeworkId, authToken) => {
-    return await post(
-      "/api/editor/assign",
-      { idiomId, source, homeworkId },
-      authToken
-    );
-  },
-
-  assignFulfill: async (args, audioFile, authToken) => {
-    return await postFile(
-      "/api/editor/fulfill",
-      audioFile,
-      args,
-      authToken
-    );
-  },
-
-  homeworkPublish: async (idiomId, homework, authToken) => {
-    return await post(
-      "/api/editor/publish",
-      { idiomId, homework },
-      authToken
-    );
-  },
-
-  editors: async (authToken) => {
-    return await get("/api/editors", authToken);
-  },
-
-
-  /*(((((((((((((((())))))))))))))))
                 IMPORT
     (((((((((((((((())))))))))))))))                 
   */

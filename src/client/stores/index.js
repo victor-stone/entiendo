@@ -1,6 +1,5 @@
 export * from './adminStore';
 export * from './brandImageStore';
-export * from './editorStore';
 export * from './exampleStore';
 export * from './exerciseStore';
 export * from './idiomStore';

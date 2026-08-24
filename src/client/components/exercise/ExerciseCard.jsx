@@ -29,7 +29,7 @@ exercise example:
     }
 }
 **/
-const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
+const ExerciseCard = ({ criteria = {}, onExerciseDone, onVoiceTypeChange }) => {
   const getToken = useUserStore(state => state.getToken);
   const { 
     exercise, 
@@ -111,13 +111,20 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
   return (
     <div>
       {phase === 'prompt' && (
-        <ExercisePrompt exercise={exercise} onContinue={handlePromptContinue} 
+        <ExercisePrompt
+          exercise={exercise}
+          onContinue={handlePromptContinue}
+          onVoiceTypeChange={onVoiceTypeChange}
         />
       )}
       
       {phase === 'input' && (
         <>
-          <ExercisePrompt exercise={exercise} onContinue={null} />
+          <ExercisePrompt
+            exercise={exercise}
+            onContinue={null}
+            onVoiceTypeChange={onVoiceTypeChange}
+          />
           <ExerciseInput exercise={exercise} onSubmit={handleInputSubmit}
           />
         </>
@@ -133,6 +140,7 @@ const ExerciseCard = ({ criteria = {}, onExerciseDone }) => {
           userInput={userInput}
           onNext={handleNextExercise}
           onExerciseDone={onExerciseDone}
+          onVoiceTypeChange={onVoiceTypeChange}
         />
       )}
     </div>

@@ -5,13 +5,19 @@ import { getSettings } from '../settingsAPI.js';
 import { isNewAllowed } from './isNewAllowed.js';
 import { finalizeExample } from '../lib/finalizeExample.js';
 import { createExample } from '../lib/createExample.js';
+import {
+    VOICE_TYPE,
+    isVoiceType,
+    normalizeVoiceType,
+} from '../../../shared/constants/voiceTypes.js';
 
 const debugGetNext = debug('api:exercise:getNext');
 
 export async function getNext(routeContext) {
     debugGetNext('**** Getting next exercise for user %s *****', routeContext.user.name || routeContext.user.userId);
 
-    const [bypassExercise,args] = _getAdminBypassExercise(routeContext);
+    const voiceType = _getPreferredVoiceType(routeContext);
+    const [bypassExercise,args] = _getAdminBypassExercise(routeContext, voiceType);
     if (bypassExercise) 
         return await finalizeExample(bypassExercise,args)
 
@@ -43,13 +49,17 @@ async function _getNextDueExercise(routeContext) {
     const [idiom, progressRecDue] = _getNextDueIdiom(routeContext);
 
     if (idiom) {
-        return await _getExerciseForDueIdiom({ idiom, progressRecDue });
+        return await _getExerciseForDueIdiom({
+            idiom,
+            progressRecDue,
+            voiceType: _getPreferredVoiceType(routeContext),
+        });
     }
 
     return null;
 }
 
-async function _getExerciseForDueIdiom({ idiom, progressRecDue }) {
+async function _getExerciseForDueIdiom({ idiom, progressRecDue, voiceType }) {
     const { GET_NEXT_EXAMPLES_PER_IDIOM } = getSettings();
 
     const gatherCounts = (counts, id) => {
@@ -85,12 +95,10 @@ async function _getExerciseForDueIdiom({ idiom, progressRecDue }) {
         }
         const exampleToUse = seen[ (controlIndex + 1) % seen.length ];
         exercise = _examples.byId(exampleToUse);
-        if( typeof exercise.audio === 'object' ) 
-            throw "WRONG EXERCISE SHAPE"
         debugGetNext('Using: %s', exampleToUse )
     }
 
-    return await finalizeExample(exercise, {idiom, debug: debugGetNext});
+    return await finalizeExample(exercise, {idiom, debug: debugGetNext, voiceType});
 }
 
 async function _isNewAllowed(routeContext) {
@@ -134,7 +142,11 @@ async function _getExerciseForNewIdiom(routeContext) {
         exercise = await createExample(idiom);
         debugGetNext('created a new exercise');
     }
-    return await finalizeExample(exercise, {idiom, debug: debugGetNext});
+    return await finalizeExample(exercise, {
+        idiom,
+        debug: debugGetNext,
+        voiceType: _getPreferredVoiceType(routeContext),
+    });
 }
 
 function _getNextDueIdiom(routeContext) {
@@ -185,16 +197,24 @@ function _shuffle(items) {
     return shuffled;
 }
 
-function _getAdminBypassExercise(routeContext) {
-    const { user: { preferences } } = routeContext;
+function _getAdminBypassExercise(routeContext, voiceType) {
+    const preferences = routeContext.user?.preferences || {};
     if( preferences.getNextExample ) {
         debugGetNext("Getting admin example: " + preferences.getNextExample)
         const _examples = new Examples();
         const _idioms   = new Idioms();
         let   exercise  = _examples.byId(preferences.getNextExample);
         let   idiom     = _idioms.byId(exercise.idiomId);
-        return [exercise, { idiom, model: _examples, debug: debugGetNext }]
+        return [exercise, { idiom, model: _examples, debug: debugGetNext, voiceType }]
 //        return finalizeExample(exercise, { idiom, model: _examples, debug: debugGetNext });
     }
     return [null];
+}
+
+function _getPreferredVoiceType(routeContext) {
+    const requestedVoiceType = routeContext.query?.[VOICE_TYPE];
+    if (isVoiceType(requestedVoiceType)) {
+        return requestedVoiceType;
+    }
+    return normalizeVoiceType(routeContext.user?.preferences?.[VOICE_TYPE]);
 }

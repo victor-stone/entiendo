@@ -5,9 +5,11 @@ import { PageLink, LoadingSpinner, ButtonBar } from "../components/ui";
 import { useEffect } from "react";
 import { ToneSelectorField } from "../components/ToneSelector";
 import UsageRangeSelector from "../components/UsageRangeSelector";
+import { VoiceOptions, VOICE_TYPE } from "../components/VoiceOptions";
 
 const hints = {
     usage: 'Prioritize which idioms you see based on how frequently they are used. "Super Common" means used all the time, "Super Rare" means it’s hardly ever used.',
+    voice: 'Choose the audio style used when an exercise first loads. You can still switch styles during the exercise.',
     admin: 'Admin: Next example ID'
 };
 
@@ -18,6 +20,7 @@ const Preferences = () => {
         setUsage,
         setPreference,
         loading,
+        preferencesLoading,
         isAdmin,
         getToken
     } = useUserStore();
@@ -29,10 +32,13 @@ const Preferences = () => {
     }, [setImage])
 
     return (
-        <Card title={<span>Preferences {loading ? <LoadingSpinner /> : ''}</span>}>
+        <Card title={<span>Preferences {loading || preferencesLoading ? <LoadingSpinner /> : ''}</span>}>
             <Card.Body>
                 <CardField hint={hints.usage}>
                     <UsageRangeSelector value={preferences?.filter?.usage} onChange={setUsage} />
+                </CardField>
+                <CardField title="Exercise audio style" hint={hints.voice}>
+                    <VoiceOptions value={preferences?.[VOICE_TYPE]} onChange={setPreference} />
                 </CardField>
                 <ToneSelectorField getToken={getToken} value={preferences?.filter?.tone || ""} onChange={setTone} />
                 {isAdmin &&

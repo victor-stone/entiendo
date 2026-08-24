@@ -40,10 +40,10 @@ Example:
 ```jsx
 <Listing
   data={data}
-  filters={["text", "source"]}
-  columns={["text", "transcription", "source", "assign", "publish"]}
-  tools={["copyToClipboard", "newIdiomPopup"]}
-  context={{ editors }}
+  filters={["text", "tone", "usage"]}
+  columns={["text", "translation", "tone", "usage"]}
+  tools={["newIdiomPopup"]}
+  context={{ getToken }}
   onSelectRow={(row) => setSelected(row)}
   onUpdateRow={(row, ctx) => {
     console.log("row update", row, ctx);
@@ -56,15 +56,10 @@ Example:
 `columns` is a list of names. Each name must exist in `ListingColumns.jsx`.
 
 Current built-in names:
-- `sync`
 - `text`
 - `translation`
 - `tone`
 - `usage`
-- `transcription`
-- `assign`
-- `publish`
-- `source`
 
 ### Add a new column
 
@@ -103,7 +98,6 @@ Current built-in names:
 - `text`
 - `tone`
 - `usage`
-- `source`
 
 Each filter object has:
 - `name`
@@ -127,7 +121,7 @@ Each filter object has:
       Only published
     </label>
   ),
-  filter: (row, value) => !value || !!row.homework?.publishedAt
+  filter: (row, value) => !value || !!row.publishedAt
 }
 ```
 
@@ -137,7 +131,6 @@ Each filter object has:
 They are looked up by name in `ListingTools.jsx`.
 
 Current built-in names:
-- `copyToClipboard`
 - `newIdiomPopup`
 
 Tool object shape:
@@ -165,7 +158,7 @@ Use `onUpdateRow` when a custom column button/edit control needs to notify paren
 <Listing
   data={data}
   onUpdateRow={(row, ctx) => {
-    if (ctx.action === "assignSource") {
+    if (ctx.action === "edit") {
       // do API call here
     }
   }}

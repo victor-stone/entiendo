@@ -26,12 +26,6 @@ const genericItems = [
     }
   ];
 
-const editorItems = [
-  {
-    path: '/editor/manage', label: 'Upload Audio'
-  },
-];
-
 const adminItems = [
     { 
       path: '/admin/idioms', label: 'Idioms'
@@ -44,9 +38,6 @@ const adminItems = [
     },
     {
       path: '/admin/example', label: 'Create Example'
-    },
-    {
-      path: '/admin/audio', label: 'Manage Assignments'
     },
     {
       path: '/admin/settings', label: 'Settings'
@@ -69,7 +60,7 @@ const EVENODD_SVG = "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 11
 const GREY_HR = "my-2 border-t border-gray-300 dark:border-gray-600";
 const OPEN_MENU = "absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:border-gray-700";
 
-const Menu = ({ isMobile, isLoggedIn, isAdmin, role, onClose }) => {
+const Menu = ({ isMobile, isLoggedIn, isAdmin, onClose }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -81,11 +72,6 @@ const Menu = ({ isMobile, isLoggedIn, isAdmin, role, onClose }) => {
   }
   
   menuItems.push(...genericItems);
-
-  if( isAdmin || role == 'editor' ) {
-    menuItems.push({ separator: true }); 
-    menuItems.push(...editorItems);
-  }
 
   if (isAdmin) {
     menuItems.push({ separator: true });

@@ -30,23 +30,6 @@ import { resetCache } from '../models/db.js';
 export const routeTable = {
   // POST routes
   POST: {
-    /** EDITOR **/
-    '/api/editor/assign': { 
-      handler: (routeContext) => adminAPI.assignEditorToIdiom(routeContext),
-      auth: true
-    },
-    '/api/editor/publish': { 
-      handler: (routeContext) => adminAPI.homeworkPublish(routeContext),
-      auth: true
-    },
-    '/api/editor/fulfill': {
-      handler: (routeContext) => adminAPI.turnInHomework(routeContext),
-      auth: true
-    },
-    '/api/editor/homeworkreports': { 
-      handler: (routeContext) => adminAPI.homeworkReports(routeContext),
-      auth: true
-    },
     /** ADMIN **/
     '/api/admin/example-audio': {
       handler: (routeContext) => adminAPI.uploadExampleAudio(routeContext),
@@ -84,7 +67,7 @@ export const routeTable = {
     /** EXAMPLE **/
     '/api/example/:exampleId': {
       handler: (routeContext) => exampleAPI.updateExample(routeContext),
-      auth: false
+      auth: true
     },
     /** EXERCISE **/
     '/api/exercises/evaluate': {
@@ -152,11 +135,6 @@ export const routeTable = {
       handler: (routeContext) => sandboxAPI.getBasedOn(routeContext),
       auth: true
     },    
-    '/api/editors': { 
-      handler: (routeContext) => adminAPI.editors(routeContext),
-      auth: true
-    },
-
     '/api/admin/resetcaches': { 
       handler: (routeContext) => resetCache( /* routeContext */ ),
       auth: true
@@ -167,11 +145,11 @@ export const routeTable = {
     },
     '/api/example/:exampleId': {
       handler: (routeContext) => exampleAPI.getExampleById(routeContext),
-      auth: false
+      auth: true
     },
     '/api/example/idiom/:idiomId': {
       handler: (routeContext) => exampleAPI.getExamplesForIdiom(routeContext),
-      auth: false
+      auth: true
     },
     '/api/exercises': {
       handler: (routeContext) => exerciseAPI.schedule(routeContext),
@@ -213,6 +191,10 @@ export const routeTable = {
   
   // PUT routes
   PUT: {
+    '/api/exercises/:exampleId/audio/:voiceType': {
+      handler: (routeContext) => exerciseAPI.getExerciseAudio(routeContext),
+      auth: true
+    }
   },
   
   // DELETE routes

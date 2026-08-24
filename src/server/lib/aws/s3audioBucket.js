@@ -73,13 +73,15 @@ export async function uploadAudioToS3(audioContent, filename, contentType = 'aud
     // Create the S3 key with 'tts/' prefix
     const s3Key = getS3Key(`tts/${filename}`);
 
-    // Handle input as either a file path or buffer
+    // Handle input as either a file path or an exact Node Buffer. Passing a
+    // pooled Buffer's backing ArrayBuffer can change after AWS signs it.
     if (typeof audioContent === 'string') {
       // It's a file path
       fileBuffer = fs.readFileSync(audioContent);
-    } else {
-      // It's already a buffer
+    } else if (Buffer.isBuffer(audioContent)) {
       fileBuffer = audioContent;
+    } else {
+      throw new TypeError('audioContent must be a Buffer or file path');
     }
 
     // Upload to S3

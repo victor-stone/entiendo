@@ -1,5 +1,4 @@
 // Admin pages
-export { default as AssignmentManagerPage } from './AssigmentManagerPage';
 export { default as IdiomImportPage } from './IdiomImportPage';
 export { default as IdiomListPage } from './IdiomListPage';
 export { default as NewExamplePage } from './NewExamplePage';

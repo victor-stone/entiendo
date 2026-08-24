@@ -48,7 +48,7 @@ export async function writeJson(key, data) {
     const name = path.basename(key)
     try {
       const jsonfile = new JsonFile(name);
-      jsonfile.data = body;
+      jsonfile.data = data;
       jsonfile.write();
       return "offline-version";
     } catch(err) {

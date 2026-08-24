@@ -1,12 +1,32 @@
 import { Link } from 'react-router-dom';
-import { Glyph } from '../ui';
-import AudioPlayer from '../ui/AudioPlayer';
+import { AudioPlayer, Glyph } from '../ui';
+import ExerciseAudio from './ExerciseAudio';
+
+const FixedExerciseAudio = ({ playback }) => (
+  <div className="mb-6">
+    <h3 className="mb-2 font-medium">Listen to the sentence:</h3>
+    {playback?.voiceName && (
+      <div className="mb-2 text-xs italic text-gray-500 dark:text-gray-400">
+        Voice: <span className="capitalize">{playback.voiceName}</span>
+      </div>
+    )}
+    {playback?.url
+      ? <AudioPlayer url={playback.url} />
+      : <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">Audio is not available for this exercise.</p>}
+  </div>
+);
 
 /**
  * ExercisePrompt component - Phase 1 "prompt"
  * Displays the Exercise challenge to the user
  */
-const ExercisePrompt = ({ exercise, onContinue }) => {
+const ExercisePrompt = ({
+  exercise,
+  onContinue,
+  onVoiceTypeChange,
+  fixedAudio = false,
+  fixedPlayback = null,
+}) => {
   if (!exercise) return null;
 
   return (
@@ -14,13 +34,14 @@ const ExercisePrompt = ({ exercise, onContinue }) => {
       <h2 className="text-xl font-bold mb-4 inline-flex items-center">Exercise 
         {exercise.isNew && <span className="inline-flex items-center bg-secondary-100 text-accent-600 rounded-full ml-2 text-sm p-1"><Glyph name="StarIcon" />New </span>}</h2>
 
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <h3 className="font-medium mb-2">Listen to the sentence:</h3>
-          <div className="text-right text-xs italic capitalize mr-10">{exercise.voice}</div>
-        </div>
-        <AudioPlayer url={exercise.url} />
-      </div>
+      {fixedAudio
+        ? <FixedExerciseAudio playback={fixedPlayback} />
+        : (
+          <ExerciseAudio
+            title="Listen to the sentence:"
+            onVoiceTypeChange={onVoiceTypeChange}
+          />
+        )}
 
       {onContinue && <div className="flex justify-end mt-4">
         <Link to="/app/dashboard" className="btn">Cancel</Link>
@@ -30,4 +51,4 @@ const ExercisePrompt = ({ exercise, onContinue }) => {
   );
 };
 
-export default ExercisePrompt; 
+export default ExercisePrompt;

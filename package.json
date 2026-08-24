@@ -16,7 +16,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env DB=OFFLINE node --test --test-concurrency=1 \"tests/*.test.js\"",
+    "migrate:audio-variants": "node scripts/migrate-audio-variants.js",
+    "migrate:audio-variants:shovels": "node scripts/migrate-audio-variants.js --file=data/shovels.json --key=entiendo/data/shovels.json",
+    "migrate:voice-types": "node scripts/migrate-audio-variants.js --voices",
+    "migrate:assignment-users": "node scripts/migrate-audio-variants.js --users"
   },
   "keywords": [
     "language",

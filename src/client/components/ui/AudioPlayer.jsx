@@ -10,6 +10,7 @@ const AudioPlayer = ({ url, isAdmin }) => {
   return (
     <div className="text-gray-700 dark:text-gray-300 mb-4">
       <audio 
+        key={url}
         src={url} 
         controls 
         controlsList={controlsList}
@@ -19,4 +20,4 @@ const AudioPlayer = ({ url, isAdmin }) => {
   );
 };
 
-export default AudioPlayer; 
+export default AudioPlayer;

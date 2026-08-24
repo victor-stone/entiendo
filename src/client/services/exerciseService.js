@@ -1,4 +1,4 @@
-import { get, post } from "../lib/apiClient";
+import { get, post, put } from "../lib/apiClient";
 import debug from "debug";
 
 const debugExercise = debug("app:exercise");
@@ -36,11 +36,22 @@ const exerciseService = {
     return response;
   },
 
+  resolveAudioVariant: async (exampleId, voiceType, authToken) => {
+    const encodedExampleId = encodeURIComponent(exampleId);
+    const encodedVoiceType = encodeURIComponent(voiceType);
+    return await put(
+      `/api/exercises/${encodedExampleId}/audio/${encodedVoiceType}`,
+      {},
+      authToken
+    );
+  },
+
   evaluateResponse: async (
     exampleId,
     userTranscription,
     userTranslation,
-    authToken
+    authToken,
+    voiceTypeUsed
   ) => {
     const response = await post(
       `/api/exercises/evaluate`,
@@ -48,6 +59,7 @@ const exerciseService = {
         exampleId,
         userTranscription,
         userTranslation,
+        voiceTypeUsed,
       },
       authToken
     );

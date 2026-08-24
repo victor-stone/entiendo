@@ -1,9 +1,26 @@
 import { Examples, Progress, Idioms, Prompts, History } from '../../models/index.js';
 import { generateText } from '../../lib/openai.js';
 import processSirpState from '../../lib/sirp/process.js';
+import { ValidationError } from '../../../shared/constants/errorTypes.js';
+import {
+    VOICE_TYPE,
+    isVoiceType,
+    normalizeVoiceType
+} from '../../../shared/constants/voiceTypes.js';
 
 export async function evaluateResponse(routeContext) {
-    const { payload: { exampleId, userTranscription, userTranslation }, user: { userId } } = routeContext;
+    const {
+        payload: { exampleId, userTranscription, userTranslation, voiceTypeUsed },
+        user: { userId, preferences = {} }
+    } = routeContext;
+
+    if (voiceTypeUsed !== undefined && !isVoiceType(voiceTypeUsed)) {
+        throw new ValidationError(`Invalid voice type: ${voiceTypeUsed}`);
+    }
+
+    const normalizedVoiceType = normalizeVoiceType(
+        voiceTypeUsed ?? preferences[VOICE_TYPE]
+    );
 
     const _history   = new History();
     const lastSeen = _history.lastSeen(userId, exampleId);
@@ -11,7 +28,13 @@ export async function evaluateResponse(routeContext) {
     const _examples  = new Examples();
     const example    = _examples.byId(exampleId);
     const evaluation = await _evaluateResponse(example.text, userTranscription, userTranslation);
-    const progress   = _markProgress(exampleId, example.idiomId, evaluation, userId);
+    const progress   = _markProgress(
+        exampleId,
+        example.idiomId,
+        evaluation,
+        userId,
+        normalizedVoiceType
+    );
 
 
     progress.lastSeen = lastSeen;
@@ -22,7 +45,7 @@ export async function evaluateResponse(routeContext) {
     };
 }
 
-function _markProgress(exampleId, idiomId, evaluation, userId) {
+function _markProgress(exampleId, idiomId, evaluation, userId, voiceTypeUsed) {
 
     const _progress = new Progress();
     let   progress  = _progress.forIdiom(userId, idiomId);
@@ -50,7 +73,8 @@ function _markProgress(exampleId, idiomId, evaluation, userId) {
         exampleId,
         evaluation,
         progressId,
-        userId
+        userId,
+        voiceTypeUsed
     })
 
     return progress;

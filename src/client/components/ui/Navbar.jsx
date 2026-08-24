@@ -29,10 +29,10 @@ const UserInfo = ({ user, greeting = "Hola", className = "", onLogout }) => (
   </div>
 );
 
-const DesktopMenu = ({ isLoggedIn, user, isAdmin, role }) => (
+const DesktopMenu = ({ isLoggedIn, user, isAdmin }) => (
   <div className={DESKTOP_MENU_CLASS}>
     {isLoggedIn && <UserInfo user={user} />}
-    <Menu isMobile={false} isLoggedIn={isLoggedIn} isAdmin={isAdmin} role={role} />
+    <Menu isMobile={false} isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
   </div>
 );
 
@@ -52,7 +52,7 @@ const MobileMenuButton = ({ isOpen, onClick }) => (
   </button>
 );
 
-// Mobile menu dropdown (no admin/editor stuff)
+// Mobile menu dropdown
 const MobileMenu = ({ isOpen, isLoggedIn, user, onClose }) => (
   <div className={`${isOpen ? 'block' : 'hidden'} ${MOBILE_MENU_CLASS}`}>
     <div className={MOBILE_MENU_INNER_CLASS}>
@@ -69,7 +69,7 @@ const MobileMenu = ({ isOpen, isLoggedIn, user, onClose }) => (
 );
 
 const Navbar = () => {
-  const { user, isAdmin, profile } = useUserStore();
+  const { user, isAdmin } = useUserStore();
   const isLoggedIn = !!user;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -88,7 +88,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center">
-            <DesktopMenu isLoggedIn={isLoggedIn} user={user} isAdmin={isAdmin} role={profile?.role} />
+            <DesktopMenu isLoggedIn={isLoggedIn} user={user} isAdmin={isAdmin} />
             <MobileMenuButton isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
           </div>
         </div>

@@ -10,6 +10,7 @@ const _ = o => o === undefined ? undefined : JSON.parse(JSON.stringify(o));
 const _path = (name) => name.includes('/') ? name : DATA_DIR + name + '.json';
 
 const _cache = {};
+const _writeQueues = {};
 
 export default class db {
   constructor(name, key, doTS) {
@@ -40,19 +41,35 @@ export default class db {
   }
 
   commit() {
-    try {
-      const data = this.data;
-      const path = this._path;
-      if( db.preventWrite ) {
-        debugDB(`blocking write of ${data.length} records to ${path}`);
-      } else {
-        writeJson( path, data ).then( () => 
-          debugDB(`wrote ${data.length} records to ${path}`)
-        );
-      }
-    } catch( err ) {
-      console.error(err);
+    const data = _(this.data);
+    const path = this._path;
+    if( db.preventWrite ) {
+      debugDB(`blocking write of ${data.length} records to ${path}`);
+      return Promise.resolve(null);
     }
+
+    // Each model is stored as one JSON object. Serialize writes per object so
+    // an older full-dataset snapshot can never finish after a newer snapshot.
+    const previousWrite = _writeQueues[path] || Promise.resolve();
+    const write = previousWrite
+      .catch(() => undefined)
+      .then(async () => {
+        const version = await db.writeJson(path, data);
+        debugDB(`wrote ${data.length} records to ${path}`);
+        return version;
+      });
+
+    _writeQueues[path] = write;
+    write.catch(error => console.error(error));
+    write.then(
+      () => {
+        if (_writeQueues[path] === write) delete _writeQueues[path];
+      },
+      () => {
+        if (_writeQueues[path] === write) delete _writeQueues[path];
+      },
+    );
+    return write;
   }
 
   create(record) {
@@ -112,6 +129,12 @@ export default class db {
     return _(record);
   }
 
+  async updateAndCommit(keyValue, newValues) {
+    const record = this.#_update(keyValue, newValues);
+    await this.commit();
+    return _(record);
+  }
+
   #_update(keyValue, newValues) {
     const index = this.data.findIndex(record => record[this._key] == keyValue);
     this.data[index] = { ...this.data[index], ...newValues };
@@ -128,6 +151,7 @@ export default class db {
 }
 
 db.preventWrite = false;
+db.writeJson = writeJson;
 
 const _onInit = [];
 db.onInit = (name, handler) => _onInit.push( { handler, name } );

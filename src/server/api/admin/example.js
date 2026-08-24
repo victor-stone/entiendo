@@ -1,6 +1,11 @@
 import { ForbiddenError, ValidationError } from '../../../shared/constants/errorTypes.js';
 import { Examples } from '../../models/index.js';
-import { uploadAudioToS3 } from '../../lib/aws/s3audioBucket.js';
+import { uploadAudioToS3, setAudioUrl } from '../../lib/aws/s3audioBucket.js';
+import {
+  VOICE_CONVERSATION,
+  isVoiceType,
+} from '../../../shared/constants/voiceTypes.js';
+import { getAudioVariants } from '../lib/audioVariantUtils.js';
 
 /**
  * Save a new example to the database
@@ -18,7 +23,22 @@ export async function createExample(routeContext) {
   const examples = new Examples();
   
   // Create the idiom example
-  const createdExample = examples.create(exampleData);
+  if (
+    Object.prototype.hasOwnProperty.call(exampleData, 'audio') ||
+    Object.prototype.hasOwnProperty.call(exampleData, 'voice') ||
+    Object.prototype.hasOwnProperty.call(exampleData, 'url') ||
+    Object.prototype.hasOwnProperty.call(exampleData, 'playback')
+  ) {
+    throw new ValidationError('Use audioVariants for example audio');
+  }
+
+  const audioVariants = getAudioVariants({
+    audioVariants: exampleData.audioVariants ?? {},
+  });
+  const createdExample = examples.create({
+    ...exampleData,
+    audioVariants,
+  });
   return createdExample;
 }
 
@@ -44,6 +64,11 @@ export async function uploadExampleAudio(routeContext) {
   if (!payload.files || !payload.files.file) {
     throw new ValidationError('Audio file is required');
   }
+
+  const voiceType = payload.voiceType || VOICE_CONVERSATION;
+  if (!isVoiceType(voiceType)) {
+    throw new ValidationError(`Invalid voice type: ${voiceType}`);
+  }
   
   const _examples = new Examples();
   
@@ -56,7 +81,7 @@ export async function uploadExampleAudio(routeContext) {
   try {
     // Generate a unique filename based on timestamp and example ID
     const timestamp = Date.now();
-    const filename = `example_${example.exampleId}_${timestamp}.mp3`;
+    const filename = `example_${example.exampleId}_${voiceType}_${timestamp}.mp3`;
     
     // Get the file content
     const audioContent = payload.files.file.data;
@@ -64,10 +89,22 @@ export async function uploadExampleAudio(routeContext) {
     
     // Upload the audio file to S3
     const audioResult = await uploadAudioToS3(audioContent, filename, contentType);
+    setAudioUrl(audioResult.key, audioResult.url, audioResult.expires);
     
-    // Update the example with audio information
-    const updatedExample = _examples.update(example.exampleId, {
-      audio: audioResult
+    const latestExample = _examples.byId(example.exampleId);
+    const audioVariants = getAudioVariants(latestExample);
+    const variant = {
+      key: audioResult.key,
+      ...(payload.voiceName ? { voiceName: payload.voiceName } : {}),
+      source: 'upload',
+    };
+
+    // Update only the selected canonical variant.
+    const updatedExample = await _examples.updateAndCommit(example.exampleId, {
+      audioVariants: {
+        ...audioVariants,
+        [voiceType]: variant,
+      },
     });
     
     return {
@@ -79,4 +116,3 @@ export async function uploadExampleAudio(routeContext) {
     throw new Error(`Failed to upload audio: ${error.message}`);
   }
 }
-

@@ -1,13 +1,19 @@
 import { uploadAudioToS3 } from "../../lib/aws/s3audioBucket.js"
 
 export async function uploadExampleAudioFromHTTPForm(payload, filename) {
-  const audioContent = payload.file !== "" && (payload.file || payload.files.file).data;
-  const contentType = audioContent
-    ? (payload.file || payload.files.file).mimetype || "audio/mpeg"
-    : undefined;
-  const s3Info = audioContent
-    ? await uploadAudioToS3(audioContent, filename, contentType)
-    : { key: null };
-  return s3Info;
-}
+  const directFile = payload?.file && typeof payload.file === 'object'
+    ? payload.file
+    : null;
+  const multipartFile = payload?.files?.file;
+  const file = directFile || multipartFile || null;
 
+  if (!file?.data) {
+    return { key: null, url: null, expires: 0 };
+  }
+
+  return uploadAudioToS3(
+    file.data,
+    filename,
+    file.mimetype || "audio/mpeg"
+  );
+}

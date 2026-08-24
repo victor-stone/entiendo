@@ -1,10 +1,51 @@
 import { create } from 'zustand';
 import exerciseService from '../services/exerciseService';
 const { getSchedule, getScheduleStats, 
-  getNext, evaluateResponse } = exerciseService;
+  getNext, evaluateResponse, resolveAudioVariant } = exerciseService;
 import debug from 'debug';
 const debugStore = debug('app:store');
 import { storeFetch } from '../lib/storeUtils';
+import {
+  VOICE_CONVERSATION,
+  VOICE_EDUCATION,
+} from '../../shared/constants/voiceTypes';
+
+const validVoiceTypes = new Set([VOICE_CONVERSATION, VOICE_EDUCATION]);
+
+const getCanonicalPlayback = (payload) => {
+  const playback = payload?.playback;
+  if (
+    !playback ||
+    typeof playback !== 'object' ||
+    typeof playback.url !== 'string' ||
+    !playback.url ||
+    !validVoiceTypes.has(playback.voiceType)
+  ) {
+    return null;
+  }
+
+  return playback;
+};
+
+const getInitialAudioState = (exercise) => {
+  const playback = getCanonicalPlayback(exercise);
+
+  if (!playback) {
+    return {
+      activeVoiceType: VOICE_CONVERSATION,
+      playbackByType: {},
+      audioError: exercise?.warning || null,
+    };
+  }
+
+  return {
+    activeVoiceType: playback.voiceType,
+    playbackByType: {
+      [playback.voiceType]: playback,
+    },
+    audioError: exercise?.warning || null,
+  };
+};
 
 export const useScheduleStatsStore = create((set, get) => ({
   loading: false,
@@ -35,6 +76,12 @@ export const useExerciseStore = create((set, get) => ({
   exercise  : null,
   evaluation: null,
   progress  : null,
+
+  activeVoiceType: VOICE_CONVERSATION,
+  playbackByType : {},
+  audioLoading   : false,
+  audioError     : null,
+  audioRequestId : 0,
 
   calendarFull: false,
 
@@ -79,6 +126,12 @@ export const useExerciseStore = create((set, get) => ({
       evaluation: null,
       progress  : null,
 
+      activeVoiceType: VOICE_CONVERSATION,
+      playbackByType : {},
+      audioLoading   : false,
+      audioError     : null,
+      audioRequestId : get().audioRequestId + 1,
+
       calendarFull:false,
 
       phase     : 'prompt',
@@ -97,16 +150,22 @@ export const useExerciseStore = create((set, get) => ({
       exercise    : null,
       loading     : true,
       error       : null,
-      calendarFull: false
+      calendarFull: false,
+      activeVoiceType: VOICE_CONVERSATION,
+      playbackByType : {},
+      audioLoading   : false,
+      audioError     : null,
+      audioRequestId : get().audioRequestId + 1,
     });
     try {
       const token    = await getToken();
       const exercise = await getNext(criteria, token);
       
-      set({ 
+      set({
         exercise,
         loading: false,
-        phase  : 'prompt'  // Reset to prompt phase for new exercise
+        phase  : 'prompt',  // Reset to prompt phase for new exercise
+        ...getInitialAudioState(exercise),
       });
       
       return exercise;
@@ -128,6 +187,88 @@ export const useExerciseStore = create((set, get) => ({
       return null;
     }
   },
+
+  switchVoiceType: async (voiceType, getToken) => {
+    if (!validVoiceTypes.has(voiceType)) {
+      set({ audioError: 'That audio style is not available.' });
+      return null;
+    }
+    const requestedVoiceType = voiceType;
+
+    const state = get();
+    const cachedPlayback = state.playbackByType[requestedVoiceType];
+    const requestId = state.audioRequestId + 1;
+
+    if (cachedPlayback) {
+      set({
+        activeVoiceType: requestedVoiceType,
+        audioLoading: false,
+        audioError: null,
+        audioRequestId: requestId,
+      });
+      return cachedPlayback;
+    }
+
+    const exampleId = state.exercise?.exampleId;
+    if (!exampleId || !getToken) {
+      set({ audioError: 'Unable to load that audio style right now.' });
+      return null;
+    }
+
+    const previousVoiceType = state.activeVoiceType;
+    set({
+      activeVoiceType: requestedVoiceType,
+      audioLoading: true,
+      audioError: null,
+      audioRequestId: requestId,
+    });
+
+    try {
+      const token = await getToken();
+      const response = await resolveAudioVariant(
+        exampleId,
+        requestedVoiceType,
+        token
+      );
+      const playback = getCanonicalPlayback(response);
+
+      if (!playback) {
+        throw new Error('The requested audio style is unavailable.');
+      }
+
+      // A reset, a new exercise, or a later switch makes this response stale.
+      if (
+        get().audioRequestId !== requestId ||
+        get().exercise?.exampleId !== exampleId
+      ) {
+        return playback;
+      }
+
+      const warning = response.warning || null;
+      set((current) => ({
+        activeVoiceType: playback.voiceType,
+        playbackByType: {
+          ...current.playbackByType,
+          [playback.voiceType]: playback,
+        },
+        audioLoading: false,
+        audioError: warning,
+      }));
+      return playback;
+    } catch (err) {
+      if (
+        get().audioRequestId === requestId &&
+        get().exercise?.exampleId === exampleId
+      ) {
+        set({
+          activeVoiceType: previousVoiceType,
+          audioLoading: false,
+          audioError: err.message || 'Failed to load that audio style.',
+        });
+      }
+      return null;
+    }
+  },
   
   evaluateResponse: async (userTranscription, userTranslation, getToken) => {
     if (!getToken) return null;
@@ -135,9 +276,19 @@ export const useExerciseStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
 
-      const token    = await getToken();
-      const exercise = get().exercise;
-      const { evaluation, progress } = await evaluateResponse(exercise.exampleId, userTranscription, userTranslation, token);
+      const state = get();
+      const exercise = state.exercise;
+      const selectedPlayback = state.playbackByType[state.activeVoiceType];
+      const availablePlayback = selectedPlayback || Object.values(state.playbackByType)[0];
+      const voiceTypeUsed = availablePlayback?.voiceType || state.activeVoiceType;
+      const token = await getToken();
+      const { evaluation, progress } = await evaluateResponse(
+        exercise.exampleId,
+        userTranscription,
+        userTranslation,
+        token,
+        voiceTypeUsed
+      );
       set({ 
         loading: false,
         evaluation,
@@ -154,5 +305,9 @@ export const useExerciseStore = create((set, get) => ({
   // Clear error (all errors)
   clearError: () => set({ 
     error: null
-  })
+  }),
+
+  clearAudioError: () => set({
+    audioError: null,
+  }),
 }));

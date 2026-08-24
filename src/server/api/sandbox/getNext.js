@@ -90,7 +90,7 @@ async function _makeNewShovel(basedOn) {
     for( var i = 0; i < shovels.length; i++ ) {
         const { text, basedOn } = shovels[i];
         debugSB('[%s] %s', basedOn.join(', '), text);
-        shovels[i] = _shovels.create({text, basedOn});
+        shovels[i] = _shovels.create({ text, basedOn, audioVariants: {} });
     }
     const shovel = await finalizeExample(shovels[0], { model: _shovels, debug: debugSB });
     debugSB('Using shovel: %s', shovel.text)
@@ -110,6 +110,5 @@ async function _generateSandboxSentence(basedOn) {
         throw err;
     }
 }
-
 
 

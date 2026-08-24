@@ -1,8 +1,11 @@
 // src/server/api/lib/finalizeExample.js
-import { Examples, Idioms, Normals } from '../../models/index.js';
-import { getAudioUrl, setAudioUrl } from '../../lib/aws/s3audioBucket.js';
-
-import { generateSpeech, selectVoice } from '../../lib/elevenlabs.js';
+import { Idioms, Normals } from '../../models/index.js';
+import { VOICE_CONVERSATION } from '../../../shared/constants/voiceTypes.js';
+import {
+    audioResponse,
+    resolveAudioVariant,
+} from './audioVariants.js';
+import { getAudioVariants } from './audioVariantUtils.js';
 
 export async function finalizeExample
 (
@@ -10,36 +13,32 @@ export async function finalizeExample
     {
         force = true, 
         model = null, 
-        debug = null
-    } = { force: true }
+        debug = null,
+        idiom = null,
+        voiceType = VOICE_CONVERSATION,
+    } = {}
 ) {
-
     if( debug ) {
-        if( record.audio ) {
-            debug('Audio at: ' + record.audio );
-            debug('VOICE: ' + record.voice );
+        const variants = getAudioVariants(record);
+        if( variants[voiceType] ) {
+            debug('Audio at: ' + variants[voiceType].key);
+            debug('VOICE: ' + variants[voiceType].voiceName);
         }
     }
-    if( record.audio ) {
-        record.url = await getAudioUrl(record.audio);
-    } else if ( force ) {
-        const voice = selectVoice();
-        const { key, url, expires } = await generateSpeech(record.text, voice);
 
-        setAudioUrl( key, url, expires );
-        
-        if (debug) debug('generating audio for example with [' + voice.name + "]\n " + key);
-        
-        if( !model ) 
-            model = new Examples();
-
-        record = model.addAudio(model.key(record), { audio: key, voice: voice.name } );
-        record.url = url;
-    }
+    const resolved = await resolveAudioVariant(record, voiceType, {
+        force,
+        model,
+        debug,
+    });
+    record = { ...resolved.record };
 
     if( !record.idiom && !record.basedOn?.length ) {
-        const _idioms = new Idioms();
-        record.idiom = _idioms.byId(record.idiomId);
+        record.idiom = idiom;
+        if( !record.idiom ) {
+            const _idioms = new Idioms();
+            record.idiom = _idioms.byId(record.idiomId);
+        }
     }
 
     if( record.idiom ) {
@@ -47,5 +46,12 @@ export async function finalizeExample
         record.normal = record.idiom.normal && _normals.byId(record.idiom.normal);
     }
 
-    return record;
+    // Persisted keys and generation metadata stay server-side. Learner clients
+    // receive only the selected signed playback object.
+    const { audioVariants: _audioVariants, ...learnerRecord } = record;
+
+    return {
+        ...learnerRecord,
+        ...audioResponse(resolved),
+    };
 }
