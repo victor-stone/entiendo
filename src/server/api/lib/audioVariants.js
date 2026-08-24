@@ -3,6 +3,8 @@ import { Examples } from '../../models/index.js';
 import { getAudioUrl, setAudioUrl } from '../../lib/aws/s3audioBucket.js';
 import { generateSpeech, selectVoice } from '../../lib/elevenlabs.js';
 import {
+  DEFAULT_VOICE_SPEEDS,
+  EDUCATION_VOICE_ID,
   getAudioVariants,
   isVoiceType,
   mergeAudioVariant,
@@ -36,7 +38,7 @@ export async function ensureAudioVariant(
   }
 
   const variants = getAudioVariants(record);
-  if (variants[voiceType]) {
+  if (shouldReuseVariant(variants[voiceType], voiceType, force)) {
     return resolveExistingVariant(record, variants, voiceType, getAudioUrlFn);
   }
 
@@ -151,7 +153,8 @@ async function generateAndPersistVariant({
   // Another voice-type request may have completed while this one was queued.
   const beforeGeneration = model.byId(recordId) || record;
   const currentVariants = getAudioVariants(beforeGeneration);
-  if (currentVariants[voiceType]) {
+  const currentVariant = currentVariants[voiceType];
+  if (shouldReuseVariant(currentVariant, voiceType, true)) {
     return resolveExistingVariant(
       beforeGeneration,
       currentVariants,
@@ -173,11 +176,37 @@ async function generateAndPersistVariant({
     voiceName: voice.name,
     voiceId: voice.serviceId,
     speed: voiceSpeedForVoice(voice, voiceType),
+    source: 'tts',
   };
 
   // Re-read immediately before the shallow model update, then merge the
   // nested map. This preserves a different variant written while TTS ran.
   const latestRecord = model.byId(recordId) || beforeGeneration;
+  const latestVariants = getAudioVariants(latestRecord);
+  const latestVariant = latestVariants[voiceType];
+  const variantChangedDuringGeneration = !sameVariant(
+    currentVariant,
+    latestVariant,
+  );
+
+  // A manual upload always wins over background generation. Also reuse a
+  // current TTS variant written by another server process while this request
+  // was waiting for ElevenLabs.
+  if (
+    latestVariant?.source === 'upload'
+    || (
+      variantChangedDuringGeneration
+      && shouldReuseVariant(latestVariant, voiceType, true)
+    )
+  ) {
+    return resolveExistingVariant(
+      latestRecord,
+      latestVariants,
+      voiceType,
+      getAudioUrlFn,
+    );
+  }
+
   const audioVariants = mergeAudioVariant(latestRecord, voiceType, variant);
   const update = { audioVariants };
 
@@ -221,6 +250,19 @@ function createPlayback(voiceType, variant, url) {
     url,
     voiceName: variant.voiceName || null,
   };
+}
+
+function shouldReuseVariant(variant, voiceType, force) {
+  if (!variant) return false;
+  if (voiceType !== VOICE_EDUCATION || !force) return true;
+  if (variant.source === 'upload') return true;
+
+  return variant.voiceId === EDUCATION_VOICE_ID
+    && variant.speed === DEFAULT_VOICE_SPEEDS[VOICE_EDUCATION];
+}
+
+function sameVariant(first, second) {
+  return JSON.stringify(first || null) === JSON.stringify(second || null);
 }
 
 function getFreshRecord(model, record) {

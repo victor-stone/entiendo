@@ -3,7 +3,7 @@
 Exercises support two server-controlled audio styles:
 
 - `conversation`: the existing natural recordings and rotating conversational TTS voices.
-- `education`: Zeta (`8Nz6hV5TPv151P6ZNEBV`) generated at speed `0.85` unless its server voice record specifies another speed.
+- `education`: Zeta (`8Nz6hV5TPv151P6ZNEBV`) generated at ElevenLabs' minimum supported speed, `0.70`.
 
 The browser sends only the style name. ElevenLabs voice IDs and generation settings remain on the server.
 
@@ -20,7 +20,8 @@ The browser sends only the style name. ElevenLabs voice IDs and generation setti
       "key": "https://bucket.example/tts/education.mp3",
       "voiceName": "Zeta",
       "voiceId": "8Nz6hV5TPv151P6ZNEBV",
-      "speed": 0.85
+      "speed": 0.7,
+      "source": "tts"
     }
   }
 }
@@ -29,6 +30,9 @@ The browser sends only the style name. ElevenLabs voice IDs and generation setti
 `audioVariants` is the only persisted audio field. Every example and shovel record contains that object (empty until its first recording is generated). Variant values are always objects; top-level `audio`, `voice`, `url`, and `playback` fields are invalid. Signed `url`/`expires` values are response data and are also invalid inside persisted variants. Learner API responses do not expose storage keys; they receive a signed `playback` object.
 
 Missing variants are generated on demand. Requests for the same example and style are deduplicated within the server process. If education generation fails and conversation audio exists, the API returns conversation audio with a fallback warning.
+
+Generated Zeta variants created at an older speed are replaced lazily the next
+time they are requested. Admin-uploaded education recordings are not replaced.
 
 Every ElevenLabs voice record must also have an explicit `voiceType`. Zeta is `education`; the rotating native voices are `conversation`.
 

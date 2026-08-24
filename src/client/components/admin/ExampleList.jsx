@@ -3,6 +3,7 @@ import { AudioPlayer, HighlightedText, Glyph } from '../ui';
 import ExampleForm from './ExampleForm';
 import { Card } from '../layout';
 import { useExamplesStore, useUserStore } from '../../stores';
+import { resolveAdminExampleList } from './exampleListState';
 import {
   VOICE_CONVERSATION,
   VOICE_EDUCATION
@@ -70,6 +71,7 @@ const ExampleList = ({ idiom, onChange }) => {
   const getToken = useUserStore(state => state.getToken);
   const {
     data,
+    idiomId: examplesIdiomId,
     loading,
     error,
     fetch,
@@ -83,15 +85,31 @@ const ExampleList = ({ idiom, onChange }) => {
     return reset;
   }, [idiom.idiomId, getToken, fetch, reset]);
 
-  const examples = data?.examples || idiom.examples || [];
+  const listState = resolveAdminExampleList({
+    data,
+    error,
+    expectedIdiomId: idiom.idiomId,
+    loading,
+    responseIdiomId: examplesIdiomId,
+  });
 
-  if (!examples.length && loading) {
+  if (listState.status === 'loading') {
     return <div className="p-3 text-sm text-gray-500">Loading example audio…</div>;
   }
 
-  if (!examples.length) {
-    return null;
+  if (listState.status === 'error') {
+    return (
+      <Card.Section title="Examples" className="w-full">
+        <div className="text-red-500 text-sm">
+          Could not load example audio: {listState.error}
+        </div>
+      </Card.Section>
+    );
   }
+
+  if (listState.status === 'empty') return null;
+
+  const examples = listState.examples;
 
   function _onChange(updatedExample) {
     debugId('ExampleList: turning off editing')
@@ -106,11 +124,6 @@ const ExampleList = ({ idiom, onChange }) => {
 
   return (
     <Card.Section title="Examples" className="w-full">
-      {error && (
-        <div className="text-red-500 text-sm mb-2">
-          Could not load all audio variants: {error}
-        </div>
-      )}
       {editing ? (
         <ExampleForm example={editing} onChange={_onChange} onCancel={onCancel} />
       ) : (

@@ -8,6 +8,7 @@ import {
 } from '../src/server/api/lib/audioVariants.js';
 import {
   EDUCATION_VOICE_ID,
+  voiceSpeedForVoice,
 } from '../src/server/api/lib/audioVariantUtils.js';
 import {
   VOICE_CONVERSATION,
@@ -107,6 +108,7 @@ test('conversation generation writes only the canonical variants map', async () 
       voiceName: 'Nacho',
       voiceId: 'conversation-voice',
       speed: 1,
+      source: 'tts',
     },
   });
   assert.deepEqual(result.playback, {
@@ -125,6 +127,13 @@ test('concurrent requests generate and persist one education variant', async () 
         key: 'conversation.mp3',
         voiceName: 'Malena',
       },
+      [VOICE_EDUCATION]: {
+        key: 'education-old.mp3',
+        voiceName: 'Zeta',
+        voiceId: EDUCATION_VOICE_ID,
+        speed: 0.85,
+        source: 'tts',
+      },
     },
   };
   const model = new FakeExamples(record);
@@ -137,7 +146,7 @@ test('concurrent requests generate and persist one education variant', async () 
       serviceId: EDUCATION_VOICE_ID,
       name: 'Zeta',
       voiceType: VOICE_EDUCATION,
-      speed: 0.85,
+      speed: 0.7,
     }),
     generateSpeechFn: async () => {
       generationCount += 1;
@@ -169,9 +178,138 @@ test('concurrent requests generate and persist one education variant', async () 
       key: 'education.mp3',
       voiceName: 'Zeta',
       voiceId: EDUCATION_VOICE_ID,
-      speed: 0.85,
+      speed: 0.7,
+      source: 'tts',
     },
   });
+});
+
+test('stale Zeta audio is regenerated once at ElevenLabs speed 0.70', async () => {
+  const record = {
+    exampleId: 'stale-education',
+    text: 'Más despacio, por favor.',
+    audioVariants: {
+      [VOICE_CONVERSATION]: {
+        key: 'conversation.mp3',
+        voiceName: 'Malena',
+      },
+      [VOICE_EDUCATION]: {
+        key: 'education-old.mp3',
+        voiceName: 'Zeta',
+        voiceId: EDUCATION_VOICE_ID,
+        speed: 0.85,
+        source: 'tts',
+      },
+    },
+  };
+  const model = new FakeExamples(record);
+  let generationCount = 0;
+  let receivedVoice = null;
+  const dependencies = {
+    model,
+    selectVoiceFn: () => ({
+      serviceId: EDUCATION_VOICE_ID,
+      name: 'Zeta',
+      voiceType: VOICE_EDUCATION,
+      speed: 0.95,
+    }),
+    generateSpeechFn: async (_text, voice) => {
+      generationCount += 1;
+      receivedVoice = voice;
+      return {
+        key: 'education-slow.mp3',
+        url: 'signed:education-slow.mp3',
+        expires: Date.now() + 60_000,
+      };
+    },
+    getAudioUrlFn: async (key) => `signed:${key}`,
+    setAudioUrlFn: () => {},
+  };
+
+  const first = await ensureAudioVariant(record, VOICE_EDUCATION, dependencies);
+  const second = await ensureAudioVariant(model.record, VOICE_EDUCATION, dependencies);
+
+  assert.equal(generationCount, 1);
+  assert.equal(voiceSpeedForVoice(receivedVoice, VOICE_EDUCATION), 0.7);
+  assert.equal(first.playback.url, 'signed:education-slow.mp3');
+  assert.equal(second.playback.url, 'signed:education-slow.mp3');
+  assert.deepEqual(model.record.audioVariants[VOICE_EDUCATION], {
+    key: 'education-slow.mp3',
+    voiceName: 'Zeta',
+    voiceId: EDUCATION_VOICE_ID,
+    speed: 0.7,
+    source: 'tts',
+  });
+});
+
+test('manual education uploads are never replaced by TTS', async () => {
+  const record = {
+    exampleId: 'manual-education',
+    text: 'Grabación manual.',
+    audioVariants: {
+      [VOICE_EDUCATION]: {
+        key: 'manual.mp3',
+        voiceName: 'Teacher',
+        source: 'upload',
+      },
+    },
+  };
+  const model = new FakeExamples(record);
+
+  const result = await ensureAudioVariant(record, VOICE_EDUCATION, {
+    model,
+    selectVoiceFn: () => { throw new Error('must not select TTS'); },
+    generateSpeechFn: async () => { throw new Error('must not generate TTS'); },
+    getAudioUrlFn: async (key) => `signed:${key}`,
+  });
+
+  assert.equal(model.writeCount, 0);
+  assert.equal(result.playback.url, 'signed:manual.mp3');
+});
+
+test('a manual education upload arriving during generation wins', async () => {
+  const record = {
+    exampleId: 'concurrent-upload',
+    text: 'Grabación concurrente.',
+    audioVariants: {},
+  };
+  const model = new FakeExamples(record);
+  let finishGeneration;
+  let generationStarted;
+  const started = new Promise(resolve => { generationStarted = resolve; });
+  const generation = ensureAudioVariant(record, VOICE_EDUCATION, {
+    model,
+    selectVoiceFn: () => ({
+      serviceId: EDUCATION_VOICE_ID,
+      name: 'Zeta',
+      voiceType: VOICE_EDUCATION,
+    }),
+    generateSpeechFn: async () => {
+      generationStarted();
+      await new Promise(resolve => { finishGeneration = resolve; });
+      return {
+        key: 'generated.mp3',
+        url: 'signed:generated.mp3',
+        expires: Date.now() + 60_000,
+      };
+    },
+    getAudioUrlFn: async (key) => `signed:${key}`,
+    setAudioUrlFn: () => {},
+  });
+
+  await started;
+  model.record.audioVariants[VOICE_EDUCATION] = {
+    key: 'manual-new.mp3',
+    voiceName: 'Teacher',
+    source: 'upload',
+  };
+  finishGeneration();
+
+  const result = await generation;
+
+  assert.equal(model.writeCount, 0);
+  assert.equal(result.playback.url, 'signed:manual-new.mp3');
+  assert.equal(model.record.audioVariants[VOICE_EDUCATION].source, 'upload');
 });
 
 test('education failure falls back to an existing conversation recording', async () => {

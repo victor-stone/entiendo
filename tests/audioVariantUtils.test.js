@@ -4,9 +4,11 @@ import assert from 'node:assert/strict';
 import {
   DEFAULT_VOICE_SPEEDS,
   EDUCATION_VOICE_ID,
+  ELEVENLABS_SPEED_RANGE,
   getAudioVariants,
   mergeAudioVariant,
   selectVoiceFromList,
+  voiceSpeedForVoice,
   voicesForType,
 } from '../src/server/api/lib/audioVariantUtils.js';
 import {
@@ -87,7 +89,7 @@ test('canonical variants preserve both styles and generation metadata', () => {
         key: 'education.mp3',
         voiceName: 'Zeta',
         voiceId: EDUCATION_VOICE_ID,
-        speed: 0.85,
+        speed: 0.7,
       },
     },
   };
@@ -102,7 +104,7 @@ test('canonical variants preserve both styles and generation metadata', () => {
       key: 'education.mp3',
       voiceName: 'Zeta',
       voiceId: EDUCATION_VOICE_ID,
-      speed: 0.85,
+      speed: 0.7,
     },
   });
 });
@@ -186,16 +188,44 @@ test('education selection is restricted to Zeta at the clear default speed', () 
 
   assert.equal(selected.serviceId, EDUCATION_VOICE_ID);
   assert.equal(selected.name, 'Zeta');
+  assert.equal(selected.speed, 0.7);
   assert.equal(selected.speed, DEFAULT_VOICE_SPEEDS[VOICE_EDUCATION]);
 });
 
-test('an explicit configured speed overrides the style default', () => {
+test('Zeta speed is fixed at 0.70 even if its data record specifies another value', () => {
   const configured = voices.map((voice) => (
     voice.serviceId === EDUCATION_VOICE_ID ? { ...voice, speed: 0.8 } : voice
   ));
 
   assert.equal(
     selectVoiceFromList(configured, VOICE_EDUCATION, () => 0).speed,
+    0.7,
+  );
+});
+
+test('configured conversation speeds must stay within ElevenLabs limits', () => {
+  const conversation = {
+    serviceId: 'conversation',
+    name: 'Conversation',
+    voiceType: VOICE_CONVERSATION,
+  };
+
+  assert.equal(
+    voiceSpeedForVoice({ ...conversation, speed: 0.8 }),
     0.8,
+  );
+  assert.throws(
+    () => voiceSpeedForVoice({
+      ...conversation,
+      speed: ELEVENLABS_SPEED_RANGE.min - 0.01,
+    }),
+    /between 0.7 and 1.2/,
+  );
+  assert.throws(
+    () => voiceSpeedForVoice({
+      ...conversation,
+      speed: ELEVENLABS_SPEED_RANGE.max + 0.01,
+    }),
+    /between 0.7 and 1.2/,
   );
 });

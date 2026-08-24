@@ -12,8 +12,10 @@ export const EDUCATION_VOICE_ID = '8Nz6hV5TPv151P6ZNEBV';
 
 export const DEFAULT_VOICE_SPEEDS = Object.freeze({
   [VOICE_CONVERSATION]: 1,
-  [VOICE_EDUCATION]: 0.85,
+  [VOICE_EDUCATION]: 0.7,
 });
+
+export const ELEVENLABS_SPEED_RANGE = Object.freeze({ min: 0.7, max: 1.2 });
 
 export function voiceTypeForVoice(voice = {}) {
   if (!isVoiceType(voice.voiceType)) {
@@ -29,8 +31,22 @@ export function voiceSpeedForVoice(voice = {}, voiceType = voiceTypeForVoice(voi
     throw new TypeError(`Voice ${voice.name || voice.serviceId} is not configured for ${voiceType}`);
   }
 
+  // Clear audio uses the slowest speed supported by ElevenLabs. This is a
+  // server policy and cannot be overridden by a stale voice data record.
+  if (voiceType === VOICE_EDUCATION) {
+    return DEFAULT_VOICE_SPEEDS[VOICE_EDUCATION];
+  }
+
   const configuredSpeed = Number(voice.speed);
-  if (Number.isFinite(configuredSpeed) && configuredSpeed > 0) {
+  if (Number.isFinite(configuredSpeed)) {
+    if (
+      configuredSpeed < ELEVENLABS_SPEED_RANGE.min
+      || configuredSpeed > ELEVENLABS_SPEED_RANGE.max
+    ) {
+      throw new RangeError(
+        `Voice speed must be between ${ELEVENLABS_SPEED_RANGE.min} and ${ELEVENLABS_SPEED_RANGE.max}`,
+      );
+    }
     return configuredSpeed;
   }
 

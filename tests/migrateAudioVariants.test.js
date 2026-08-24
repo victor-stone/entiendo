@@ -27,7 +27,7 @@ test('migration moves legacy audio into conversation and deletes aliases', () =>
       education: {
         key: 'clear.mp3',
         voiceName: 'Zeta',
-        speed: 0.85,
+        speed: 0.7,
       },
     },
   };

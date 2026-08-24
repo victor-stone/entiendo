@@ -101,7 +101,7 @@ const ExampleForm = ({ example, onChange, onCancel }) => {
               <button
                 key={option.value}
                 type="button"
-                className={`btn ${activeVoiceType === option.value ? 'btn-primary' : ''}`}
+                className={`btn border border-gray-500 ${activeVoiceType === option.value ? 'btn-primary' : ''}`}
                 onClick={() => setActiveVoiceType(option.value)}
                 disabled={loading}
               >
